@@ -1,0 +1,219 @@
+<?php
+
+namespace App\Http\Controllers\Apis;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+use App\Http\Resources\AgrolyticResource;
+use App\Agrolytic;
+use Auth;
+
+class AgrolyticController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        //
+        $query = Agrolytic::with('clientCustomer')->with('reports')->with('comments');
+        
+        if ($request->filled('user_id')){
+           $query = $query->where('user_id',$request->user_id);  
+        }
+        
+        if ($request->filled('op_rep')){
+            $query = $query->where('op_rep',$request->op_rep);  
+        }
+
+        if ($request->filled('cat_id')){
+           $query = $query->where('cat_id',$request->cat_id);
+        }
+
+        if ($request->filled('sec_id')){
+           $query = $query->where('sec_id',$request->sec_id);
+        }
+
+        if ($request->filled('date_from') && $request->filled('date_to')){ //date range search
+          $query = $query->whereDate('created_at','>=',$request->date_from);
+          $query = $query->whereDate('created_at','<=',$request->date_to);
+        }
+ 
+        return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+//        $this->store();
+
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request,Agrolytic $agrolytic)
+    {
+        //
+        $agrolytic->group_name_id = $request->group_name_id;
+        $agrolytic->pag_objective = $request->pag_objective;
+        $agrolytic->cat_id = $request->cat_id;
+        $agrolytic->sec_id = $request->sec_id;
+        $agrolytic->customer_id = $request->customer_id;
+        $agrolytic->prospect = $request->prospect;
+        $agrolytic->comp_objective = $request->comp_objective;
+        $agrolytic->initiative = $request->initiative;
+        $agrolytic->user_id = $request->user_id; //Auth::user()->id;
+        $agrolytic->op_rep = $request->op_rep;
+        $agrolytic->status = $request->status;
+
+        // $agrolytic->day_of_week = $request->day_of_week;
+        // $agrolytic->prog_status = $request->prog_status;
+        // $agrolytic->lmodified_id = $request->lmodified_id;
+
+        if ($agrolytic->save()){
+           return new AgrolyticResource($agrolytic);
+        }
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Agrolytic $agrolytic)
+    {
+        //
+        return new AgrolyticResource($agrolytic);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request,Agrolytic $agrolytic)
+    {
+        //
+        // $agrolytic->group_name_id = $request->group_name_id;
+        // $agrolytic->prog_status = $request->prog_status;
+        // $agrolytic->cat_id = $request->cat_id;
+        // $agrolytic->sec_id = $request->sec_id;
+        // $agrolytic->prospect = $request->prospect;
+        // $agrolytic->comp_objective = $request->comp_objective;
+        // $agrolytic->initiative = $request->initiative;
+        // $agrolytic->user_id = Auth::user()->id;
+        // $agrolytic->op_rep = $request->op_rep;
+        // $agrolytic->day_of_week = $request->day_of_week;
+
+
+        $agrolytic->group_name_id = $request->group_name_id;
+        $agrolytic->pag_objective = $request->pag_objective;
+        $agrolytic->cat_id = $request->cat_id;
+        $agrolytic->sec_id = $request->sec_id;
+        $agrolytic->status = $request->status;
+        $agrolytic->customer_id = $request->customer_id;
+        $agrolytic->prospect = $request->prospect;
+        $agrolytic->comp_objective = $request->comp_objective;
+        $agrolytic->initiative = $request->initiative;
+        $agrolytic->user_id = $request->user_id; //Auth::user()->id;
+        $agrolytic->op_rep = $request->op_rep;
+
+
+        if ($agrolytic->save()){
+            return new AgrolyticResource($agrolytic);
+        }
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Agrolytic $agrolytic)
+    {
+        //
+        if ($agrolytic->delete()){
+           return new AgrolyticResource($agrolytic);
+        }
+    }
+
+
+    function report($week=0){
+        
+        $process=['Perpetual','Purchase','Pipeline','Prospect','Present'];
+        $allAgro = Agrolytic::where('id','<>',0);
+
+        if ($week==1){
+            $allAgro=$allAgro->whereBetween('updated_at',[date('Y-m-d',strtotime('-6 days')),date('Y-m-d',strtotime('+1 days'))]);
+        }
+        $allAgro=$allAgro->count('id');
+        $status=[];
+
+        foreach($process as $process){
+            $pCOunt = Agrolytic::where('status',$process);
+            if($week==1){
+                $pCOunt=$pCOunt->whereBetween('updated_at',[date('Y-m-d',strtotime('-6 days')),date('Y-m-d',strtotime('+1 days'))]);
+            }
+            $pCOunt=$pCOunt->count('id');
+            if($allAgro==0){
+               $status[$process]=0;
+            }else{
+               $status[$process]=round(($pCOunt/$allAgro)*100,2);
+            }
+        }
+        // $status;
+        //  return $status;
+
+ 
+    //     $allreport=\App\Report::where('id','>',0);
+
+    //     if(\Auth::user()->type=='prime_osp'){
+
+    //         $allreport=$allreport->where('user_id',\Auth::user()->id);
+
+    //     }
+
+    //     $allreport=$allreport->count('id');	  
+
+    //     // dd($this->miniReport('\App\Agrolytic'));
+
+    //    return ['thisweek'=>$this->miniReport('\App\Agrolytic'),'thisweekreport'=>$this->miniReport('\App\Report'),'allreport'=>$allreport];
+       
+
+
+        return $status;
+
+    }
+
+
+
+}
