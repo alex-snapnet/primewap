@@ -2,8 +2,67 @@
   
   <div class="row">
 
+
+
+
+
+
+<!-- comment modal start -->
+<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> {{ edit? 'Edit Group':'Add Group' }} </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form @submit.prevent="saveGroup">
+      <div class="modal-body">
+
+          <div class="container">
+              <div class="row">
+
+        <div class="col-md-12">
+
+
+           <div class="form-group col-md-12">
+               <label for="">
+                   Group Name
+               </label>
+               <input placeholder="Group Name" class="form-control" v-model="group.name" />
+           </div>  
+
+           <div style="clear: both;"></div> 
+
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Group' }} </button>
+      </div>
+
+      </form>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- comment modal stop -->
+
+
      
-     <div class="col-lg-6">
+     <div class="col-lg-12">
        
        <div class="card">
            <div class="card-body">
@@ -13,6 +72,20 @@
         <div class="col-xs-12" style="height: 20px;">
              {{ status }}
         </div>
+
+
+<div class="col-xs-12" align="right">
+
+  <export-csv :excelStyle="{'margin-bottom':'0 !important'}" v-bind:data="groups"></export-csv>     
+
+  <!-- importGroupModal -->
+
+ <excel-import  @batchCreated="batchCreateNotificationAndReload" :compId="23" :apiBatchCreate="'http://127.0.0.1:8000/api/groupname-batch-create'"></excel-import>
+  <!-- <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#importGroupModal" data-toggle="modal">Import Group</a> -->
+
+  <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#groupModal" data-toggle="modal">Add Group</a>
+
+</div>
 
 
        <h4>Manage Groups &nbsp;
@@ -47,7 +120,6 @@
 
 <!-- Jamie Foxx Interviews Gabrielle Union -- OFF SCR -->
 
-
 <!-- <div class="dropdown">
   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Dropdown button
@@ -65,8 +137,8 @@
   </button>
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-    <a href="" @click.prevent="linktoForm(group)" class="dropdown-item">Edit</a>
-    <a href="" @click.prevent="selectSub(group)" class="dropdown-item">View Sub Group</a>
+    <a href="#" @click.prevent="linktoForm(group)" data-target="#groupModal" data-toggle="modal" class="dropdown-item">Edit</a>
+    <!-- <a href="" @click.prevent="selectSub(group)" class="dropdown-item">View Sub Group</a> -->
     <a href="" @click.prevent="removeGroup(group)" class="dropdown-item">Remove</a>
 
     <!-- <a class="dropdown-item" href="#">Action</a>
@@ -124,45 +196,7 @@
 
 
 
-<!-- add update section -->
-     <div class="col-lg-6">
-       
-       <div class="card">
-           <div class="card-body">
-
-
-       <h4>Add/Save Group</h4>
-
-        <div class="col-xs-12">
-        </div>
-    
-        <form @submit.prevent="saveGroup">
-  
-           <div class="form-group">
-              <input v-bind:style="{border: error}" type="text" class="form-control" placeholder="Category Name" v-model="group.name" />    
-           </div>  
-
-           <div align="right">
-                <button class="btn btn-sm btn-success">Save</button>
-           </div>
-<!-- {{ grp }} -->
-
-<!-- <div> -->
-    
-    <!-- <group-select v-model="grp"></group-select> -->
-
-<!-- </div> -->
-
-        </form>
-
-
-
-           </div>
-       </div>
-
-
-
-     </div>
+<!-- excel-to-json -->
 
 
   </div>
@@ -208,6 +242,22 @@ export default {
     },
 
     methods: {
+
+        batchCreateNotificationAndReload(){
+            toastr.success('Batch Created Successfully ...');
+            this.fetchGroups();  
+        }, 
+
+        hideForm(){
+            // $('#form').slideUp();
+            $('.modal').trigger('click');
+            this.toggle = true;
+            //  this.resetForm();
+        },
+
+        doAdd(){
+           this.edit = false;  
+        },
 
         hasPrevHistory(){
         //  console.log((this.parentHistory.length > 0));
@@ -300,6 +350,7 @@ export default {
                     this.edit = false;
                     this.fetchGroups();
                     this.scanResponse(res);
+                    this.hideForm();
 
 
                 })
@@ -329,6 +380,7 @@ export default {
                     this.edit = false;
                     this.fetchGroups();
                     this.scanResponse(res);
+                    this.hideForm();
 
                 })
                 .then(data=>{

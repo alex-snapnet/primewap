@@ -39,3 +39,5 @@ Route::get('/manage-comment/{agrolytic}','CommentController@index')->middleware(
 Route::get('/manage-report/{agrolytic}','ReportController@index')->middleware('auth')->name('report.manage');
 
 //CommentController
+
+

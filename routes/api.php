@@ -29,6 +29,8 @@ Route::get('agrolytic-report/{wk}','Apis\AgrolyticController@report');
 
 Route::resource('groupname','Apis\GroupNameController');
 
+Route::post('groupname-batch-create','Apis\GroupNameController@storeBulk');
+
 Route::resource('customer','Apis\CustomerController');
 Route::get('customer-field/{customer}','Apis\CustomerController@showField');
 
@@ -41,3 +43,7 @@ Route::put('change-user-role/{user}','Apis\UserController@updateUserRole');
 
 
 Route::resource('report','Apis\ReportController');
+
+
+///Excel Service API Definition Here
+Route::post('excel-to-json','Apis\ExcelServiceController@blobToJson');

@@ -11,6 +11,36 @@
   Launch demo modal
 </button> -->
 
+
+
+
+
+<!-- comment thread section start -->
+
+<div class="modal fade" id="commentThreadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Comments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+     <div>
+       <!-- content start -->
+       <comment :agro_id="id" :user_id="data.user_id"></comment>
+       <!-- content stop -->
+     </div>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- comment thread section stop -->
+
 <!-- comment modal start -->
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -347,11 +377,26 @@
    <!-- <comment v-bind:agro_id="commentData.agro_id"></comment> -->
 </span>
 
-<span class="col-lg-12" v-else-if="view == 'agrolytic'">
+<span class="col-lg-12" v-else-if="view == 'agrolytic'" style="padding: 0;">
     
 
 <!-- add update section -->
      <div class="col-lg-12">
+
+
+
+     <!-- [end] -->
+
+
+     </div>
+     <!-- add update section -->
+
+     
+     <div class="col-lg-12">
+       
+       <div class="card">
+           <div class="card-body">
+
 
 
  <div align="right">
@@ -366,27 +411,20 @@
 
      <a data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-warning mb-2" >Import Excel Document</a>
 
-     <a  href="/manage-agrolytic" class="btn btn-sm btn-success mb-2" >Reset Filter</a>
+     <a  href="#" @click.prevent="resetFilters" class="btn btn-sm btn-success mb-2" >Reset Filter</a>
 
      <a v-show="isAdminOnly()" data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-success mb-2" >Add / Save Agrolytic</a>
  
  </div>
 
-     <!-- [end] -->
 
-
-     </div>
-     <!-- add update section -->
-
-     
-     <div class="col-lg-12">
-       
-       <div class="card">
-           <div class="card-body">
 
         <div class="col-xs-12" style="height: 20px;" v-show="status">
              <img src="/images/loader.gif" style="height: 20px;"/>    
         </div>
+
+
+
 
        <h4>
 
@@ -402,16 +440,16 @@
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Category:.</b><br />  
-                <select v-bind="filterCat" style="border: 1px solid #ddd;font-size: 13px;padding: 7px;">
-                    <option value="0">--Select Category--</option>
+                <select v-model="cat_id" style="border: 1px solid #ddd;font-size: 13px;padding: 7px;">
+                    <option value="">--Select Category--</option>
                     <option v-for="cat in categories" v-bind:value="cat.id" v-bind:key="cat.id">{{ cat.name }}</option>
                 </select>
              </span>
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Sector:.</b><br />  
-                <select v-bind="filterSec" style="border: 1px solid #ddd;font-size: 13px;padding: 7px;">
-                    <option value="0">--Select Sector--</option>
+                <select v-model="sec_id" style="border: 1px solid #ddd;font-size: 13px;padding: 7px;">
+                    <option value="">--Select Sector--</option>
                     <option v-for="sec in sectors" v-bind:value="sec.id" v-bind:key="sec.id">{{ sec.name }}</option>
                 </select>
              </span>
@@ -523,14 +561,19 @@
     <a target="_blank" :href="getReportLink(data_)" class="dropdown-item">View Reports</a>
     <div class="dropdown-divider"></div>
 
-    <a target="_blank" :href="getManageCommentLink(data_)" class="dropdown-item">View Comments</a>
+    <!-- view comments -->
+    <!-- :href="getManageCommentLink(data_)" -->
+    <a href="#" @click.prevent="linktoForm(data_)" data-target="#commentThreadModal" data-toggle="modal" class="dropdown-item">View Comments</a>
 
+    <!-- category filter -->
     <div class="dropdown-divider"></div>
-    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" :href="getCatFilter(data_)" class="dropdown-item">Agrolytics In This Category</a>
+    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" href="#" @click.prevent="setCategoryFilter(data_)" class="dropdown-item">Agrolytics In This Category</a>
+<!-- :href="getCatFilter(data_)" -->
 
+    <!-- sector filter -->
     <div class="dropdown-divider"></div>
-    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" :href="getSecFilter(data_)" class="dropdown-item">Agrolytics In This Sector</a>
-
+    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" href="#" @click.prevent="setSectorFilter(data_)" class="dropdown-item">Agrolytics In This Sector</a>
+<!-- :href="getSecFilter(data_)" -->
 
 <!-- /manage-agrolytic -->
   </div>
@@ -593,13 +636,15 @@ export default {
     props:[
       'user_id',
       'role',
-      'sec_id',
-      'cat_id'
+      // 'sec_id'
+      // 'cat_id'
     ],
 
     data(){
          
          return {
+            cat_id:'',
+            sec_id:'',
             csvData:[],
             dateFrom:'',
             dateTo:'',
@@ -668,7 +713,6 @@ export default {
     },
 
     mounted(){
-      this.handleFilters(); //this handles scoping  
       this.fetchAgrolytic();
       this.fetchCategories();
       this.fetchSectors();
@@ -677,8 +721,44 @@ export default {
       this.fetchGroups();
     },
 
+    watch:{
+        cat_id(newVal,oldVal){
+          // this.handleFilters(); //this handles scoping  
+          if (newVal){
+             this.fetchAgrolytic();          
+          }else{
+             this.resetFilters();
+             this.fetchAgrolytic();
+          }
+        },
+        sec_id(newVal,oldVal){
+          // this.handleFilters(); //this handles scoping  
+          if (newVal){
+            console.log(newVal);
+            this.fetchAgrolytic();          
+          }else{
+            this.resetFilters(); 
+            this.fetchAgrolytic();
+          }
+        }
+    },
+
     methods: {
+
+       resetFilters(){ ///
+          this.cat_id = '';
+          this.sec_id = ''; 
+          console.log('called...');
+       },
+
+       setCategoryFilter(agrolytic){
+          this.cat_id = agrolytic.cat_id;
+       },
         
+       setSectorFilter(agrolytic){
+          this.sec_id = agrolytic.sec_id;
+       },
+
         doPreview(data){
           this.linktoForm(data);
           this.preview = true;
@@ -693,18 +773,27 @@ export default {
         },
         
         handleFilters(){
-           if (this.isAdminOnly()){
-              this.filters.push('user_id=' + this.user_id);
+           
+
+           if (this.cat_id || this.sec_id){
+              if (this.cat_id){
+                  this.filters.push('cat_id=' + this.cat_id);     
+              }
+              if (this.sec_id){
+                  this.filters.push('sec_id=' + this.sec_id);
+              }
+           }else{
+
+              if (this.isAdminOnly()){
+                  this.filters.push('user_id=' + this.user_id);
+              }
+
+              if (this.isPrimeOspOnly()){
+                  this.filters.push('op_rep=' + this.user_id);
+              }
+
            }
-           if (this.isPrimeOspOnly()){
-              this.filters.push('op_rep=' + this.user_id);
-           }
-           if (this.cat_id){
-              this.filters.push('cat_id=' + this.cat_id);     
-           }
-           if (this.sec_id){
-              this.filters.push('sec_id=' + this.sec_id);
-           }
+
            if (this.dateFrom){
               this.filters.push('date_from=' + this.dateFrom);
            }
@@ -873,6 +962,9 @@ export default {
         },
 
         fetchAgrolytic(url){
+           
+           this.handleFilters(); //this handles scoping  
+           
            this.statusBusy(true);  
             let api = '';
             if (url){
@@ -895,6 +987,7 @@ export default {
                 this.list = res.data;
                 this.statusBusy(false);  
                 this.makePagination(res.meta,res.links);
+                this.filters = [];
 
 
             })

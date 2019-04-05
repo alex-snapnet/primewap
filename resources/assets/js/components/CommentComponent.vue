@@ -59,18 +59,24 @@
 
 <div class="col-lg-12">
       <div class="card">
-          <div class="card-body">
+          <div class="card-body" style="padding-left: 7px;padding-right: 7px;">
 
 
 <div class="col-lg-12">
     <h4><u>Comments</u></h4>
 </div>
 <div class="col-lg-12" align="right">
-    <a href="/manage-agrolytic"  class="btn btn-info" style="margin-bottom: 7px;">Back To Agrolytic</a>
+    <!-- <a href="/manage-agrolytic"  class="btn btn-info" style="margin-bottom: 7px;">Back To Agrolytic</a> -->
 
-    <a v-show="canModify" href="#" data-target="#commentModalSelf" data-toggle="modal" class="btn btn-success" style="margin-bottom: 7px;"> + Add Comment</a>
+
+<input v-show="canModify" class="form-control" style="margin-bottom: 7px;" type="text" @keyup.enter="saveComment" v-model="comment.comment" placeholder="Type in your comment here." />
+
+
+    <!-- <a v-show="canModify" href="#" data-target="#commentModalSelf" data-toggle="modal" class="btn btn-success" style="margin-bottom: 7px;"> + Add Comment</a> -->
 </div>
 
+<span style="height: 380px;overflow-y: scroll;display:inline-block;width: 100%;">
+    <!-- start loop -->
     <div class="col-lg-12" v-for="com in comments" v-bind:key="com.id">
   
 
@@ -81,12 +87,19 @@
                <small> {{ com.created_at | ago }} </small>
              </div>
              <div align="right">
-                 <a v-show="canModify" href="#" @click.prevent="linktoForm(com)" data-target="#commentModalSelf" data-toggle="modal" class="btn btn-info btn-sm" style="background-color: #8a8aca;border: 0;">Edit</a>
+<!-- data-target="#commentModalSelf" data-toggle="modal" -->
+                 <a v-show="canModify" href="#" @click.prevent="linktoForm(com)" class="btn btn-info btn-sm" style="background-color: #8a8aca;border: 0;">Edit</a>
                  <a v-show="canModify" href="" @click.prevent="removeComment(com)" class="btn btn-danger btn-sm" style="background-color: #e29292;border: 0;">Remove</a> 
              </div>
          </div>
 
 
+    </div>
+    <!-- end loop -->
+  </span>  
+
+    <div>
+      <!-- {{ agro_id }} , {{ user_id }} -->
     </div>
 
 
@@ -124,6 +137,14 @@ export default {
         'agro_id',
         'user_id'
     ],
+
+    watch:{
+       agro_id(newValue,oldValue){
+        this.cacheUrl = ''; 
+        this.fetchComments();
+        this.fetchAgrolytic();          
+       }
+    },
 
     filters:{
        ago(value){
@@ -281,7 +302,7 @@ export default {
              this.scanResponse(res);
             //  this.hideForm();
              this.comment.comment = '';
-             this.closeForm();
+            //  this.closeForm();
              this.fetchComments(); 
           }).catch(e=>console.log(e));
         },
@@ -300,7 +321,7 @@ export default {
              this.scanResponse(res);
             //  this.hideForm();
              this.comment.comment = '';
-             this.closeForm();
+            //  this.closeForm();
              this.fetchComments();
           }).catch(e=>console.log(e));
         }, 

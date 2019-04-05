@@ -22,7 +22,7 @@ class GroupNameController extends Controller
         if ($request->filled('group_name_id')){//group_name_id
            $query = $query->where('group_name_id',$request->group_name_id);
         }
-        return GroupNameResource::collection($query->get());
+        return GroupNameResource::collection($query->paginate(5));
     }
 
     /**
@@ -52,6 +52,31 @@ class GroupNameController extends Controller
         }
 
     }
+
+    function storeBulk(Request $request){
+
+        $countRows = 0; 
+        $k = -1;
+        $bulkRequest = $request->blob;
+        
+        // dd($bulkRequest);
+
+         foreach ($bulkRequest as $k=>$v){
+           $objGroupName = new GroupName;
+           $objGroupName->name = $v['name'];
+           $objGroupName->save(); 
+         }
+       $countRows = $k + 1;
+       
+       return [
+           'message'=>'Processed ' . $countRows . ' - Rows.'
+       ];
+
+
+
+    }
+
+
 
     /**
      * Display the specified resource.

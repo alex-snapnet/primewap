@@ -1,6 +1,6 @@
 <template>
 
-     <a :href="href" :download="download" class="btn btn-sm btn-warning mb-2" >{{ text }}</a>
+     <a :style="excelStyle? excelStyle : {}" :href="href" :download="download" class="btn btn-sm btn-warning mb-2" >{{ text }}</a>
 
 </template>
 
@@ -10,7 +10,8 @@ export default {
     props:[
        'data',
        'fields',
-       'api'
+       'api',
+       'excelStyle'
     ],
 
     data(){ 

@@ -37,6 +37,7 @@ Vue.component('customer-field', require('./components/CustomerFieldComponent.vue
 Vue.component('comment', require('./components/CommentComponent.vue'));
 Vue.component('export-csv', require('./components/CsvDownloadComponent.vue'));
 Vue.component('report', require('./components/ReportComponent.vue'));
+Vue.component('excel-import', require('./components/ExcelImportComponent.vue'));
 
 // Vue.component('progress', require('./components/ProgressComponent.vue'));
 
