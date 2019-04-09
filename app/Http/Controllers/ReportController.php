@@ -13,4 +13,9 @@ class ReportController extends Controller
             'agrolytic'=>$agrolytic
         ]);
     }
+
+
+    function globalIndex(){
+        return view('report/global_index');
+    }
 }

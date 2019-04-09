@@ -34,7 +34,7 @@ export default {
 
         fetchFields(id){
             this.name = 'loading...';
-            fetch('api/customer/' + id)
+            fetch(baseURL + 'customer/' + id)
             .then(res=>res.json())
             .then(res=>{
                 // this.customers = res.data;

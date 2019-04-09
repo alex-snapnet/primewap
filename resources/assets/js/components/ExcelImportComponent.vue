@@ -107,7 +107,7 @@
 
         data(){
            return {
-              apiTransform:'http://127.0.0.1:8000/api/excel-to-json', 
+              apiTransform:baseURL + 'excel-to-json', 
               transformedData:[],
               uploadedFile:'',
               file:null,

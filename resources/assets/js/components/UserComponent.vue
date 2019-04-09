@@ -239,7 +239,7 @@ export default {
             if (url){
              this.fetchAPI = url;
             }else if (!this.fetchAPI){
-             this.fetchAPI = 'api/user';   
+             this.fetchAPI = baseURL + 'user';   
             }
 
             fetch(this.fetchAPI)
@@ -267,7 +267,7 @@ export default {
 
             this.statusBusy('Loading ...');  
 
-                fetch('api/user',{
+                fetch(baseURL + 'user',{
                     
                     method:'POST',
                     body:JSON.stringify(this.data),
@@ -309,7 +309,7 @@ export default {
         },
 
         makePrimeAdmin(data){
-           fetch('api/change-user-role/' + data.id,{
+           fetch(baseURL + 'change-user-role/' + data.id,{
                method:'PUT',
                body:JSON.stringify({type:'prime_admin'}),
                headers:{
@@ -327,7 +327,7 @@ export default {
         },
 
         makePrimeOsp(data){
-           fetch('api/change-user-role/' + data.id,{
+           fetch(baseURL + 'change-user-role/' + data.id,{
                method:'PUT',
                body:JSON.stringify({type:'prime_osp'}),
                headers:{
@@ -345,7 +345,7 @@ export default {
         },
 
         doSave(){
-               fetch('api/change-user-name/' + this.id,{
+               fetch(baseURL + 'change-user-name/' + this.id,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.data),

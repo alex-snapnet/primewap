@@ -158,7 +158,7 @@ export default {
              list:[],
              index:'',
              canModify:false,
-             baseUrl:'http://127.0.0.1:8000/',
+             baseUrl:baseURL,
              cacheUrl:'',
              comments:[],
              comment:{
@@ -191,7 +191,7 @@ export default {
 
 
         fetchAgrolytic(){
-           fetch(this.baseUrl + 'api/agrolytic/' + this.agro_id,{
+           fetch(this.baseUrl + 'agrolytic/' + this.agro_id,{
                method:'Get'
            })
            .then(res=>res.json())
@@ -231,7 +231,7 @@ export default {
                if (this.cacheUrl){
                 //do nothing..., simply retain the cacheUrl.  
                }else{
-                api = this.baseUrl + 'api/comment?agro_id=' + this.agro_id;   
+                api = this.baseUrl + 'comment?agro_id=' + this.agro_id;   
                 this.cacheUrl = api;
                } 
             }
@@ -291,7 +291,7 @@ export default {
           this.comment.agro_id = this.agro_id;
           this.comment.user_id = this.user_id;
 
-          fetch(this.baseUrl + 'api/comment/' + this.comment.id,{
+          fetch(this.baseUrl + 'comment/' + this.comment.id,{
               method:'PUT',
               body:JSON.stringify(this.comment),
               headers:{
@@ -310,7 +310,7 @@ export default {
           this.comment.agro_id = this.agro_id;
           this.comment.user_id = this.user_id;
 
-          fetch(this.baseUrl + 'api/comment',{
+          fetch(this.baseUrl + 'comment',{
               method:'POST',
               body:JSON.stringify(this.comment),
               headers:{
@@ -330,7 +330,7 @@ export default {
         //   this.comment.agro_id = this.agro_id;
         //   this.comment.user_id = this.user_id;
 
-          fetch(this.baseUrl + 'api/comment/' + this.comment.id,{
+          fetch(this.baseUrl + 'comment/' + this.comment.id,{
               method:'DELETE',
               headers:{
                   'content-Type':'application/json'

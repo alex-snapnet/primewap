@@ -39,7 +39,10 @@ Vue.component('export-csv', require('./components/CsvDownloadComponent.vue'));
 Vue.component('report', require('./components/ReportComponent.vue'));
 Vue.component('excel-import', require('./components/ExcelImportComponent.vue'));
 
-// Vue.component('progress', require('./components/ProgressComponent.vue'));
+Vue.component('xprogress', require('./components/ProgressComponent.vue'));
+
+Vue.component('dash-board-metrics', require('./components/DashboardMetricsComponent.vue'));
+
 
 // mixins:[SectorMixin],
 // console.log(SectorMixin);

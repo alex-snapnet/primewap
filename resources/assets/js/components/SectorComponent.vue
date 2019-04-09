@@ -201,7 +201,7 @@ export default {
              api = url;
              this.cacheUrl = api;
             }else{
-             api = 'api/sector'; 
+             api = baseURL + 'sector'; 
              if (!this.cacheUrl){
                this.cacheUrl = api;
              }
@@ -249,7 +249,7 @@ export default {
     
                this.statusBusy('Loading ...');  
                
-               fetch('api/sector/' + this.id,{
+               fetch(baseURL + 'sector/' + this.id,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.sector),
@@ -283,7 +283,7 @@ export default {
                this.statusBusy('Loading ...');  
 
 
-                fetch('api/sector',{
+                fetch(baseURL + 'sector',{
                     
                     method:'POST',
                     body:JSON.stringify(this.sector),
@@ -318,7 +318,7 @@ export default {
         removeSector(sector){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch('api/sector/' + sector.id,{
+           fetch(baseURL + 'sector/' + sector.id,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'

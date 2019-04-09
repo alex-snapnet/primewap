@@ -10,6 +10,8 @@ use App\Report;
 
 use App\Agrolytic;
 
+use Carbon\Carbon;
+
 class ReportController extends Controller
 {
     /**
@@ -30,8 +32,43 @@ class ReportController extends Controller
             $query = $query->whereDate('created_at','>=',$request->date_from);
             $query = $query->whereDate('created_at','<=',$request->date_to);
         }
+
+
+        if ($request->filled('date_days')){
+            $now = Carbon::now();
+            $pastDays = Carbon::now()->subDays($request->date_days * 1); //$request->date_days * 1
+ 
+         //    echo $now . '<br />';
+         //    echo $pastDays;
+ 
+            $query = $query->whereDate('created_at','>=',$pastDays);
+            $query = $query->whereDate('created_at','<=',$now); 
+        }
+
+        if ($request->filled('status')){
+           $query = $query->where('status',$request->status);
+        }
+ 
+        if ($request->filled('prog_status')){
+            $query = $query->where('prog_status',$request->prog_status);
+        }
+ 
+
+        if ($request->filled('return_type')){
+            if ($request->return_type == 'count'){
+              return [
+                  'count'=>$query->count()
+              ]; 
+            }else if ($request->return_type == 'all'){
+              return ReportResource::collection($query->orderBy('id','desc')->get());
+            }else{
+              return ReportResource::collection($query->orderBy('id','desc')->paginate(5));
+            }   
+          }else{
+            return ReportResource::collection($query->orderBy('id','desc')->paginate(5));            
+          }
+          
   
-        return ReportResource::collection($query->paginate(5));
     }
 
     /**

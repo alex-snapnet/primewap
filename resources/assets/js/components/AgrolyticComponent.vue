@@ -130,7 +130,10 @@
 
                <select class="form-control" v-model="reportData.status">
                    <option value="Prospect">Prospect</option>
-                   <option value="Perpetual">Perpetual</option>
+                   <option value="Purchase">Purchase</option>
+                   <option value="Pipeline">Pipeline</option>
+                   <option value="Prospect">Prospect</option>
+                   <option value="Present">Present</option>
                </select>
            </div>  
 
@@ -143,7 +146,7 @@
                  Progress Status
                </label>
             
-              <input type="text" class="form-control" placeholder="Progress" v-model="reportData.prog_status" />
+              <input type="number" class="form-control" placeholder="Progress" v-model="reportData.prog_status" />
 
            </div>  
 
@@ -395,7 +398,7 @@
      <div class="col-lg-12">
        
        <div class="card">
-           <div class="card-body">
+           <div class="card-body table-responsive">
 
 
 
@@ -407,6 +410,8 @@
     Manage Agrolytic
 </span>
 
+<div class="btn-group" role="group" aria-label="Basic example">
+
       <export-csv v-bind:data="list"></export-csv>     
 
      <a data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-warning mb-2" >Import Excel Document</a>
@@ -415,13 +420,12 @@
 
      <a v-show="isAdminOnly()" data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-success mb-2" >Add / Save Agrolytic</a>
  
+</div>
+
  </div>
 
 
 
-        <div class="col-xs-12" style="height: 20px;" v-show="status">
-             <img src="/images/loader.gif" style="height: 20px;"/>    
-        </div>
 
 
 
@@ -510,7 +514,9 @@
                </td>
                <td>
 
-    <progress-bar :value=" ( data_.prog_status === 'Pending' )? 0 : +data_.prog_status " />                   
+                 <xprogress :label="'Progress'" :percentage = " ( data_.prog_status === 'Pending' )? 0 : +data_.prog_status "></xprogress>
+
+    <!-- <progress-bar :value=" ( data_.prog_status === 'Pending' )? 0 : +data_.prog_status " />                    -->
                 
                </td>
                <td>
@@ -604,6 +610,11 @@
 </nav>
 
 
+        <div class="col-xs-12" style="height: 20px;" v-show="status" align="right">
+             <img src="/images/loader.gif" style="height: 45px;"/>    
+        </div>
+
+
            </div>
        </div>
 
@@ -636,6 +647,7 @@ export default {
     props:[
       'user_id',
       'role',
+      'date_days'
       // 'sec_id'
       // 'cat_id'
     ],
@@ -687,10 +699,10 @@ export default {
             users:[],
             customers:[],
             apis:{
-               readApi:'api/agrolytic',  
-               createApi:'api/agrolytic',
-               updateApi:'api/agrolytic/',
-               deleteApi:'api/agrolytic/'
+               readApi:baseURL + 'agrolytic',  
+               createApi:baseURL+ 'agrolytic',
+               updateApi:baseURL + 'agrolytic/',
+               deleteApi:baseURL + 'agrolytic/'
             },
             edit:false,
             id:'',
@@ -801,6 +813,10 @@ export default {
               this.filters.push('date_to=' + this.dateTo);
            }
 
+           if (this.date_days){
+             this.filters.push('date_days=' + this.date_days);
+           }
+
            console.log(this.filters);
 
         },
@@ -844,7 +860,7 @@ export default {
         },
 
         fetchCategories(){
-          fetch('api/category')
+          fetch(baseURL + 'category')
           .then(res=>res.json())
           .then(res=>{
               this.categories = res.data;
@@ -860,7 +876,7 @@ export default {
         // },
 
         fetchCustomers(){
-          fetch('api/customer')
+          fetch(baseURL + 'customer')
           .then(res=>res.json())
           .then(res=>{
               this.customers = res.data;
@@ -869,7 +885,7 @@ export default {
 
 
         fetchOpReps(){
-          fetch('api/user?role=prime_osp')
+          fetch(baseURL + 'user?role=prime_osp')
           .then(res=>res.json())
           .then(res=>{
               this.users = res.data;
@@ -878,7 +894,7 @@ export default {
 
 
         fetchGroups(){
-          fetch('api/groupname')
+          fetch(baseURL + 'groupname')
           .then(res=>res.json())
           .then(res=>{
               this.groups = res.data;
@@ -892,7 +908,7 @@ export default {
        }, 
        
         addReport(){
-          fetch('api/report',{
+          fetch(baseURL + 'report',{
               method:'POST',
               body:JSON.stringify(this.reportData),
               headers:{
@@ -911,7 +927,7 @@ export default {
 
 
         addComment(){
-          fetch('api/comment',{
+          fetch(baseURL + 'comment',{
               method:'POST',
               body:JSON.stringify(this.commentData),
               headers:{

@@ -1,7 +1,19 @@
 <template>
-<div class="progress">
-    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 71.43%; background-color: #00b050;" aria-valuenow="71.43" aria-valuemin="0" aria-valuemax="100"></div>
+
+<span>
+
+<div class="d-flex justify-content-between">
+                      <p class="mb-2">{{ label }}</p>
+                      <p class="mb-2 text-primary">{{ percentage }}%</p>
 </div>
+
+<div class="progress">
+
+ <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" :style="getPercentageStyle()" :aria-valuenow="getPercentageAria()" aria-valuemin="0" aria-valuemax="100"></div>
+
+</div>
+
+</span>
 </template>
 
 <script>
@@ -13,13 +25,18 @@ export default {
          }
     },
 
+    props:[
+        'percentage',
+        'label'
+    ],
+
     mounted(){
       this.initProgress();
     },
 
-    props:[
-        'progress'
-    ],
+    // props:[
+    //     'progress'
+    // ],
     watch:{
 
     },
@@ -28,7 +45,20 @@ export default {
 
         initProgress(){
 
+        },
+
+        getPercentageAria(){
+          return this.percentage;
+        },
+
+        getPercentageStyle(){
+          //width: 81.82%; background-color: #00b050;
+          return {
+             width:this.percentage + '%',
+             backgroundColor:'#00b050'
+          }; 
         }
+
 
     }
     

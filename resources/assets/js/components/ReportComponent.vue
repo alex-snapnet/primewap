@@ -42,7 +42,10 @@
 
                <select class="form-control" v-model="reportData.status">
                    <option value="Prospect">Prospect</option>
-                   <option value="Perpetual">Perpetual</option>
+                   <option value="Purchase">Purchase</option>
+                   <option value="Pipeline">Pipeline</option>
+                   <option value="Prospect">Prospect</option>
+                   <option value="Present">Present</option>
                </select>
            </div>  
 
@@ -55,7 +58,7 @@
                  Progress Status
                </label>
             
-              <input type="text" class="form-control" placeholder="Progress" v-model="reportData.prog_status" />
+              <input type="number" class="form-control" placeholder="Progress" v-model="reportData.prog_status" />
 
            </div>  
 
@@ -125,7 +128,7 @@
      <div class="col-lg-12">
        
        <div class="card">
-           <div class="card-body">
+           <div class="card-body table-responsive">
 
         <div class="col-xs-12" style="height: 20px;" v-show="status">
              <img src="/images/loader.gif" style="height: 20px;"/>    
@@ -200,7 +203,9 @@
                </td>
                <td>
 
-    <progress-bar :value=" ( data_.prog_status === 'Pending' )? 0 : +data_.prog_status " />                   
+    <xprogress :label="'Progress'" :percentage = " ( data_.prog_status === 'Pending' )? 0 : +data_.prog_status "></xprogress>
+    
+    <!-- <progress-bar :value=" ( data_.prog_status === 'Pending' )? 0 : +data_.prog_status " />                    -->
                 
                </td>
                <td>
@@ -295,7 +300,8 @@ export default {
     props:[
       'user_id',
       'role',
-      'agro_id'
+      'agro_id',
+      'date_days'
     ],
 
     data(){
@@ -321,11 +327,11 @@ export default {
             users:[],
             customers:[],
             apis:{
-               baseUrl:'http://127.0.0.1:8000/api/',  
-               readApi:'http://127.0.0.1:8000/api/report',  
-               createApi:'http://127.0.0.1:8000/api/report',
-               updateApi:'http://127.0.0.1:8000/api/report/',
-               deleteApi:'http://127.0.0.1:8000/api/report/'
+               baseUrl:baseURL,  
+               readApi:baseURL + 'report',  
+               createApi: baseURL + 'report',
+               updateApi:baseURL + 'report/',
+               deleteApi:baseURL + 'report/'
             },
             edit:false,
             id:'',
@@ -350,7 +356,7 @@ export default {
     mounted(){
     //   this.handleFilters(); //this handles scoping  
       this.fetchReports();
-      this.fetchAgrolytic();
+      if (this.agro_id)this.fetchAgrolytic();
     },
 
     methods: {
@@ -396,7 +402,13 @@ export default {
               this.filters.push('date_to=' + this.dateTo);
            }
 
-           this.filters.push('agro_id=' + this.agro_id);
+           if (this.agro_id){
+             this.filters.push('agro_id=' + this.agro_id);
+           }
+
+           if (1*this.date_days){
+             this.filters.push('date_days=' + this.date_days);
+           }
 
            console.log(this.filters);
 
@@ -602,6 +614,8 @@ export default {
             this.reportData.status = data.status;
             this.reportData.prog_status = data.prog_status;
             this.preview = false;
+
+            console.log(this.reportData);
 
         },
         

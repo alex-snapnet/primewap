@@ -1,3 +1,30 @@
+@section('css')
+<style type="text/css">
+    .pointer{
+        cursor: pointer;
+    }
+
+
+    ::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
+</style>
+
+  <link rel="stylesheet" href="{{asset('vendors/iconfonts/mdi/css/materialdesignicons.min.css')}}">
+  <link rel="stylesheet" href="{{asset('vendors/css/vendor.bundle.base.css')}}">
+  <link rel="stylesheet" href="{{asset('vendors/css/vendor.bundle.addons.css')}}">
+@endsection
 <!DOCTYPE html>
 
 <html lang="en">
@@ -19,6 +46,7 @@
      };
      window.authUser = '{{ Auth::user()->id }}';
      window.authRole = '{{ Auth::user()->type }}';
+     var baseURL = '{{ url("/") }}/api/';
   </script>
   <title>Prime Atlantic Agrolytic Action Plan</title>
 
@@ -133,6 +161,11 @@
         margin: 1px;
     }
 
+    table td{
+      padding-top: 7px !important;
+      padding-bottom: 7px !important;
+    }
+
 
 </style>
 
@@ -150,7 +183,7 @@
 
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
 
-      <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="width: 219px;">
 
         <a class="navbar-brand brand-logo" href="../../index.html">
 
@@ -272,7 +305,7 @@
 
       
 
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+      <nav class="sidebar sidebar-offcanvas" id="sidebar" style="width: 219px;">
 
         <ul class="nav">
 
@@ -304,9 +337,11 @@
 
               </div>
 
+              @if (Auth::user()->type == 'prime_admin')
+
               <a href="{{ route('agrolytic.index') }}" class="btn btn-success btn-block">New Agrolytic
 
-
+              @endif 
 
                 <i class="mdi mdi-plus"></i>
 
@@ -328,6 +363,9 @@
 
           </li>
 
+      
+
+          @if (Auth::user()->type == 'prime_admin')
 
           <li class="nav-item">
 
@@ -394,6 +432,8 @@
 
           </li>
 
+          @endif
+
         </ul>
 
       </nav>
@@ -402,7 +442,7 @@
 
       <!-- partial -->
 
-      <div class="main-panel">
+      <div class="main-panel" style="width: calc(100% - 219px)">
 
         <div class="content-wrapper" style="padding: 5px;">
 

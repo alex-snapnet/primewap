@@ -190,7 +190,7 @@ export default {
             if (url){
              api = url;
             }else{
-             api = 'api/category';   
+             api = baseURL + 'category';   
             }
 
             // console.log(url,api);
@@ -242,7 +242,7 @@ export default {
     
                this.statusBusy('Loading ...');  
                
-               fetch('api/category/' + this.id,{
+               fetch(baseURL + 'category/' + this.id,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.category),
@@ -278,7 +278,7 @@ export default {
                this.statusBusy('Loading ...');  
 
 
-                fetch('api/category',{
+                fetch(baseURL + 'category',{
                     
                     method:'POST',
                     body:JSON.stringify(this.category),
@@ -312,7 +312,7 @@ export default {
         removeCategory(category){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch('api/category/' + category.id,{
+           fetch(baseURL + 'category/' + category.id,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'

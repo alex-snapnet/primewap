@@ -37,6 +37,9 @@ Route::get('/manage-user','UserController@index')->middleware('auth')->name('use
 Route::get('/manage-agrolytic','AgrolyticController@index')->middleware('auth')->name('agrolytic.index');
 Route::get('/manage-comment/{agrolytic}','CommentController@index')->middleware('auth')->name('comment.manage');
 Route::get('/manage-report/{agrolytic}','ReportController@index')->middleware('auth')->name('report.manage');
+Route::get('/manage-report-global','ReportController@globalIndex')->middleware('auth')->name('report.global');
+
+
 
 //CommentController
 

@@ -2,6 +2,9 @@
 
 @section('content')
 <div id="app">
-  <sector></sector>
+  <sector>
+  <img src="{{ url('/') }}/images/loader.gif" style="height: 45px;"/>
+
+  </sector>
 </div>
 @endsection

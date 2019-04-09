@@ -219,7 +219,7 @@ export default {
             if (url){
              api = url;
             }else{
-             api = 'api/customer';   
+             api = baseURL + 'customer';   
             }
 
             fetch(api)
@@ -261,7 +261,7 @@ export default {
 
             this.statusBusy('Loading ...');  
 
-                fetch('api/customer',{
+                fetch(baseURL + 'customer',{
                     
                     method:'POST',
                     body:JSON.stringify(this.customer),
@@ -291,7 +291,7 @@ export default {
         },
 
         doSave(){
-               fetch('api/customer/' + this.id,{
+               fetch(baseURL + 'customer/' + this.id,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.customer),
@@ -323,7 +323,7 @@ export default {
         doRemove(customer){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch('api/customer/' + customer.id,{
+           fetch(baseURL + 'customer/' + customer.id,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'

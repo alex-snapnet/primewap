@@ -76,14 +76,18 @@
 
 <div class="col-xs-12" align="right">
 
+  <div class="btn-group" role="group" aria-label="Basic example">
+
   <export-csv :excelStyle="{'margin-bottom':'0 !important'}" v-bind:data="groups"></export-csv>     
 
   <!-- importGroupModal -->
 
- <excel-import  @batchCreated="batchCreateNotificationAndReload" :compId="23" :apiBatchCreate="'http://127.0.0.1:8000/api/groupname-batch-create'"></excel-import>
+ <excel-import  @batchCreated="batchCreateNotificationAndReload" :compId="23" :apiBatchCreate="batchCreate"></excel-import>
   <!-- <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#importGroupModal" data-toggle="modal">Import Group</a> -->
 
   <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#groupModal" data-toggle="modal">Add Group</a>
+
+  </div>
 
 </div>
 
@@ -113,6 +117,9 @@
             <tr v-for="group in groups" v-bind:key="group.id">
                <td>
                    {{ group.name }}
+               </td>
+               <td>
+                 <!-- <xprogress :label="'Progress'" :percentage = "50"></xprogress> -->
                </td>
                <td>
 
@@ -212,6 +219,7 @@ export default {
          
          return {
             groups:[],
+            batchCreate:baseURL + 'groupname-batch-create',
             grp:'',
             parentHistory:[],
             currentParent:null,
@@ -294,7 +302,7 @@ export default {
             if (url){
              api = url;
             }else{
-             api = 'api/groupname'
+             api = baseURL + 'groupname'
             }
 
             // console.log(url,api);
@@ -335,7 +343,7 @@ export default {
         doSave(){
                this.statusBusy('Loading ...');  
                
-               fetch('api/groupname/' + this.id,{
+               fetch(baseURL + 'groupname/' + this.id,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.group),
@@ -366,7 +374,7 @@ export default {
                this.group.group_name_id = this.group_name_id;
 
 
-                fetch('api/groupname',{
+                fetch(baseURL + 'groupname',{
                     
                     method:'POST',
                     body:JSON.stringify(this.group),
@@ -419,7 +427,7 @@ export default {
         removeGroup(group){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch('api/groupname/' + group.id,{
+           fetch(baseURL + 'groupname/' + group.id,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'

@@ -82,7 +82,7 @@ export default {
         },
 
         getGroup(id){
-          fetch('api/groupname/' + id)
+          fetch(baseURL + 'groupname/' + id)
           .then(res=>res.json())
           .then(res=>{
             this.group = res.data.id;  
@@ -96,7 +96,7 @@ export default {
 
         fetchGroups(group_name_id){
            this.statusBusy('Loading ...');  
-            let api = 'api/groupname' + '?group_name_id=' + group_name_id;   //group_name_id=1
+            let api = baseURL + 'groupname' + '?group_name_id=' + group_name_id;   //group_name_id=1
 
 
             // console.log(url,api);

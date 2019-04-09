@@ -9,6 +9,8 @@ use App\Http\Resources\AgrolyticResource;
 use App\Agrolytic;
 use Auth;
 
+use Carbon\Carbon;
+
 class AgrolyticController extends Controller
 {
     /**
@@ -18,7 +20,11 @@ class AgrolyticController extends Controller
      */
     public function index(Request $request)
     {
+        // $now = Carbon::now();
+        // $pastDays = $now->subDays(5); //$request->date_days * 1
+        // return $now->format('Y M d h:i:s A');
         //
+        
         $query = Agrolytic::with('clientCustomer')->with('reports')->with('comments');
         
         if ($request->filled('user_id')){
@@ -41,8 +47,36 @@ class AgrolyticController extends Controller
           $query = $query->whereDate('created_at','>=',$request->date_from);
           $query = $query->whereDate('created_at','<=',$request->date_to);
         }
+
+        if ($request->filled('date_days')){
+           $now = Carbon::now();
+           $pastDays = Carbon::now()->subDays($request->date_days * 1); //$request->date_days * 1
+
+        //    echo $now . '<br />';
+        //    echo $pastDays;
+
+           $query = $query->whereDate('created_at','>=',$pastDays);
+           $query = $query->whereDate('created_at','<=',$now); 
+        }
+
+
+
+        // echo $query->toSql();
+
+        if ($request->filled('return_type')){
+          if ($request->return_type == 'count'){
+            return [
+                'count'=>$query->count()
+            ]; 
+          }else if ($request->return_type == 'all'){
+            return AgrolyticResource::collection($query->orderBy('id','desc')->get());
+          }else{
+            return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
+          }   
+        }else{
+          return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
+        }
  
-        return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
     }
 
     /**

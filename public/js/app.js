@@ -65,6 +65,115 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -374,115 +483,6 @@ module.exports = {
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
@@ -516,7 +516,7 @@ module.exports = g;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 var normalizeHeaderName = __webpack_require__(23);
 
 var DEFAULT_CONTENT_TYPE = {
@@ -13789,7 +13789,7 @@ process.umask = function() { return 0; };
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 var settle = __webpack_require__(24);
 var buildURL = __webpack_require__(26);
 var parseHeaders = __webpack_require__(27);
@@ -14048,7 +14048,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(14);
-module.exports = __webpack_require__(79);
+module.exports = __webpack_require__(85);
 
 
 /***/ }),
@@ -14101,7 +14101,9 @@ Vue.component('export-csv', __webpack_require__(70));
 Vue.component('report', __webpack_require__(73));
 Vue.component('excel-import', __webpack_require__(76));
 
-// Vue.component('progress', require('./components/ProgressComponent.vue'));
+Vue.component('xprogress', __webpack_require__(79));
+
+Vue.component('dash-board-metrics', __webpack_require__(82));
 
 // mixins:[SectorMixin],
 // console.log(SectorMixin);
@@ -35774,7 +35776,7 @@ module.exports = __webpack_require__(20);
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 var bind = __webpack_require__(6);
 var Axios = __webpack_require__(22);
 var defaults = __webpack_require__(3);
@@ -35861,7 +35863,7 @@ function isSlowBuffer (obj) {
 
 
 var defaults = __webpack_require__(3);
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 var InterceptorManager = __webpack_require__(31);
 var dispatchRequest = __webpack_require__(32);
 
@@ -35946,7 +35948,7 @@ module.exports = Axios;
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
@@ -36026,7 +36028,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 function encode(val) {
   return encodeURIComponent(val).
@@ -36099,7 +36101,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 // Headers whose duplicates are ignored by node
 // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -36159,7 +36161,7 @@ module.exports = function parseHeaders(headers) {
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -36277,7 +36279,7 @@ module.exports = btoa;
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -36337,7 +36339,7 @@ module.exports = (
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 function InterceptorManager() {
   this.handlers = [];
@@ -36396,7 +36398,7 @@ module.exports = InterceptorManager;
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 var transformData = __webpack_require__(33);
 var isCancel = __webpack_require__(10);
 var defaults = __webpack_require__(3);
@@ -36489,7 +36491,7 @@ module.exports = function dispatchRequest(config) {
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 /**
  * Transform the data for a request or a response
@@ -49941,7 +49943,7 @@ module.exports = function listToStyles (parentId, list) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(44)
 /* template */
@@ -50179,7 +50181,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (url) {
                 api = url;
             } else {
-                api = 'api/category';
+                api = baseURL + 'category';
             }
 
             // console.log(url,api);
@@ -50227,7 +50229,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                 this.statusBusy('Loading ...');
 
-                fetch('api/category/' + this.id, {
+                fetch(baseURL + 'category/' + this.id, {
 
                     method: 'PUT',
                     body: JSON.stringify(this.category),
@@ -50261,7 +50263,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                     this.statusBusy('Loading ...');
 
-                    fetch('api/category', {
+                    fetch(baseURL + 'category', {
 
                         method: 'POST',
                         body: JSON.stringify(this.category),
@@ -50290,7 +50292,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             if (confirm('You you want to confirm this action?')) {
                 this.statusBusy('Loading ...');
-                fetch('api/category/' + category.id, {
+                fetch(baseURL + 'category/' + category.id, {
                     method: 'DELETE',
                     headers: {
                         'content-Type': 'application/json'
@@ -50638,7 +50640,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(47)
 /* template */
@@ -50885,7 +50887,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 api = url;
                 this.cacheUrl = api;
             } else {
-                api = 'api/sector';
+                api = baseURL + 'sector';
                 if (!this.cacheUrl) {
                     this.cacheUrl = api;
                 }
@@ -50928,7 +50930,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                 this.statusBusy('Loading ...');
 
-                fetch('api/sector/' + this.id, {
+                fetch(baseURL + 'sector/' + this.id, {
 
                     method: 'PUT',
                     body: JSON.stringify(this.sector),
@@ -50961,7 +50963,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                     this.statusBusy('Loading ...');
 
-                    fetch('api/sector', {
+                    fetch(baseURL + 'sector', {
 
                         method: 'POST',
                         body: JSON.stringify(this.sector),
@@ -50991,7 +50993,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             if (confirm('You you want to confirm this action?')) {
                 this.statusBusy('Loading ...');
-                fetch('api/sector/' + sector.id, {
+                fetch(baseURL + 'sector/' + sector.id, {
                     method: 'DELETE',
                     headers: {
                         'content-Type': 'application/json'
@@ -51339,7 +51341,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(50)
 /* template */
@@ -51601,7 +51603,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (url) {
                 api = url;
             } else {
-                api = 'api/customer';
+                api = baseURL + 'customer';
             }
 
             fetch(api).then(function (res) {
@@ -51638,7 +51640,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.statusBusy('Loading ...');
 
-            fetch('api/customer', {
+            fetch(baseURL + 'customer', {
 
                 method: 'POST',
                 body: JSON.stringify(this.customer),
@@ -51667,7 +51669,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         doSave: function doSave() {
             var _this3 = this;
 
-            fetch('api/customer/' + this.id, {
+            fetch(baseURL + 'customer/' + this.id, {
 
                 method: 'PUT',
                 body: JSON.stringify(this.customer),
@@ -51698,7 +51700,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             if (confirm('You you want to confirm this action?')) {
                 this.statusBusy('Loading ...');
-                fetch('api/customer/' + customer.id, {
+                fetch(baseURL + 'customer/' + customer.id, {
                     method: 'DELETE',
                     headers: {
                         'content-Type': 'application/json'
@@ -52121,7 +52123,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(53)
 /* template */
@@ -52376,12 +52378,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
 
         return {
             groups: [],
+            batchCreate: baseURL + 'groupname-batch-create',
             grp: '',
             parentHistory: [],
             currentParent: null,
@@ -52457,7 +52467,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (url) {
                 api = url;
             } else {
-                api = 'api/groupname';
+                api = baseURL + 'groupname';
             }
 
             // console.log(url,api);
@@ -52495,7 +52505,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.statusBusy('Loading ...');
 
-            fetch('api/groupname/' + this.id, {
+            fetch(baseURL + 'groupname/' + this.id, {
 
                 method: 'PUT',
                 body: JSON.stringify(this.group),
@@ -52525,7 +52535,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.group.group_name_id = this.group_name_id;
 
-            fetch('api/groupname', {
+            fetch(baseURL + 'groupname', {
 
                 method: 'POST',
                 body: JSON.stringify(this.group),
@@ -52573,7 +52583,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             if (confirm('You you want to confirm this action?')) {
                 this.statusBusy('Loading ...');
-                fetch('api/groupname/' + group.id, {
+                fetch(baseURL + 'groupname/' + group.id, {
                     method: 'DELETE',
                     headers: {
                         'content-Type': 'application/json'
@@ -52735,47 +52745,48 @@ var render = function() {
             [_vm._v("\n             " + _vm._s(_vm.status) + "\n        ")]
           ),
           _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col-xs-12", attrs: { align: "right" } },
-            [
-              _c("export-csv", {
-                attrs: {
-                  excelStyle: { "margin-bottom": "0 !important" },
-                  data: _vm.groups
-                }
-              }),
-              _vm._v(" "),
-              _c("excel-import", {
-                attrs: {
-                  compId: 23,
-                  apiBatchCreate:
-                    "http://127.0.0.1:8000/api/groupname-batch-create"
-                },
-                on: { batchCreated: _vm.batchCreateNotificationAndReload }
-              }),
-              _vm._v(" "),
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-sm btn-info",
+          _c("div", { staticClass: "col-xs-12", attrs: { align: "right" } }, [
+            _c(
+              "div",
+              {
+                staticClass: "btn-group",
+                attrs: { role: "group", "aria-label": "Basic example" }
+              },
+              [
+                _c("export-csv", {
                   attrs: {
-                    href: "#",
-                    "data-target": "#groupModal",
-                    "data-toggle": "modal"
-                  },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.doAdd($event)
-                    }
+                    excelStyle: { "margin-bottom": "0 !important" },
+                    data: _vm.groups
                   }
-                },
-                [_vm._v("Add Group")]
-              )
-            ],
-            1
-          ),
+                }),
+                _vm._v(" "),
+                _c("excel-import", {
+                  attrs: { compId: 23, apiBatchCreate: _vm.batchCreate },
+                  on: { batchCreated: _vm.batchCreateNotificationAndReload }
+                }),
+                _vm._v(" "),
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-sm btn-info",
+                    attrs: {
+                      href: "#",
+                      "data-target": "#groupModal",
+                      "data-toggle": "modal"
+                    },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.doAdd($event)
+                      }
+                    }
+                  },
+                  [_vm._v("Add Group")]
+                )
+              ],
+              1
+            )
+          ]),
           _vm._v(" "),
           _c("h4", [
             _vm._v("Manage Groups  \n           "),
@@ -52834,6 +52845,8 @@ var render = function() {
                         "\n               "
                     )
                   ]),
+                  _vm._v(" "),
+                  _c("td"),
                   _vm._v(" "),
                   _c("td", [
                     _c("div", { staticClass: "dropdown" }, [
@@ -53012,7 +53025,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(56)
 /* template */
@@ -53137,7 +53150,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getGroup: function getGroup(id) {
             var _this = this;
 
-            fetch('api/groupname/' + id).then(function (res) {
+            fetch(baseURL + 'groupname/' + id).then(function (res) {
                 return res.json();
             }).then(function (res) {
                 _this.group = res.data.id;
@@ -53152,7 +53165,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             this.statusBusy('Loading ...');
-            var api = 'api/groupname' + '?group_name_id=' + group_name_id; //group_name_id=1
+            var api = baseURL + 'groupname' + '?group_name_id=' + group_name_id; //group_name_id=1
 
 
             // console.log(url,api);
@@ -53318,7 +53331,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(59)
 /* template */
@@ -53599,7 +53612,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (url) {
                 this.fetchAPI = url;
             } else if (!this.fetchAPI) {
-                this.fetchAPI = 'api/user';
+                this.fetchAPI = baseURL + 'user';
             }
 
             fetch(this.fetchAPI).then(function (res) {
@@ -53624,7 +53637,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.statusBusy('Loading ...');
 
-            fetch('api/user', {
+            fetch(baseURL + 'user', {
 
                 method: 'POST',
                 body: JSON.stringify(this.data),
@@ -53664,7 +53677,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         makePrimeAdmin: function makePrimeAdmin(data) {
             var _this3 = this;
 
-            fetch('api/change-user-role/' + data.id, {
+            fetch(baseURL + 'change-user-role/' + data.id, {
                 method: 'PUT',
                 body: JSON.stringify({ type: 'prime_admin' }),
                 headers: {
@@ -53682,7 +53695,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         makePrimeOsp: function makePrimeOsp(data) {
             var _this4 = this;
 
-            fetch('api/change-user-role/' + data.id, {
+            fetch(baseURL + 'change-user-role/' + data.id, {
                 method: 'PUT',
                 body: JSON.stringify({ type: 'prime_osp' }),
                 headers: {
@@ -53700,7 +53713,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         doSave: function doSave() {
             var _this5 = this;
 
-            fetch('api/change-user-name/' + this.id, {
+            fetch(baseURL + 'change-user-name/' + this.id, {
 
                 method: 'PUT',
                 body: JSON.stringify(this.data),
@@ -54222,7 +54235,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(62)
 /* template */
@@ -54897,6 +54910,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 // import SectorMixin from './mixins';
 
@@ -54905,7 +54929,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     mixins: [SectorMixin],
 
-    props: ['user_id', 'role'],
+    props: ['user_id', 'role', 'date_days'
+    // 'sec_id'
+    // 'cat_id'
+    ],
 
     data: function data() {
 
@@ -54954,10 +54981,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             users: [],
             customers: [],
             apis: {
-                readApi: 'api/agrolytic',
-                createApi: 'api/agrolytic',
-                updateApi: 'api/agrolytic/',
-                deleteApi: 'api/agrolytic/'
+                readApi: baseURL + 'agrolytic',
+                createApi: baseURL + 'agrolytic',
+                updateApi: baseURL + 'agrolytic/',
+                deleteApi: baseURL + 'agrolytic/'
             },
             edit: false,
             id: '',
@@ -55059,6 +55086,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.filters.push('date_to=' + this.dateTo);
             }
 
+            if (this.date_days) {
+                this.filters.push('date_days=' + this.date_days);
+            }
+
             console.log(this.filters);
         },
         isAdminOnly: function isAdminOnly() {
@@ -55093,7 +55124,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchCategories: function fetchCategories() {
             var _this = this;
 
-            fetch('api/category').then(function (res) {
+            fetch(baseURL + 'category').then(function (res) {
                 return res.json();
             }).then(function (res) {
                 _this.categories = res.data;
@@ -55112,7 +55143,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchCustomers: function fetchCustomers() {
             var _this2 = this;
 
-            fetch('api/customer').then(function (res) {
+            fetch(baseURL + 'customer').then(function (res) {
                 return res.json();
             }).then(function (res) {
                 _this2.customers = res.data;
@@ -55121,7 +55152,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchOpReps: function fetchOpReps() {
             var _this3 = this;
 
-            fetch('api/user?role=prime_osp').then(function (res) {
+            fetch(baseURL + 'user?role=prime_osp').then(function (res) {
                 return res.json();
             }).then(function (res) {
                 _this3.users = res.data;
@@ -55130,7 +55161,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchGroups: function fetchGroups() {
             var _this4 = this;
 
-            fetch('api/groupname').then(function (res) {
+            fetch(baseURL + 'groupname').then(function (res) {
                 return res.json();
             }).then(function (res) {
                 _this4.groups = res.data;
@@ -55143,7 +55174,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         addReport: function addReport() {
             var _this5 = this;
 
-            fetch('api/report', {
+            fetch(baseURL + 'report', {
                 method: 'POST',
                 body: JSON.stringify(this.reportData),
                 headers: {
@@ -55162,7 +55193,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         addComment: function addComment() {
             var _this6 = this;
 
-            fetch('api/comment', {
+            fetch(baseURL + 'comment', {
                 method: 'POST',
                 body: JSON.stringify(this.commentData),
                 headers: {
@@ -55644,11 +55675,21 @@ var render = function() {
                                   _vm._v("Prospect")
                                 ]),
                                 _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Perpetual" } },
-                                  [_vm._v("Perpetual")]
-                                )
+                                _c("option", { attrs: { value: "Purchase" } }, [
+                                  _vm._v("Purchase")
+                                ]),
+                                _vm._v(" "),
+                                _c("option", { attrs: { value: "Pipeline" } }, [
+                                  _vm._v("Pipeline")
+                                ]),
+                                _vm._v(" "),
+                                _c("option", { attrs: { value: "Prospect" } }, [
+                                  _vm._v("Prospect")
+                                ]),
+                                _vm._v(" "),
+                                _c("option", { attrs: { value: "Present" } }, [
+                                  _vm._v("Present")
+                                ])
                               ]
                             )
                           ]),
@@ -55672,7 +55713,10 @@ var render = function() {
                                 }
                               ],
                               staticClass: "form-control",
-                              attrs: { type: "text", placeholder: "Progress" },
+                              attrs: {
+                                type: "number",
+                                placeholder: "Progress"
+                              },
                               domProps: { value: _vm.reportData.prog_status },
                               on: {
                                 input: function($event) {
@@ -56384,101 +56428,84 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "col-lg-12" }, [
               _c("div", { staticClass: "card" }, [
-                _c("div", { staticClass: "card-body" }, [
-                  _c(
-                    "div",
-                    { attrs: { align: "right" } },
-                    [
-                      _c(
-                        "span",
-                        {
-                          staticClass: "pull-left",
-                          staticStyle: {
-                            float: "left",
-                            "font-size": "18px",
-                            "text-decoration": "underline"
-                          }
-                        },
-                        [_vm._v("\n    Manage Agrolytic\n")]
-                      ),
-                      _vm._v(" "),
-                      _c("export-csv", { attrs: { data: _vm.list } }),
-                      _vm._v(" "),
-                      _c(
-                        "a",
-                        {
-                          staticClass: "btn btn-sm btn-warning mb-2",
-                          attrs: {
-                            "data-toggle": "modal",
-                            "data-target": "#agrolyticModal",
-                            id: "form-btn",
-                            href: "#"
-                          }
-                        },
-                        [_vm._v("Import Excel Document")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "a",
-                        {
-                          staticClass: "btn btn-sm btn-success mb-2",
-                          attrs: { href: "#" },
-                          on: {
-                            click: function($event) {
-                              $event.preventDefault()
-                              return _vm.resetFilters($event)
-                            }
-                          }
-                        },
-                        [_vm._v("Reset Filter")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "a",
-                        {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.isAdminOnly(),
-                              expression: "isAdminOnly()"
-                            }
-                          ],
-                          staticClass: "btn btn-sm btn-success mb-2",
-                          attrs: {
-                            "data-toggle": "modal",
-                            "data-target": "#agrolyticModal",
-                            id: "form-btn",
-                            href: "#"
-                          }
-                        },
-                        [_vm._v("Add / Save Agrolytic")]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.status,
-                          expression: "status"
+                _c("div", { staticClass: "card-body table-responsive" }, [
+                  _c("div", { attrs: { align: "right" } }, [
+                    _c(
+                      "span",
+                      {
+                        staticClass: "pull-left",
+                        staticStyle: {
+                          float: "left",
+                          "font-size": "18px",
+                          "text-decoration": "underline"
                         }
+                      },
+                      [_vm._v("\n    Manage Agrolytic\n")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "btn-group",
+                        attrs: { role: "group", "aria-label": "Basic example" }
+                      },
+                      [
+                        _c("export-csv", { attrs: { data: _vm.list } }),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "btn btn-sm btn-warning mb-2",
+                            attrs: {
+                              "data-toggle": "modal",
+                              "data-target": "#agrolyticModal",
+                              id: "form-btn",
+                              href: "#"
+                            }
+                          },
+                          [_vm._v("Import Excel Document")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "btn btn-sm btn-success mb-2",
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault()
+                                return _vm.resetFilters($event)
+                              }
+                            }
+                          },
+                          [_vm._v("Reset Filter")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.isAdminOnly(),
+                                expression: "isAdminOnly()"
+                              }
+                            ],
+                            staticClass: "btn btn-sm btn-success mb-2",
+                            attrs: {
+                              "data-toggle": "modal",
+                              "data-target": "#agrolyticModal",
+                              id: "form-btn",
+                              href: "#"
+                            }
+                          },
+                          [_vm._v("Add / Save Agrolytic")]
+                        )
                       ],
-                      staticClass: "col-xs-12",
-                      staticStyle: { height: "20px" }
-                    },
-                    [
-                      _c("img", {
-                        staticStyle: { height: "20px" },
-                        attrs: { src: "/images/loader.gif" }
-                      })
-                    ]
-                  ),
+                      1
+                    )
+                  ]),
                   _vm._v(" "),
                   _c("h4", [
                     _c("span", { staticStyle: { display: "inline-block" } }, [
@@ -56698,9 +56725,10 @@ var render = function() {
                           _c(
                             "td",
                             [
-                              _c("progress-bar", {
+                              _c("xprogress", {
                                 attrs: {
-                                  value:
+                                  label: "Progress",
+                                  percentage:
                                     data_.prog_status === "Pending"
                                       ? 0
                                       : +data_.prog_status
@@ -57095,6 +57123,29 @@ var render = function() {
                         )
                       ])
                     ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.status,
+                          expression: "status"
+                        }
+                      ],
+                      staticClass: "col-xs-12",
+                      staticStyle: { height: "20px" },
+                      attrs: { align: "right" }
+                    },
+                    [
+                      _c("img", {
+                        staticStyle: { height: "45px" },
+                        attrs: { src: "/images/loader.gif" }
+                      })
+                    ]
                   )
                 ])
               ])
@@ -57266,7 +57317,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(65)
 /* template */
@@ -57346,7 +57397,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.name = 'loading...';
-            fetch('api/customer/' + id).then(function (res) {
+            fetch(baseURL + 'customer/' + id).then(function (res) {
                 return res.json();
             }).then(function (res) {
                 // this.customers = res.data;
@@ -57384,7 +57435,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(68)
 /* template */
@@ -57589,7 +57640,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             list: [],
             index: '',
             canModify: false,
-            baseUrl: 'http://127.0.0.1:8000/',
+            baseUrl: baseURL,
             cacheUrl: '',
             comments: [],
             comment: {
@@ -57621,7 +57672,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         fetchAgrolytic: function fetchAgrolytic() {
             var _this = this;
 
-            fetch(this.baseUrl + 'api/agrolytic/' + this.agro_id, {
+            fetch(this.baseUrl + 'agrolytic/' + this.agro_id, {
                 method: 'Get'
             }).then(function (res) {
                 return res.json();
@@ -57655,7 +57706,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 if (this.cacheUrl) {
                     //do nothing..., simply retain the cacheUrl.  
                 } else {
-                    api = this.baseUrl + 'api/comment?agro_id=' + this.agro_id;
+                    api = this.baseUrl + 'comment?agro_id=' + this.agro_id;
                     this.cacheUrl = api;
                 }
             }
@@ -57711,7 +57762,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.comment.agro_id = this.agro_id;
             this.comment.user_id = this.user_id;
 
-            fetch(this.baseUrl + 'api/comment/' + this.comment.id, {
+            fetch(this.baseUrl + 'comment/' + this.comment.id, {
                 method: 'PUT',
                 body: JSON.stringify(this.comment),
                 headers: {
@@ -57735,7 +57786,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.comment.agro_id = this.agro_id;
             this.comment.user_id = this.user_id;
 
-            fetch(this.baseUrl + 'api/comment', {
+            fetch(this.baseUrl + 'comment', {
                 method: 'POST',
                 body: JSON.stringify(this.comment),
                 headers: {
@@ -57760,7 +57811,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             //   this.comment.agro_id = this.agro_id;
             //   this.comment.user_id = this.user_id;
 
-            fetch(this.baseUrl + 'api/comment/' + this.comment.id, {
+            fetch(this.baseUrl + 'comment/' + this.comment.id, {
                 method: 'DELETE',
                 headers: {
                     'content-Type': 'application/json'
@@ -58179,7 +58230,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(71)
 /* template */
@@ -58374,7 +58425,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(74)
 /* template */
@@ -58708,6 +58759,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 // import SectorMixin from './mixins';
 
@@ -58716,7 +58772,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         mixins: [SectorMixin],
 
-        props: ['user_id', 'role', 'agro_id'],
+        props: ['user_id', 'role', 'agro_id', 'date_days'],
 
         data: function data() {
 
@@ -58741,11 +58797,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         users: [],
                         customers: [],
                         apis: {
-                                baseUrl: 'http://127.0.0.1:8000/api/',
-                                readApi: 'http://127.0.0.1:8000/api/report',
-                                createApi: 'http://127.0.0.1:8000/api/report',
-                                updateApi: 'http://127.0.0.1:8000/api/report/',
-                                deleteApi: 'http://127.0.0.1:8000/api/report/'
+                                baseUrl: baseURL,
+                                readApi: baseURL + 'report',
+                                createApi: baseURL + 'report',
+                                updateApi: baseURL + 'report/',
+                                deleteApi: baseURL + 'report/'
                         },
                         edit: false,
                         id: '',
@@ -58768,7 +58824,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         mounted: function mounted() {
                 //   this.handleFilters(); //this handles scoping  
                 this.fetchReports();
-                this.fetchAgrolytic();
+                if (this.agro_id) this.fetchAgrolytic();
         },
 
 
@@ -58814,7 +58870,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                                 this.filters.push('date_to=' + this.dateTo);
                         }
 
-                        this.filters.push('agro_id=' + this.agro_id);
+                        if (this.agro_id) {
+                                this.filters.push('agro_id=' + this.agro_id);
+                        }
+
+                        if (1 * this.date_days) {
+                                this.filters.push('date_days=' + this.date_days);
+                        }
 
                         console.log(this.filters);
                 },
@@ -59002,6 +59064,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         this.reportData.status = data.status;
                         this.reportData.prog_status = data.prog_status;
                         this.preview = false;
+
+                        console.log(this.reportData);
                 },
                 saveReport: function saveReport() {
 
@@ -59163,11 +59227,21 @@ var render = function() {
                                   _vm._v("Prospect")
                                 ]),
                                 _vm._v(" "),
-                                _c(
-                                  "option",
-                                  { attrs: { value: "Perpetual" } },
-                                  [_vm._v("Perpetual")]
-                                )
+                                _c("option", { attrs: { value: "Purchase" } }, [
+                                  _vm._v("Purchase")
+                                ]),
+                                _vm._v(" "),
+                                _c("option", { attrs: { value: "Pipeline" } }, [
+                                  _vm._v("Pipeline")
+                                ]),
+                                _vm._v(" "),
+                                _c("option", { attrs: { value: "Prospect" } }, [
+                                  _vm._v("Prospect")
+                                ]),
+                                _vm._v(" "),
+                                _c("option", { attrs: { value: "Present" } }, [
+                                  _vm._v("Present")
+                                ])
                               ]
                             )
                           ]),
@@ -59191,7 +59265,10 @@ var render = function() {
                                 }
                               ],
                               staticClass: "form-control",
-                              attrs: { type: "text", placeholder: "Progress" },
+                              attrs: {
+                                type: "number",
+                                placeholder: "Progress"
+                              },
                               domProps: { value: _vm.reportData.prog_status },
                               on: {
                                 input: function($event) {
@@ -59324,7 +59401,7 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "col-lg-12" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "card-body table-responsive" }, [
           _c(
             "div",
             {
@@ -59465,9 +59542,10 @@ var render = function() {
                   _c(
                     "td",
                     [
-                      _c("progress-bar", {
+                      _c("xprogress", {
                         attrs: {
-                          value:
+                          label: "Progress",
+                          percentage:
                             data_.prog_status === "Pending"
                               ? 0
                               : +data_.prog_status
@@ -59703,7 +59781,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(1)
+var normalizeComponent = __webpack_require__(0)
 /* script */
 var __vue_script__ = __webpack_require__(77)
 /* template */
@@ -59857,7 +59935,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
-            apiTransform: 'http://127.0.0.1:8000/api/excel-to-json',
+            apiTransform: baseURL + 'excel-to-json',
             transformedData: [],
             uploadedFile: '',
             file: null,
@@ -60214,6 +60292,567 @@ if (false) {
 
 /***/ }),
 /* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(0)
+/* script */
+var __vue_script__ = __webpack_require__(80)
+/* template */
+var __vue_template__ = __webpack_require__(81)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/ProgressComponent.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-554537ae", Component.options)
+  } else {
+    hotAPI.reload("data-v-554537ae", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 80 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            name: ''
+        };
+    },
+
+
+    props: ['percentage', 'label'],
+
+    mounted: function mounted() {
+        this.initProgress();
+    },
+
+
+    // props:[
+    //     'progress'
+    // ],
+    watch: {},
+
+    methods: {
+        initProgress: function initProgress() {},
+        getPercentageAria: function getPercentageAria() {
+            return this.percentage;
+        },
+        getPercentageStyle: function getPercentageStyle() {
+            //width: 81.82%; background-color: #00b050;
+            return {
+                width: this.percentage + '%',
+                backgroundColor: '#00b050'
+            };
+        }
+    }
+
+});
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("span", [
+    _c("div", { staticClass: "d-flex justify-content-between" }, [
+      _c("p", { staticClass: "mb-2" }, [_vm._v(_vm._s(_vm.label))]),
+      _vm._v(" "),
+      _c("p", { staticClass: "mb-2 text-primary" }, [
+        _vm._v(_vm._s(_vm.percentage) + "%")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "progress" }, [
+      _c("div", {
+        staticClass: "progress-bar progress-bar-striped progress-bar-animated",
+        style: _vm.getPercentageStyle(),
+        attrs: {
+          role: "progressbar",
+          "aria-valuenow": _vm.getPercentageAria(),
+          "aria-valuemin": "0",
+          "aria-valuemax": "100"
+        }
+      })
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-554537ae", module.exports)
+  }
+}
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(0)
+/* script */
+var __vue_script__ = __webpack_require__(83)
+/* template */
+var __vue_template__ = __webpack_require__(84)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/DashboardMetricsComponent.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e3b8f5f2", Component.options)
+  } else {
+    hotAPI.reload("data-v-e3b8f5f2", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        console.log('Component mounted.');
+        this.getAgrolyticCount();
+        this.getAgrolyticThisWeekCount();
+        this.getReportCount();
+        this.getReportThisWeekCount();
+        console.log(this.all_agrolytic_report_link);
+    },
+
+
+    props: ['all_agrolytic_report_link', 'all_agrolytic_report_link_this_week', 'all_report_link', 'all_report_link_this_week'],
+
+    data: function data() {
+        return {
+            agroReportCount: '',
+            agroReportThisWeekCount: '',
+            reportCount: '',
+            reportThisWeekCount: ''
+        };
+    },
+
+
+    methods: {
+        gotoAllAgrolyticLink: function gotoAllAgrolyticLink() {
+            location.href = this.all_agrolytic_report_link;
+        },
+        gotoAllAgrolyticThisWeekLink: function gotoAllAgrolyticThisWeekLink() {
+            location.href = this.all_agrolytic_report_link + '?date_days=8';
+        },
+        gotoAllReportLink: function gotoAllReportLink() {
+            location.href = this.all_report_link;
+        },
+        gotoAllReportThisWeekLink: function gotoAllReportThisWeekLink() {
+            location.href = this.all_report_link + '?date_days=7';
+        },
+        getAgrolyticCount: function getAgrolyticCount() {
+            var _this = this;
+
+            fetch(baseURL + 'agrolytic?return_type=count', {
+                method: 'GET'
+            }).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                _this.agroReportCount = res.count;
+            });
+        },
+        getAgrolyticThisWeekCount: function getAgrolyticThisWeekCount() {
+            var _this2 = this;
+
+            fetch(baseURL + 'agrolytic?return_type=count&date_days=7', {
+                method: 'GET'
+            }).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                _this2.agroReportThisWeekCount = res.count;
+            });
+        },
+        getReportCount: function getReportCount() {
+            var _this3 = this;
+
+            fetch(baseURL + 'report?return_type=count', {
+                method: 'GET'
+            }).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                _this3.reportCount = res.count;
+            });
+        },
+        getReportThisWeekCount: function getReportThisWeekCount() {
+            var _this4 = this;
+
+            fetch(baseURL + 'report?return_type=count&date_days=7', {
+                method: 'GET'
+            }).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                _this4.reportThisWeekCount = res.count;
+            });
+        }
+    }
+
+});
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+        on: { click: _vm.gotoAllAgrolyticLink }
+      },
+      [
+        _c("div", { staticClass: "card card-statistics" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "clearfix" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "float-right" }, [
+                _c("p", { staticClass: "mb-0 text-right" }, [
+                  _vm._v("All Agrolytic Report")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "fluid-container" }, [
+                  _c(
+                    "h3",
+                    { staticClass: "font-weight-medium text-right mb-0" },
+                    [_vm._v(_vm._s(_vm.agroReportCount))]
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+          ])
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+        on: { click: _vm.gotoAllAgrolyticThisWeekLink }
+      },
+      [
+        _c("div", { staticClass: "card card-statistics" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "clearfix" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "float-right" }, [
+                _c("p", { staticClass: "mb-0 text-right" }, [
+                  _vm._v("Agrolytics This Week")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "fluid-container" }, [
+                  _c(
+                    "h3",
+                    { staticClass: "font-weight-medium text-right mb-0" },
+                    [_vm._v(_vm._s(_vm.agroReportThisWeekCount))]
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+          ])
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+        on: { click: _vm.gotoAllReportLink }
+      },
+      [
+        _c("div", { staticClass: "card card-statistics" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "clearfix" }, [
+              _vm._m(2),
+              _vm._v(" "),
+              _c("div", { staticClass: "float-right" }, [
+                _c("p", { staticClass: "mb-0 text-right" }, [
+                  _vm._v("All Report")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "fluid-container" }, [
+                  _c(
+                    "h3",
+                    { staticClass: "font-weight-medium text-right mb-0" },
+                    [_vm._v(_vm._s(_vm.reportCount))]
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+          ])
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+        on: { click: _vm.gotoAllReportThisWeekLink }
+      },
+      [
+        _c("div", { staticClass: "card card-statistics" }, [
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "clearfix" }, [
+              _vm._m(3),
+              _vm._v(" "),
+              _c("div", { staticClass: "float-right" }, [
+                _c("p", { staticClass: "mb-0 text-right" }, [
+                  _vm._v("Report this Week")
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "fluid-container" }, [
+                  _c(
+                    "h3",
+                    { staticClass: "font-weight-medium text-right mb-0" },
+                    [_vm._v(_vm._s(_vm.reportThisWeekCount))]
+                  )
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+          ])
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "float-left" }, [
+      _c("i", { staticClass: "mdi mdi-cube text-danger icon-lg" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "float-left" }, [
+      _c("i", { staticClass: "mdi mdi-receipt text-warning icon-lg" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "float-left" }, [
+      _c("i", { staticClass: "mdi mdi-poll-box text-success icon-lg" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "float-left" }, [
+      _c("i", { staticClass: "mdi mdi-account-location text-info icon-lg" })
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-e3b8f5f2", module.exports)
+  }
+}
+
+/***/ }),
+/* 85 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
