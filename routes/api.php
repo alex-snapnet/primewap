@@ -26,6 +26,8 @@ Route::resource('agrolytic','Apis\AgrolyticController');
 
 Route::get('agrolytic-report/{wk}','Apis\AgrolyticController@report');
 
+Route::get('agrolytic-visualization-data','Apis\AgrolyticController@getStatusReport');
+
 
 Route::resource('groupname','Apis\GroupNameController');
 

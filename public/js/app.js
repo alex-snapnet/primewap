@@ -54929,7 +54929,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     mixins: [SectorMixin],
 
-    props: ['user_id', 'role', 'date_days'
+    props: ['user_id', 'role', 'date_days', 'progress'
     // 'sec_id'
     // 'cat_id'
     ],
@@ -55090,7 +55090,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.filters.push('date_days=' + this.date_days);
             }
 
-            console.log(this.filters);
+            if (this.progress !== null) {
+                ///use double equal to (==)
+                this.filters.push('progress=' + this.progress);
+            }
+
+            //  console.log(this.filters);
         },
         isAdminOnly: function isAdminOnly() {
             return this.role == 'prime_admin';
@@ -56701,7 +56706,11 @@ var render = function() {
                           _c("td", [
                             _vm._v(
                               "\n                   " +
-                                _vm._s(data_.client_customer.name) +
+                                _vm._s(
+                                  data_.client_customer
+                                    ? data_.client_customer.name
+                                    : "N/A"
+                                ) +
                                 "\n               "
                             )
                           ]),
@@ -56709,7 +56718,11 @@ var render = function() {
                           _c("td", [
                             _vm._v(
                               "\n                   " +
-                                _vm._s(data_.reports.length.toLocaleString()) +
+                                _vm._s(
+                                  data_.reports
+                                    ? data_.reports.length.toLocaleString()
+                                    : 0
+                                ) +
                                 "\n               "
                             )
                           ]),
@@ -56717,7 +56730,11 @@ var render = function() {
                           _c("td", [
                             _vm._v(
                               "\n                   " +
-                                _vm._s(data_.comments.length.toLocaleString()) +
+                                _vm._s(
+                                  data_.reports
+                                    ? data_.comments.length.toLocaleString()
+                                    : 0
+                                ) +
                                 "\n               "
                             )
                           ]),
@@ -58772,7 +58789,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         mixins: [SectorMixin],
 
-        props: ['user_id', 'role', 'agro_id', 'date_days'],
+        props: ['user_id', 'role', 'agro_id', 'date_days', 'prog_status', 'status'],
 
         data: function data() {
 
@@ -58876,6 +58893,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                         if (1 * this.date_days) {
                                 this.filters.push('date_days=' + this.date_days);
+                        }
+
+                        if (this.prog_status) {
+                                this.filters.push('prog_status=' + this.prog_status);
+                        }
+
+                        if (this.status) {
+                                this.filters.push('status=' + this.status);
                         }
 
                         console.log(this.filters);

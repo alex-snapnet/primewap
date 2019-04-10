@@ -18,7 +18,7 @@
 </dash-board-metrics>
 
 
-<div class="col-lg-12">
+<div class="col-lg-12" style="padding: 0;">
 
 <div class="row">
      <div class="col-lg-6 grid-margin stretch-card">
@@ -34,8 +34,8 @@
                 <div class="card-body">
                   <h2 class="card-title text-primary mb-5">Progress Report All Time</h2>
                    
-                  @foreach($status as $key=>$status)
-                  <div class="wrapper" style="cursor: pointer;" onclick="loadUrl('{{url('/agrolytic/viewAgrolytic')}}?life_cycle={{$key}}')">
+                  @foreach($status as $key=>$status) 
+                  <div class="wrapper" style="cursor: pointer;" onclick="loadUrl('{{url('/manage-report-global')}}?status={{$key}}')">
                     <div class="d-flex justify-content-between">
                       <p class="mb-2">{{$key}}</p>
                       <p class="mb-2 text-primary">{{$status}}%</p>
@@ -83,8 +83,9 @@
 
   <script>
     $(function(){
-
-   $.get('{{url('agrolytic')}}/getStatusReport',function(data){
+      //api/agrolytic-visualization-data
+      // '{{url('agrolytic')}}/getStatusReport'
+   $.get('{{url('api')}}/agrolytic-visualization-data',function(data){
 
 var ctx = document.getElementById("barChart");
  
@@ -130,10 +131,19 @@ var myChart = new Chart(ctx, {
 
 });
 
-function graphClickEvent(event, array){
+  function graphClickEvent(event, array){
 
-    window.location=('{{url('/agrolytic/viewAgrolytic')}}?progress='+array[0]._model['label']);
-}
+    //progress
+  //manage-agrolytic
+  ///agrolytic/viewAgrolytic
+  // console.log(array);
+  var rawPercent = array[0]._model['label'];
+      rawPercent = rawPercent.split('%');
+      rawPercent = rawPercent[0]; 
+      //array[0]._model['label']
+      window.location=('{{url('/manage-agrolytic')}}?progress=' + rawPercent);
+
+  }
 
  });
 </script>

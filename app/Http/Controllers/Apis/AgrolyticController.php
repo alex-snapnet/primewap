@@ -52,13 +52,30 @@ class AgrolyticController extends Controller
            $now = Carbon::now();
            $pastDays = Carbon::now()->subDays($request->date_days * 1); //$request->date_days * 1
 
-        //    echo $now . '<br />';
-        //    echo $pastDays;
-
            $query = $query->whereDate('created_at','>=',$pastDays);
            $query = $query->whereDate('created_at','<=',$now); 
         }
 
+
+        if ($request->filled('progress')){
+
+            $i = $request->progress;
+            $i = $i * 1;  
+
+            $hi = 0;
+            $low = 0;
+    
+            if ($i == 10){
+             $low = 0;
+             $hi = $i;   
+            }else{
+             $low = $i - 10;
+             $hi = $i;   
+            }
+    
+            $query = Agrolytic::where('prog_status','>=',$low)->where('prog_status','<=',$hi);    
+
+        }           
 
 
         // echo $query->toSql();
@@ -154,18 +171,6 @@ class AgrolyticController extends Controller
      */
     public function update(Request $request,Agrolytic $agrolytic)
     {
-        //
-        // $agrolytic->group_name_id = $request->group_name_id;
-        // $agrolytic->prog_status = $request->prog_status;
-        // $agrolytic->cat_id = $request->cat_id;
-        // $agrolytic->sec_id = $request->sec_id;
-        // $agrolytic->prospect = $request->prospect;
-        // $agrolytic->comp_objective = $request->comp_objective;
-        // $agrolytic->initiative = $request->initiative;
-        // $agrolytic->user_id = Auth::user()->id;
-        // $agrolytic->op_rep = $request->op_rep;
-        // $agrolytic->day_of_week = $request->day_of_week;
-
 
         $agrolytic->group_name_id = $request->group_name_id;
         $agrolytic->pag_objective = $request->pag_objective;
@@ -224,29 +229,51 @@ class AgrolyticController extends Controller
                $status[$process]=round(($pCOunt/$allAgro)*100,2);
             }
         }
-        // $status;
-        //  return $status;
-
- 
-    //     $allreport=\App\Report::where('id','>',0);
-
-    //     if(\Auth::user()->type=='prime_osp'){
-
-    //         $allreport=$allreport->where('user_id',\Auth::user()->id);
-
-    //     }
-
-    //     $allreport=$allreport->count('id');	  
-
-    //     // dd($this->miniReport('\App\Agrolytic'));
-
-    //    return ['thisweek'=>$this->miniReport('\App\Agrolytic'),'thisweekreport'=>$this->miniReport('\App\Report'),'allreport'=>$allreport];
-       
-
 
         return $status;
 
     }
+
+
+    function getStatusReport(Request $request){
+
+    	$data=[];
+
+    	for ($i=0; $i<=100; $i+=10){
+
+    		$data[] = $this->countProgress($i);
+
+    	}
+
+    	return  $data;
+
+    	   	    // var  data: [{x:'2016-12-25', y:20}, {x:'2016-12-26', y:10}]
+
+    }
+
+
+    private function countProgress($i){
+
+        // $i = ( $i == "0" ? ['Pending',$i] : [$i] );
+        
+        $hi = 0;
+        $low = 0;
+
+        if ($i == 10){
+         $low = 0;
+         $hi = $i;   
+        }else{
+         $low = $i - 10;
+         $hi = $i;   
+        }
+
+        $query = Agrolytic::where('prog_status','>=',$low)->where('prog_status','<=',$hi);
+
+    	return $query->count('id');
+
+    }
+    
+
 
 
 

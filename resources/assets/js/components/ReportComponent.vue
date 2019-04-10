@@ -301,7 +301,9 @@ export default {
       'user_id',
       'role',
       'agro_id',
-      'date_days'
+      'date_days',
+      'prog_status',
+      'status'
     ],
 
     data(){
@@ -409,6 +411,15 @@ export default {
            if (1*this.date_days){
              this.filters.push('date_days=' + this.date_days);
            }
+
+           if (this.prog_status){
+             this.filters.push('prog_status=' + this.prog_status);
+           }
+
+           if (this.status){
+             this.filters.push('status=' + this.status);
+           }
+
 
            console.log(this.filters);
 

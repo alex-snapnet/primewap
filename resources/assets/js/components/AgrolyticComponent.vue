@@ -504,13 +504,13 @@
                </td> -->
 
                <td>
-                   {{ data_.client_customer.name }}
+                   {{ data_.client_customer? data_.client_customer.name : 'N/A' }}
                </td>
                <td>
-                   {{ data_.reports.length.toLocaleString() }}
+                   {{ data_.reports?  data_.reports.length.toLocaleString() : 0 }}
                </td>
                <td>
-                   {{ data_.comments.length.toLocaleString() }}
+                   {{ data_.reports? data_.comments.length.toLocaleString() : 0 }}
                </td>
                <td>
 
@@ -647,7 +647,8 @@ export default {
     props:[
       'user_id',
       'role',
-      'date_days'
+      'date_days',
+      'progress'
       // 'sec_id'
       // 'cat_id'
     ],
@@ -817,7 +818,11 @@ export default {
              this.filters.push('date_days=' + this.date_days);
            }
 
-           console.log(this.filters);
+           if (this.progress !== null){ ///use double equal to (==)
+             this.filters.push('progress=' + this.progress);
+           }
+
+          //  console.log(this.filters);
 
         },
 
