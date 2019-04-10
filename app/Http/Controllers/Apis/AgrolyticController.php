@@ -73,7 +73,7 @@ class AgrolyticController extends Controller
              $hi = $i;   
             }
     
-            $query = Agrolytic::where('prog_status','>=',$low)->where('prog_status','<=',$hi);    
+            $query = $query->where('prog_status','>=',$low)->where('prog_status','<=',$hi);    
 
         }           
 
