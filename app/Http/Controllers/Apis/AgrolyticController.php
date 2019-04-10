@@ -241,7 +241,7 @@ class AgrolyticController extends Controller
 
     	for ($i=0; $i<=100; $i+=10){
 
-    		$data[] = $this->countProgress($i);
+    		$data[] = $this->countProgress($i,$request->user_id);
 
     	}
 
@@ -252,7 +252,7 @@ class AgrolyticController extends Controller
     }
 
 
-    private function countProgress($i){
+    private function countProgress($i,$user_id){
 
         // $i = ( $i == "0" ? ['Pending',$i] : [$i] );
         
@@ -267,7 +267,8 @@ class AgrolyticController extends Controller
          $hi = $i;   
         }
 
-        $query = Agrolytic::where('prog_status','>=',$low)->where('prog_status','<=',$hi);
+        // dd(Auth::user());
+        $query = Agrolytic::where('prog_status','>=',$low)->where('prog_status','<=',$hi)->where('user_id',$user_id);
 
     	return $query->count('id');
 

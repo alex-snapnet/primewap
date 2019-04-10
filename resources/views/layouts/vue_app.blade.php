@@ -77,6 +77,8 @@
 
   <link rel="stylesheet" href="{{asset('css/select2.min.css')}}">
 
+  <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}">
+
  
 
   <!-- endinject -->
@@ -185,13 +187,13 @@
 
       <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="width: 219px;">
 
-        <a class="navbar-brand brand-logo" href="../../index.html">
+        <a class="navbar-brand brand-logo">
 
           <img src="../../images/logo.png" alt="logo" />
 
         </a>
 
-        <a class="navbar-brand brand-logo-mini" href="../../index.html">
+        <a class="navbar-brand brand-logo-mini">
 
           <img src="../../images/logo-mini.png" alt="logo" />
 
@@ -500,7 +502,7 @@
   <script src="{{asset('vendors/js/vendor.bundle.addons.js')}}"></script>
 
 
-  <script src="{{ asset('js/app.js') }}"></script>
+  
 
   <!-- endinject -->
 
@@ -526,7 +528,14 @@
 
    <script type="text/javascript" src="{{asset('js/select2.full.min.js')}}"></script>
 
+
      @yield('script')
+
+
+   <script src="{{ asset('js/jquery-ui.js') }}"></script>
+
+   <script src="{{ asset('js/app.js') }}"></script>
+
 
   <script type="text/javascript">
 
@@ -560,9 +569,9 @@
 
 
 
-       select2Populate('ospA','{{url('agrolytic')}}/searchAcrolytic');
+      //  select2Populate('ospA','{{url('agrolytic')}}/searchAcrolytic');
 
-       $('#type2').val($type);
+      //  $('#type2').val($type);
 
       $('#submitManagerComment').click(function(){
 

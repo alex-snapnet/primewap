@@ -410,7 +410,7 @@
     Manage Agrolytic
 </span>
 
-<div class="btn-group" role="group" aria-label="Basic example">
+<!-- <div class="btn-group" role="group" aria-label="Basic example"> -->
 
       <export-csv v-bind:data="list"></export-csv>     
 
@@ -420,7 +420,7 @@
 
      <a v-show="isAdminOnly()" data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-success mb-2" >Add / Save Agrolytic</a>
  
-</div>
+<!-- </div> -->
 
  </div>
 

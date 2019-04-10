@@ -7,7 +7,7 @@
   :date_days="'{{ request()->input('date_days',0)  }}'" 
   :role="'{{ Auth::user()->type }}'"
   :prog_status="'{{ request()->input('prog_status','') }}'"
-  :status="'{{ request()->input('status','') }}'">
+  :status_filter="'{{ request()->input('status','') }}'">
   <img src="{{ url('/') }}/images/loader.gif" style="height: 45px;"/>
   </report>
 </div>

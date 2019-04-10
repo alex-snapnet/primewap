@@ -85,7 +85,7 @@
     $(function(){
       //api/agrolytic-visualization-data
       // '{{url('agrolytic')}}/getStatusReport'
-   $.get('{{url('api')}}/agrolytic-visualization-data',function(data){
+   $.get('{{url('api')}}/agrolytic-visualization-data?user_id={{ Auth::user()->id }}',function(data){
 
 var ctx = document.getElementById("barChart");
  

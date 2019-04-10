@@ -56434,83 +56434,78 @@ var render = function() {
             _c("div", { staticClass: "col-lg-12" }, [
               _c("div", { staticClass: "card" }, [
                 _c("div", { staticClass: "card-body table-responsive" }, [
-                  _c("div", { attrs: { align: "right" } }, [
-                    _c(
-                      "span",
-                      {
-                        staticClass: "pull-left",
-                        staticStyle: {
-                          float: "left",
-                          "font-size": "18px",
-                          "text-decoration": "underline"
-                        }
-                      },
-                      [_vm._v("\n    Manage Agrolytic\n")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass: "btn-group",
-                        attrs: { role: "group", "aria-label": "Basic example" }
-                      },
-                      [
-                        _c("export-csv", { attrs: { data: _vm.list } }),
-                        _vm._v(" "),
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-warning mb-2",
-                            attrs: {
-                              "data-toggle": "modal",
-                              "data-target": "#agrolyticModal",
-                              id: "form-btn",
-                              href: "#"
+                  _c(
+                    "div",
+                    { attrs: { align: "right" } },
+                    [
+                      _c(
+                        "span",
+                        {
+                          staticClass: "pull-left",
+                          staticStyle: {
+                            float: "left",
+                            "font-size": "18px",
+                            "text-decoration": "underline"
+                          }
+                        },
+                        [_vm._v("\n    Manage Agrolytic\n")]
+                      ),
+                      _vm._v(" "),
+                      _c("export-csv", { attrs: { data: _vm.list } }),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-sm btn-warning mb-2",
+                          attrs: {
+                            "data-toggle": "modal",
+                            "data-target": "#agrolyticModal",
+                            id: "form-btn",
+                            href: "#"
+                          }
+                        },
+                        [_vm._v("Import Excel Document")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-sm btn-success mb-2",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.resetFilters($event)
                             }
-                          },
-                          [_vm._v("Import Excel Document")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "a",
-                          {
-                            staticClass: "btn btn-sm btn-success mb-2",
-                            attrs: { href: "#" },
-                            on: {
-                              click: function($event) {
-                                $event.preventDefault()
-                                return _vm.resetFilters($event)
-                              }
+                          }
+                        },
+                        [_vm._v("Reset Filter")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.isAdminOnly(),
+                              expression: "isAdminOnly()"
                             }
-                          },
-                          [_vm._v("Reset Filter")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "a",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value: _vm.isAdminOnly(),
-                                expression: "isAdminOnly()"
-                              }
-                            ],
-                            staticClass: "btn btn-sm btn-success mb-2",
-                            attrs: {
-                              "data-toggle": "modal",
-                              "data-target": "#agrolyticModal",
-                              id: "form-btn",
-                              href: "#"
-                            }
-                          },
-                          [_vm._v("Add / Save Agrolytic")]
-                        )
-                      ],
-                      1
-                    )
-                  ]),
+                          ],
+                          staticClass: "btn btn-sm btn-success mb-2",
+                          attrs: {
+                            "data-toggle": "modal",
+                            "data-target": "#agrolyticModal",
+                            id: "form-btn",
+                            href: "#"
+                          }
+                        },
+                        [_vm._v("Add / Save Agrolytic")]
+                      )
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
                   _c("h4", [
                     _c("span", { staticStyle: { display: "inline-block" } }, [
@@ -58789,7 +58784,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         mixins: [SectorMixin],
 
-        props: ['user_id', 'role', 'agro_id', 'date_days', 'prog_status', 'status'],
+        props: ['user_id', 'role', 'agro_id', 'date_days', 'prog_status', 'status_filter'],
 
         data: function data() {
 
@@ -58899,8 +58894,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                                 this.filters.push('prog_status=' + this.prog_status);
                         }
 
-                        if (this.status) {
-                                this.filters.push('status=' + this.status);
+                        if (this.status_filter) {
+                                this.filters.push('status=' + this.status_filter);
                         }
 
                         console.log(this.filters);
@@ -60614,14 +60609,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
 
-    props: ['all_agrolytic_report_link', 'all_agrolytic_report_link_this_week', 'all_report_link', 'all_report_link_this_week'],
+    props: ['all_agrolytic_report_link', 'all_agrolytic_report_link_this_week', 'all_report_link', 'all_report_link_this_week', 'user_id'],
 
     data: function data() {
         return {
             agroReportCount: '',
             agroReportThisWeekCount: '',
             reportCount: '',
-            reportThisWeekCount: ''
+            reportThisWeekCount: '',
+            filters: []
         };
     },
 
@@ -60639,10 +60635,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         gotoAllReportThisWeekLink: function gotoAllReportThisWeekLink() {
             location.href = this.all_report_link + '?date_days=7';
         },
+        handleFilters: function handleFilters() {},
         getAgrolyticCount: function getAgrolyticCount() {
             var _this = this;
 
-            fetch(baseURL + 'agrolytic?return_type=count', {
+            fetch(baseURL + 'agrolytic?return_type=count&user_id=' + this.user_id, {
                 method: 'GET'
             }).then(function (res) {
                 return res.json();
@@ -60653,7 +60650,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getAgrolyticThisWeekCount: function getAgrolyticThisWeekCount() {
             var _this2 = this;
 
-            fetch(baseURL + 'agrolytic?return_type=count&date_days=7', {
+            fetch(baseURL + 'agrolytic?return_type=count&date_days=7&user_id=' + this.user_id, {
                 method: 'GET'
             }).then(function (res) {
                 return res.json();
@@ -60664,7 +60661,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getReportCount: function getReportCount() {
             var _this3 = this;
 
-            fetch(baseURL + 'report?return_type=count', {
+            fetch(baseURL + 'report?return_type=count&user_id=' + this.user_id, {
                 method: 'GET'
             }).then(function (res) {
                 return res.json();
@@ -60675,7 +60672,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         getReportThisWeekCount: function getReportThisWeekCount() {
             var _this4 = this;
 
-            fetch(baseURL + 'report?return_type=count&date_days=7', {
+            fetch(baseURL + 'report?return_type=count&date_days=7&user_id=' + this.user_id, {
                 method: 'GET'
             }).then(function (res) {
                 return res.json();

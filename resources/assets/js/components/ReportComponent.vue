@@ -303,7 +303,7 @@ export default {
       'agro_id',
       'date_days',
       'prog_status',
-      'status'
+      'status_filter'
     ],
 
     data(){
@@ -416,8 +416,8 @@ export default {
              this.filters.push('prog_status=' + this.prog_status);
            }
 
-           if (this.status){
-             this.filters.push('status=' + this.status);
+           if (this.status_filter){
+             this.filters.push('status=' + this.status_filter);
            }
 
 

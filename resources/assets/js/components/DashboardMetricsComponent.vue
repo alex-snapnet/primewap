@@ -98,7 +98,8 @@
             'all_agrolytic_report_link',
             'all_agrolytic_report_link_this_week',
             'all_report_link',
-            'all_report_link_this_week'
+            'all_report_link_this_week',
+            'user_id'
         ],
 
         data(){
@@ -106,12 +107,15 @@
                 agroReportCount:'',
                 agroReportThisWeekCount:'',
                 reportCount:'',
-                reportThisWeekCount:''
+                reportThisWeekCount:'',
+                filters:[]
             };
         },
 
         methods:{
            
+             
+
            gotoAllAgrolyticLink(){
               location.href = this.all_agrolytic_report_link;
            },
@@ -128,9 +132,13 @@
              location.href = this.all_report_link + '?date_days=7';
            },
 
+           handleFilters(){
+              
+           },
+
 
            getAgrolyticCount(){
-               fetch(baseURL + 'agrolytic?return_type=count',{
+               fetch(baseURL + 'agrolytic?return_type=count&user_id=' + this.user_id,{
                    method:'GET'
                })
                .then(res=>res.json())
@@ -140,7 +148,7 @@
            },
 
            getAgrolyticThisWeekCount(){
-               fetch(baseURL + 'agrolytic?return_type=count&date_days=7',{
+               fetch(baseURL + 'agrolytic?return_type=count&date_days=7&user_id=' + this.user_id,{
                    method:'GET'
                })
                .then(res=>res.json())
@@ -151,7 +159,7 @@
 
 
            getReportCount(){
-               fetch(baseURL + 'report?return_type=count',{
+               fetch(baseURL + 'report?return_type=count&user_id=' + this.user_id,{
                    method:'GET'
                })
                .then(res=>res.json())
@@ -161,7 +169,7 @@
            },
 
            getReportThisWeekCount(){
-               fetch(baseURL + 'report?return_type=count&date_days=7',{
+               fetch(baseURL + 'report?return_type=count&date_days=7&user_id=' + this.user_id,{
                    method:'GET'
                })
                .then(res=>res.json())
