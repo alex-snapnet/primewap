@@ -21,4 +21,5 @@ class Report extends Model
     public function lmodified(){
     	return $this->belongsTo('App\User','lmodified_id')->withDefault();
     }
+
 }

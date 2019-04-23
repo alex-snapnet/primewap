@@ -138,12 +138,14 @@
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;color: #777;">Date From:.</b><br />  
-               <input v-model="dateFrom" type="date" placeholder="Date From" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/>
+                <date-picker :placeholder="'Date From'" :date_value="dateFrom" @date-changed="getDateValueFrom" :date_id="1" :date_style="{border: '1px solid #ddd','font-size': '14px',padding: '7px'}" ></date-picker>
+               <!-- <input v-model="dateFrom" type="date" placeholder="Date From" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/> -->
              </span>
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Date To:.</b><br />  
-               <input v-model="dateTo" type="date" placeholder="Date To" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/>
+                <date-picker :placeholder="'Date To'" :date_value="dateTo" @date-changed="getDateValueTo" :date_id="2" :date_style="{border: '1px solid #ddd','font-size': '14px',padding: '7px'}" ></date-picker>             
+               <!-- <input v-model="dateTo" type="date" placeholder="Date To" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/> -->
              </span> 
 
 
@@ -363,6 +365,13 @@ export default {
 
     methods: {
 
+        getDateValueFrom(vl){
+          this.dateFrom = vl;
+        },
+        getDateValueTo(vl){
+          this.dateTo = vl;
+        },
+
         getCurrentPageUrl(){
            return '/manage-report/' + this.agro_id;
         },
@@ -522,7 +531,7 @@ export default {
 
             this.statusBusy(true);  
 
-                fetch(this.apis.createApi,{
+                fetch(this.apis.createApi + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.reportData),
@@ -553,7 +562,7 @@ export default {
 
         doSave(){
                this.statusBusy(true);
-               fetch(this.apis.updateApi + this.id,{
+               fetch(this.apis.updateApi + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.reportData),
@@ -585,7 +594,7 @@ export default {
         doRemove(data){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy(true);  
-           fetch(this.apis.deleteApi + data.id,{
+           fetch(this.apis.deleteApi + data.id + '?user_id=' + authUser,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'

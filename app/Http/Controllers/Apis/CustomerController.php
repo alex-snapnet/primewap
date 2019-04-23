@@ -17,10 +17,25 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        return CustomerResource::collection(Customer::orderBy('id','desc')->paginate(5));
+
+        if ($request->filled('return_type')){
+            if ($request->return_type == 'count'){
+              return [
+                  'count'=>Customer::count()
+              ]; 
+            }else if ($request->return_type == 'all'){
+              return CustomerResource::collection(Customer::orderBy('id','desc')->get());
+            }else{
+              return CustomerResource::collection(Customer::orderBy('id','desc')->paginate(5));
+            }   
+        }else{
+            return CustomerResource::collection(Customer::orderBy('id','desc')->paginate(5));
+            // return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
+        }
+  
     }
 
     /**

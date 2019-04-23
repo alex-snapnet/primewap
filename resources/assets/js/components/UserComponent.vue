@@ -1,87 +1,87 @@
 <template>
   
-  <div class="row">
+  <span>
 
 
+<!-- comment modal start -->
+<div class="modal fade" id="userAccountModal11" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: #000;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> {{ edit? 'Edit User':'Add User' }} </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
-<!-- add update section -->
-     <div class="col-lg-12">
+      <div class="modal-body">
 
- <div align="right" v-show="!toggle">
-     <a id="form-btn" href="" class="btn btn-sm btn-danger mb-2" @click.prevent="hideForm" >Close</a>
- </div>
+          <div class="container">
+              <div class="row">
 
- <div align="right" v-show="toggle">
-     <a id="form-btn" href="" class="btn btn-sm btn-info mb-2" @click.prevent="showForm" >Add / Save User</a>
- </div>
+        <div class="col-md-12" style="padding: 0;">
 
-       <div class="card mb-2" id="form" style="display: none;">
-           <div class="card-body">
+            <!-- col-1 -->
+            <div class="col-md-3 box">
 
-
-       <h4>Add/Save User Data</h4>
-
-        <div class="col-xs-12">
-        </div>
-    
         <form @submit.prevent="saveUser">
+
+           <div class="form-group" style="margin-bottom: 0;">
+              <label>Full Name</label>
+            </div> 
   
            <div class="form-group">
               <input v-bind:style="{border: error}" type="text" class="form-control" placeholder="Full Name" v-model="data.name" />    
            </div>  
 
 
+           <div class="form-group" style="margin-bottom: 0;">
+              <label>E-mail</label>
+            </div> 
+
            <div class="form-group">
               <input v-bind:style="{border: error}" type="text" class="form-control" placeholder="E-mail" v-model="data.email" />    
            </div>  
 
+           <div class="form-group" style="margin-bottom: 0;">
+              <label>Password</label>
+            </div> 
 
            <div class="form-group">
               <input v-bind:style="{border: error}" type="password" class="form-control" placeholder="Password" v-model="data.password" />    
            </div>  
+
+
+           <div class="form-group" style="margin-bottom: 0;">
+              <label>Confirm Password</label>
+            </div> 
 
            <div class="form-group">
               <input v-bind:style="{border: error}" type="password" class="form-control" placeholder="Password Confirm" v-model="data.password_confirm" />    
            </div>  
 
 
-           <div align="right">
-                <button class="btn btn-sm btn-success">{{ text }}</button>
-           </div>
+
+<div class="form-group">
+   <button class="btn btn-sm btn-outline-primary"> {{ edit? 'Save' : 'Add User' }} </button>
+   <button v-show="edit" @click.prevent="edit = false;resetForm()" class="btn btn-sm btn-outline-warning">Cancel</button>
+</div>
+
 
 
         </form>
 
+            </div>
+            <!-- col-1 -->
+
+            <!-- col-2 -->
+            <div class="col-md-9 box">
 
 
-           </div>
-       </div>
+<!-- table content here .     -->
 
-
-
-     </div>
-     <!-- add update section -->
-
-     
-     <div class="col-lg-12">
-       
-       <div class="card">
-           <div class="card-body">
-
-        <div class="col-xs-12" style="height: 20px;">
-             {{ status }}
-        </div>
-
-
-       <h4>Manage Users</h4>
-
-        <div class="col-xs-12">
-
-
-        </div>
-    
-        
-        <table class="table table-striped">
+        <table class="table table-striped" style="border: 1px solid rgb(20, 89, 255);margin-bottom: 5px;">
 
             <tr>
                 <th>
@@ -110,13 +110,16 @@
 
 
 <div class="dropdown">
-    <button type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-secondary dropdown-toggle">
+    <button type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm btn-outline-info btn-secondary dropdown-toggle">
     Actions
    </button> 
-   <div aria-labelledby="dropdownMenuButton" class="dropdown-menu">
+   <div aria-labelledby="dropdownMenuButton" class="dropdown-menu" style="position: absolute;">
         <a href="" @click.prevent="linktoForm(data_)" class="dropdown-item">Edit</a>
         <a href="" @click.prevent="makePrimeAdmin(data_)"  class="dropdown-item">Make Prime-Admin</a>
         <a href="" @click.prevent="makePrimeOsp(data_)"  class="dropdown-item">Make Prime-Osp</a>
+        <a href="" @click.prevent="makePrimeSuperAdmin(data_)"  class="dropdown-item">Make Prime-Super Admin</a>
+        
+        
     </div>
 </div>
 
@@ -127,6 +130,8 @@
 
 
         </table>
+
+
 
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
@@ -142,19 +147,49 @@
   </ul>
 </nav>
 
-
-           </div>
-       </div>
-
-
-
-     </div>
+            </div>
+            <!-- col-2 -->
 
 
 
+<!-- content start -->
+
+<!-- table content stop  -->
 
 
+<!-- content stop -->
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal">Close</button>
+      </div>
+
+     
+
+
+    </div>
   </div>
+</div>
+
+
+
+<!-- comment modal stop -->
+
+<!-- link section  -->
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-target="#userAccountModal11" data-toggle="modal">
+              <i class="fa fa-check-circle"></i>Accounts</a>
+          </li>
+<!-- link section -->
+
+  </span>
 
 
 
@@ -223,13 +258,13 @@ export default {
         },
 
         hideForm(){
-            $('#form').slideUp();
-            this.toggle = true;
+            // $('#form').slideUp();
+            // this.toggle = true;
             this.resetForm();
         },
 
         showForm(){
-            $('#form').slideDown();
+            // $('#form').slideDown();
             this.toggle = false;
         },
 
@@ -267,7 +302,7 @@ export default {
 
             this.statusBusy('Loading ...');  
 
-                fetch(baseURL + 'user',{
+                fetch(baseURL + 'user' + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.data),
@@ -309,7 +344,7 @@ export default {
         },
 
         makePrimeAdmin(data){
-           fetch(baseURL + 'change-user-role/' + data.id,{
+           fetch(baseURL + 'change-user-role/' + data.id + '?user_id=' + authUser,{
                method:'PUT',
                body:JSON.stringify({type:'prime_admin'}),
                headers:{
@@ -325,9 +360,29 @@ export default {
                this.scanResponse(e);
            });
         },
+//prime_super_admin
+
+        makePrimeSuperAdmin(data){
+           fetch(baseURL + 'change-user-role/' + data.id + '?user_id=' + authUser,{
+               method:'PUT',
+               body:JSON.stringify({type:'prime_super_admin'}),
+               headers:{
+                   'content-Type':'application/json'
+               }
+           })
+           .then(res=>res.json())
+           .then(res=>{
+              this.scanResponse(res);
+              this.fetchUsers();
+           })
+           .catch(e=>{
+               this.scanResponse(e);
+           });
+        },
+
 
         makePrimeOsp(data){
-           fetch(baseURL + 'change-user-role/' + data.id,{
+           fetch(baseURL + 'change-user-role/' + data.id + '?user_id=' + authUser,{
                method:'PUT',
                body:JSON.stringify({type:'prime_osp'}),
                headers:{
@@ -345,7 +400,7 @@ export default {
         },
 
         doSave(){
-               fetch(baseURL + 'change-user-name/' + this.id,{
+               fetch(baseURL + 'change-user-name/' + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.data),
@@ -436,3 +491,9 @@ export default {
     
 }
 </script>
+
+<style scoped>
+ .page-link{
+   color: #000 !important;
+ }
+</style>

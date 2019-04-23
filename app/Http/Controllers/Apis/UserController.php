@@ -24,6 +24,11 @@ class UserController extends Controller
         if ($request->filled('role')){
            $query = $query->where('type',$request->role);  
         }
+
+        if ($request->has('searchText')){
+           $query = $query->whereRaw("email like '%" . $request->searchText . "%' ");
+        }
+
         return UserResource::collection($query->paginate(5));
     }
 
@@ -93,7 +98,7 @@ class UserController extends Controller
     }
 
     function updateUserRole(User $user,Request $request){
-        $allowedTypes = ['prime_admin','prime_osp'];
+        $allowedTypes = ['prime_admin','prime_osp','prime_super_admin'];
         if (in_array($request->type,$allowedTypes)){
             $user->type = $request->type;
             if ($user->save()){

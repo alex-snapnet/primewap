@@ -22,7 +22,25 @@ class Agrolytic extends Model
 
     public function reports(){
         return $this->hasMany(Report::class,'agro_id');
-    }
+	}
+	
+	function milestones(){
+		return $this->reports();
+	}
+
+	function completedMilestones(){
+		return $this->milestones()->where('done',1);
+	}
+
+	function getPercentageCompleted(){
+		// echo  $this->withCount('milestones')->toSql();
+		$queryTotal = $this->withCount('milestones')->where('id',$this->id)->first()->milestones_count;
+		$queryCompleted = $this->withCount('completedMilestones')->where('id',$this->id)->first()->completed_milestones_count;
+		// echo $queryTotal;
+		// dd($queryCompleted);
+		$percentage = $queryCompleted/$queryTotal * 100;
+		return $percentage;
+	}
 
     public function comments(){
         return $this->hasMany(Comment::class,'agro_id');
@@ -79,5 +97,13 @@ class Agrolytic extends Model
     			# code...
     			break;
     	}
-    }
+	}
+	
+
+	function recomputeProgress(){
+	   $percent = $this->getPercentageCompleted();
+	   $this->prog_status = $percent;
+	   $this->save();
+	}
+
 }

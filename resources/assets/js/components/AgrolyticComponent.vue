@@ -15,354 +15,10 @@
 
 
 
-<!-- comment thread section start -->
 
-<div class="modal fade" id="commentThreadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Comments</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
 
-     <div>
-       <!-- content start -->
-       <comment :agro_id="id" :user_id="data.user_id"></comment>
-       <!-- content stop -->
-     </div>
 
 
-    </div>
-  </div>
-</div>
-
-<!-- comment thread section stop -->
-
-<!-- comment modal start -->
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <form @submit.prevent="addComment">
-      <div class="modal-body">
-
-          <div class="container">
-              <div class="row">
-
-        <div class="col-md-12">
-
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Comment
-               </label>
-               <input placeholder="Your comment" class="form-control"  v-model="commentData.comment" />
-           </div>  
-
-           <div style="clear: both;"></div> 
-
-
-        </div>
-
-              </div>
-          </div>
-        
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary">Post Comment</button>
-      </div>
-
-      </form>
-
-
-    </div>
-  </div>
-</div>
-<!-- comment modal stop -->
-
-<!-- report modal start -->
-<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Report</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <form @submit.prevent="addReport">
-      <div class="modal-body">
-
-          <div class="container">
-              <div class="row">
-
-        <div class="col-md-12">
-
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Report
-               </label>
-               <textarea class="form-control" id="" cols="30" rows="10" v-model="reportData.report"></textarea>
-           </div>  
-
-           <div style="clear: both;"></div> 
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Status
-               </label>
-
-               <select class="form-control" v-model="reportData.status">
-                   <option value="Prospect">Prospect</option>
-                   <option value="Purchase">Purchase</option>
-                   <option value="Pipeline">Pipeline</option>
-                   <option value="Prospect">Prospect</option>
-                   <option value="Present">Present</option>
-               </select>
-           </div>  
-
-           <div style="clear: both;"></div> 
-
-
-           <div class="form-group col-md-12">
-
-               <label for="">
-                 Progress Status
-               </label>
-            
-              <input type="number" class="form-control" placeholder="Progress" v-model="reportData.prog_status" />
-
-           </div>  
-
-
-           <div style="clear: both;"></div> 
-
-
-
-        </div>
-
-              </div>
-          </div>
-        
-
-         <!-- <div class="col-md-12" style="border-top: 1px solid #aaa;padding-top: 11px;">
-           <div align="right" class="col-md-12">
-                <button class="btn btn-sm btn-success">{{ text }}</button>
-           </div>
-         </div> -->
-
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary">Post Report</button>
-      </div>
-
-      </form>
-
-
-    </div>
-  </div>
-</div>
-<!-- report modal stop -->
-
-
-<!-- Modal -->
-<div class="modal fade" id="agrolyticModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Agrolytic {{ preview? 'Preview' : '' }}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-
-      <form @submit.prevent="saveAgrolytic">
-      <div class="modal-body">
-
-          <div class="container">
-              <div class="row">
-
-        <div class="col-xs-12">
-
-
-           <div class="form-group">
-               <!-- {{ data.group_name_id }} -->
-             <!-- <group-select v-model="data.group_name_id"></group-select> -->
-           </div>  
-
-           <div class="form-group col-md-6">
-               <label for="">
-                   Select Group
-               </label>
-
-               <select class="form-control" v-model="data.group_name_id">
-                   <option value="0">--Select Group--</option>
-                   <option v-for="group in groups" v-bind:value="group.id" v-bind:key="group.id">
-                       {{ group.name }}
-                   </option>
-               </select>
-           </div>  
-
-
-
-           <div class="form-group col-md-6">
-               <label for="">
-                   Customer / Client
-               </label>
-               <select class="form-control" v-model="data.customer_id">
-                   <option value="">--Select Customer--</option>
-                   <option v-for="customer in customers" v-bind:key="customer.id" v-bind:value="customer.id">
-                       {{ customer.name }}
-                   </option>
-               </select>
-           </div>  
-
-<div style="clear: both;"></div>
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Category
-               </label>
-
-               <select class="form-control" v-model="data.cat_id">
-                   <option value="">--Select Category--</option>
-                   <option v-for="category in categories" v-bind:key="category.id" v-bind:value="category.id">
-                       {{ category.name }}
-                   </option>
-               </select>
-           </div>  
-
-           <div style="clear: both;"></div> 
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Sector
-               </label>
-
-               <select class="form-control" v-model="data.sec_id">
-                   <option value="">--Select Sector--</option>
-                   <option v-for="sector in sectors" v-bind:key="sector.id" v-bind:value="sector.id">
-                       {{ sector.name }}
-                   </option>
-               </select>
-           </div>  
-
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Prospect
-               </label>
-
-              <input type="text" class="form-control" placeholder="Prospect" v-model="data.prospect" />    
-           </div>  
-
-          <hr class="clearfix" style="display: block;clear: both;"/>    
-
-
-           <div class="form-group col-md-6">
-               <label for="">
-                   Company Objective
-               </label>
-
-              <input type="text" class="form-control" placeholder="Company Objective" v-model="data.comp_objective" />    
-           </div>  
-
-           <div class="form-group col-md-6">
-               <label for="">
-                   Pag Objective
-               </label>
-
-              <input type="text" class="form-control" placeholder="Pag Objective" v-model="data.pag_objective" />    
-           </div>  
-
-<div style="clear: both;"></div>
-
-           <div class="form-group col-md-12">
-               <label for="">
-                   Initiative    
-               </label>
-
-              <input type="text" class="form-control" placeholder="Initiative" v-model="data.initiative" />    
-           </div>  
-
-
-
-           <div class="form-group col-md-6">
-               <label for="">
-                   Operations Representative
-               </label>
-
-               <select class="form-control" v-model="data.op_rep">
-                   <option value="">--Select Operations Representative--</option>
-                   <option v-for="user in users" v-bind:key="user.id" v-bind:value="user.id">
-                       {{ user.name }}
-                   </option>
-               </select>
-           </div>  
-
-           <div class="form-group col-md-6">
-               <label for="">
-                   Status
-               </label>
-
-
-               <select class="form-control" v-model="data.status">
-                   <option value="">--Select Status--</option>
-                   <option value="Perpetual">Perpetual</option>
-                   <option value="Prospect">Prospect</option>
-
-               </select>
-           </div>  
-
-
-        </div>
-
-              </div>
-          </div>
-        
-
-         <!-- <div class="col-md-12" style="border-top: 1px solid #aaa;padding-top: 11px;">
-           <div align="right" class="col-md-12">
-                <button class="btn btn-sm btn-success">{{ text }}</button>
-           </div>
-         </div> -->
-
-
-      </div>
-
-      <div class="modal-footer" v-show="!preview">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary">{{ text }}</button>
-      </div>
-
-      </form>
-
-
-    </div>
-  </div>
-</div>
-
-<!-- modal stop -->
 
 <div v-show="view !== 'agrolytic'" class="col-lg-12">
 <div align="right">
@@ -407,18 +63,24 @@
      <!-- <a v-show="toggle" id="form-btn" href="" class="btn btn-sm btn-info mb-2" @click.prevent="showForm" >Add / Save Agrolytic</a> -->
 
 <span class="pull-left" style="float: left;font-size: 18px;text-decoration: underline;">
-    Manage Agrolytic
+    Manage Tasks
 </span>
 
 <!-- <div class="btn-group" role="group" aria-label="Basic example"> -->
 
       <export-csv v-bind:data="list"></export-csv>     
 
-     <a data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-warning mb-2" >Import Excel Document</a>
+ <excel-import :label="'Import Agrolytic'" style="position: relative;top: -4px;"  @batchCreated="batchCreated" :compId="23" :apiBatchCreate="batchCreate"></excel-import>
 
-     <a  href="#" @click.prevent="resetFilters" class="btn btn-sm btn-success mb-2" >Reset Filter</a>
+     <!-- <a data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-warning mb-2" >Import Excel Document</a> -->
 
-     <a v-show="isAdminOnly()" data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-sm btn-success mb-2" >Add / Save Agrolytic</a>
+<!-- agrolytic-batch-create -->
+
+     <a  href="#" @click.prevent="resetFilters" class="btn btn-outline-primary mb-2" >Reset Filter</a>
+
+     <a @click.prevent="doAddMode" v-show="isAdminOnly()" data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-outline-primary mb-2" >Add Task</a>
+
+     <!-- <a v-modal="'#agrolyticModal'" href="">Test Directive</a> -->
  
 <!-- </div> -->
 
@@ -430,21 +92,24 @@
 
 
 
-       <h4>
+       <h4 style="background-color: #1459ff14;padding: 7px;">
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;color: #777;">Date From:.</b><br />  
-               <input v-bind="dateFrom" type="date" placeholder="Date From" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/>
+                <!-- date_value -->
+                <date-picker :placeholder="'Date From'" :date_value="dateFrom" @date-changed="getDateValueFrom" :date_id="1" :date_style="{border: '1px solid #000','font-size': '14px',padding: '7px'}" ></date-picker>
+               <!-- <input v-bind="dateFrom" type="date" placeholder="Date From" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/> -->
              </span>
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Date To:.</b><br />  
-               <input v-bind="dateTo" type="date" placeholder="Date To" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/>
+                <date-picker :placeholder="'Date To'" :date_value="dateTo" @date-changed="getDateValueTo" :date_id="2" :date_style="{border: '1px solid #000','font-size': '14px',padding: '7px'}"></date-picker>
+               <!-- <input v-bind="dateTo" type="date" placeholder="Date To" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/> -->
              </span> 
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Category:.</b><br />  
-                <select v-model="cat_id" style="border: 1px solid #ddd;font-size: 13px;padding: 7px;">
+                <select v-model="cat_id" style="border: 1px solid #000;font-size: 13px;padding: 7px;">
                     <option value="">--Select Category--</option>
                     <option v-for="cat in categories" v-bind:value="cat.id" v-bind:key="cat.id">{{ cat.name }}</option>
                 </select>
@@ -452,14 +117,14 @@
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Sector:.</b><br />  
-                <select v-model="sec_id" style="border: 1px solid #ddd;font-size: 13px;padding: 7px;">
+                <select v-model="sec_id" style="border: 1px solid #000;font-size: 13px;padding: 7px;">
                     <option value="">--Select Sector--</option>
                     <option v-for="sec in sectors" v-bind:value="sec.id" v-bind:key="sec.id">{{ sec.name }}</option>
                 </select>
              </span>
 
 
-             <button @click.prevent="fetchAgrolytic()" class="btn btn-sm btn-info">Filter</button>
+             <button @click.prevent="fetchAgrolytic()" class="btn btn-outline-primary">Filter</button>
 
        </h4>
 
@@ -468,7 +133,7 @@
         </div>
     
         
-        <table class="table table-stripped">
+        <table class="table">
 
             <tr>
                 
@@ -481,10 +146,13 @@
                     Customer/Client
                 </th>
                 <th>
-                    Reports
+                    Milestones
                 </th>
                 <th>
-                    Comments
+                  Comments
+                </th>
+                <th>
+                  Op-Rep
                 </th>
                 <th>
                     Status
@@ -507,10 +175,19 @@
                    {{ data_.client_customer? data_.client_customer.name : 'N/A' }}
                </td>
                <td>
-                   {{ data_.reports?  data_.reports.length.toLocaleString() : 0 }}
+                 <milestones 
+                  :count="data_.reports?  data_.reports.length.toLocaleString() : 0"
+                  :agro_id="data_.id"
+                  :user_id="user_id"
+                  :comp_id="data_.id"
+                  >
+                 </milestones>
                </td>
                <td>
-                   {{ data_.reports? data_.comments.length.toLocaleString() : 0 }}
+                  {{ data_.reports? data_.comments.length.toLocaleString() : 0 }}
+               </td>
+               <td>
+                   {{ data_.oprep? data_.oprep.name : 'N/A' }}
                </td>
                <td>
 
@@ -527,65 +204,17 @@
 
 <!-- Example split danger button -->
 
-<div class="btn-group">
-  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Action
-  </button>
-  <div class="dropdown-menu">
-
-    <!-- edit button -->
-    <a v-show="isAdmin(data_)" href="" @click.prevent="linktoForm(data_)" class="dropdown-item"  data-toggle="modal" data-target="#agrolyticModal">Edit</a>
-    <div class="dropdown-divider"></div>
-
-
-    <!-- preview button -->
-    <a  href="" @click.prevent="doPreview(data_)" class="dropdown-item"  data-toggle="modal" data-target="#agrolyticModal">Preview</a>
-    <div class="dropdown-divider"></div>
-
-    <!-- assign to op-rep -->
-    <a v-show="isAdmin(data_)" href="" @click.prevent="linktoForm(data_)" class="dropdown-item"  data-toggle="modal" data-target="#agrolyticModal">Assign To Operation Rep.</a>
-    <div class="dropdown-divider"></div>
-
-    <!-- assign to third party -->
-    <a v-show="isPrimeOsp(data_)" title="This is a temporal priviledge , should be used when on leave or not in access" href="" @click.prevent="linktoForm(data_)" class="dropdown-item" >Assign To Third Party.</a>
-    <div class="dropdown-divider"></div>
-
-
-    <!-- remove -->
-    <a v-show="isAdmin(data_)" href="" @click.prevent="removeAgrolytic(data_)" class="dropdown-item">Remove</a>
-    <div class="dropdown-divider"></div>
-    
-    <!-- add report -->
-    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" href="#" @click.prevent="selectAgrolyticRow(data_)" data-target="#reportModal" data-toggle="modal" class="dropdown-item">Add Report</a>
-    <div class="dropdown-divider"></div>
-
-    <!-- add comment -->
-    <a v-show="isAdmin(data_)" href="" @click.prevent="selectAgrolyticRow(data_)" data-target="#commentModal" data-toggle="modal" class="dropdown-item">Add Comment</a>
-    <div class="dropdown-divider"></div>
-
-    <!-- view report -->
-    <a target="_blank" :href="getReportLink(data_)" class="dropdown-item">View Reports</a>
-    <div class="dropdown-divider"></div>
-
-    <!-- view comments -->
-    <!-- :href="getManageCommentLink(data_)" -->
-    <a href="#" @click.prevent="linktoForm(data_)" data-target="#commentThreadModal" data-toggle="modal" class="dropdown-item">View Comments</a>
-
-    <!-- category filter -->
-    <div class="dropdown-divider"></div>
-    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" href="#" @click.prevent="setCategoryFilter(data_)" class="dropdown-item">Agrolytics In This Category</a>
-<!-- :href="getCatFilter(data_)" -->
-
-    <!-- sector filter -->
-    <div class="dropdown-divider"></div>
-    <a v-show="isPrimeOsp(data_) || isAdmin(data_)" href="#" @click.prevent="setSectorFilter(data_)" class="dropdown-item">Agrolytics In This Sector</a>
-<!-- :href="getSecFilter(data_)" -->
-
-<!-- /manage-agrolytic -->
-  </div>
-</div>
-
-
+    <agrolytic-action :id="data_.id + 'id'" 
+              :data="data_"
+              @linktoForm="linktoForm"
+              @doPreview="doPreview"
+              @removeAgrolytic="removeAgrolytic"
+              @selectAgrolyticRow="selectAgrolyticRow"
+              @setCategoryFilter="setCategoryFilter"
+              @setSectorFilter="setSectorFilter"
+              :role="role"
+              :user_id="user_id">
+    </agrolytic-action>
 
                </td>
             </tr>
@@ -595,12 +224,19 @@
 
         </table>
 
+
+
+
+
+<!-- start of task card -->
+<!-- stop of task card -->
+
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
     <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
         <a @click.prevent="fetchAgrolytic(pagination.prev)" class="page-link" href="#">Previous</a>
     </li>
-    <li class="page-item disabled"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
+    <li class="page-item"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
     <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
     <li class="page-item"><a class="page-link" href="#">3</a></li>-->
     <li class="page-item" v-bind:class="[{disabled: !pagination.next}]"> 
@@ -623,13 +259,30 @@
      </div>
 
 
-
-
+  <agrolytic-form
+  @saveAgrolytic="saveAgrolytic"
+  :text="text"
+  :preview="preview"
+  :data="data"
+  :sectors="sectors"
+  :categories="categories"
+  :customers="customers"
+  :groups="groups"
+  :users="users">
+  </agrolytic-form>
  
+ <comment-input :commentData="commentData" @addComment="addComment"></comment-input>
 
+ <comment-modal :id="id" :data="data"></comment-modal>
 
+ <report-input :reportData="reportData" @addReport="addReport"></report-input>
+
+ <assign-to-op-rep :agro_id="id" :op_rep="data.op_rep" :email="data.oprep? data.oprep.email : 'n/a' "></assign-to-op-rep>
+ 
 </span>
 
+<!-- {{ id }} -->
+  
   </div>
 
 
@@ -656,6 +309,7 @@ export default {
     data(){
          
          return {
+            batchCreate:baseURL + 'agrolytic-batch-create?user_id=' + authUser,
             cat_id:'',
             sec_id:'',
             csvData:[],
@@ -726,12 +380,21 @@ export default {
     },
 
     mounted(){
+      
+      this.$root.$on('fetchAgrolytic',()=>{
+        this.fetchAgrolytic();
+      });
+      
+
       this.fetchAgrolytic();
       this.fetchCategories();
       this.fetchSectors();
-      this.fetchOpReps();
+      
       this.fetchCustomers();
       this.fetchGroups();
+
+
+
     },
 
     watch:{
@@ -758,10 +421,33 @@ export default {
 
     methods: {
 
+       batchCreated(){
+
+          toastr.success('Batch Created Successfully ...');
+          this.$root.$emit('fetchAgrolytic');
+
+       },
+
+       doAddMode(){
+        this.preview = false;
+        this.edit = false;
+       },
+
+       getDateValueFrom(vl){
+         this.dateFrom = vl;
+        //  alert(vl);
+       },
+       getDateValueTo(vl){
+         this.dateTo = vl;
+       },
+
        resetFilters(){ ///
           this.cat_id = '';
           this.sec_id = ''; 
+          this.dateFrom = '';
+          this.dateTo = '';
           console.log('called...');
+          this.fetchAgrolytic();
        },
 
        setCategoryFilter(agrolytic){
@@ -865,7 +551,7 @@ export default {
         },
 
         fetchCategories(){
-          fetch(baseURL + 'category')
+          fetch(baseURL + 'category?return_type=all')
           .then(res=>res.json())
           .then(res=>{
               this.categories = res.data;
@@ -881,25 +567,15 @@ export default {
         // },
 
         fetchCustomers(){
-          fetch(baseURL + 'customer')
+          fetch(baseURL + 'customer?return_type=all')
           .then(res=>res.json())
           .then(res=>{
               this.customers = res.data;
           });
         },
 
-
-        fetchOpReps(){
-          fetch(baseURL + 'user?role=prime_osp')
-          .then(res=>res.json())
-          .then(res=>{
-              this.users = res.data;
-          });
-        },
-
-
         fetchGroups(){
-          fetch(baseURL + 'groupname')
+          fetch(baseURL + 'groupname?return_type=all')
           .then(res=>res.json())
           .then(res=>{
               this.groups = res.data;
@@ -913,7 +589,7 @@ export default {
        }, 
        
         addReport(){
-          fetch(baseURL + 'report',{
+          fetch(baseURL + 'report' + '?user_id=' + authUser,{
               method:'POST',
               body:JSON.stringify(this.reportData),
               headers:{
@@ -921,9 +597,13 @@ export default {
               }
           }).then(res=>res.json())
           .then(res=>{
+             
              this.scanResponse(res);
-             this.fetchAgrolytic();
+             //this.fetchAgrolytic();
+             this.$root.$emit('fetchAgrolytic'); //wicked code.
+             this.$root.$emit('fetchFinish');
              this.hideForm();
+
 
           }).catch(e=>console.log(e));
 
@@ -932,7 +612,7 @@ export default {
 
 
         addComment(){
-          fetch(baseURL + 'comment',{
+          fetch(baseURL + 'comment' + '?user_id=' + authUser,{
               method:'POST',
               body:JSON.stringify(this.commentData),
               headers:{
@@ -943,6 +623,7 @@ export default {
              this.scanResponse(res);
              this.hideForm();
              this.fetchAgrolytic();
+             this.$root.$emit('fetchFinish');
           }).catch(e=>console.log(e));
 
         },
@@ -1039,7 +720,7 @@ export default {
             //this.data.group_name_id = ''; //data.group_name_id;
             this.data.customer_id = ''; //data.customer_id;
             this.data.status = ''; //data.status;
-            this.data.op_rep = ''; //data.op_rep;
+            // this.data.op_rep = ''; //data.op_rep;
 
             //initiative
             this.data.initiative = '';
@@ -1055,7 +736,7 @@ export default {
 
             this.statusBusy(true);  
 
-                fetch(this.apis.createApi,{
+                fetch(this.apis.createApi + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.data),
@@ -1076,9 +757,11 @@ export default {
                     // this.sector.name = '';
                     this.statusBusy(false);  
                     this.resetForm();
+                    this.$root.$emit('fetchFinish');
                 })
                 .catch(e=>{
                       this.statusBusy(e);  
+                      
                 });
 
                 this.text = 'Create';
@@ -1086,7 +769,7 @@ export default {
 
         doSave(){
                this.statusBusy(true);
-               fetch(this.apis.updateApi + this.id,{
+               fetch(this.apis.updateApi + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.data),
@@ -1107,6 +790,7 @@ export default {
                 .then(data=>{
                     // this.customer.name = '';
                     this.resetForm();
+                    this.$root.$emit('fetchFinish');
 
                 })
                 .catch(e=>console.log(e));
@@ -1118,7 +802,7 @@ export default {
         doRemove(data){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy(true);  
-           fetch(this.apis.deleteApi + data.id,{
+           fetch(this.apis.deleteApi + data.id + '?user_id=' + authUser,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'
@@ -1129,6 +813,8 @@ export default {
               this.fetchAgrolytic();
               this.statusBusy(false);
               this.scanResponse(res);
+              this.$root.$emit('fetchFinish');
+              this.hideForm();
            })
            .catch(e=>{
             this.statusBusy(e);  
@@ -1144,6 +830,8 @@ export default {
 
         linktoForm(data){
 
+          // alert('called...');
+
             this.data.group_name_id = data.group_name_id;
             this.data.pag_objective = data.pag_objective;
             this.data.cat_id = data.cat_id;
@@ -1155,11 +843,15 @@ export default {
             this.data.status = data.status;
             this.data.op_rep = data.op_rep;
 
+            this.data.oprep = data.oprep; //very important.
+            // this.data.customer_id = data.customer_id;
+
             //initiative
             this.data.initiative = data.initiative;
 
 
             this.id = data.id;
+            // console.log(this.id,'id-loaded');
             this.edit = true;
             // this.added_by = authUser;       
             this.text = 'Save';
@@ -1191,3 +883,25 @@ export default {
     
 }
 </script>
+
+<style scoped>
+  .tool a{
+    padding: 4px;background-color: #000;color: #fff;text-decoration: none;border-radius: 6px;padding: 3px;    
+  }
+
+  th{
+    background-color: #1459ff;
+    /* background-image: linear-gradient(#777, #fff); */
+    color: #fff;
+  }
+
+  table{
+    margin-bottom: 7px;
+  }
+
+  ul li a,ul li.dsabled a{
+    background-color: #000 !important;
+    color: #eee !important;
+  }
+
+</style>

@@ -4,7 +4,7 @@
 
 <div class="d-flex justify-content-between">
                       <p class="mb-2">{{ label }}</p>
-                      <p class="mb-2 text-primary">{{ percentage }}%</p>
+                      <p class="mb-2 text-primary">{{ getRoundedPercentage() }}%</p>
 </div>
 
 <div class="progress">
@@ -21,7 +21,8 @@ export default {
 
     data(){   
          return {
-            name:''
+            name:'',
+            _percentage:0
          }
     },
 
@@ -45,6 +46,10 @@ export default {
 
         initProgress(){
 
+        },
+
+        getRoundedPercentage(){
+          return Math.round(this.percentage);
         },
 
         getPercentageAria(){

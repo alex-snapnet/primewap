@@ -1,9 +1,9 @@
 <template>
   
-  <div class="row">
+  <span>
 
 <!-- comment modal start -->
-<div class="modal fade" id="sectorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="sectorModal11" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: #000;">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       
@@ -14,7 +14,6 @@
         </button>
       </div>
 
-      <form @submit.prevent="saveSector">
       <div class="modal-body">
 
           <div class="container">
@@ -22,6 +21,7 @@
 
         <div class="col-md-12">
 
+         <form @submit.prevent="saveSector">
 
            <div class="form-group col-md-12">
                <label for="">
@@ -30,83 +30,48 @@
                <input placeholder="Sector Name" class="form-control" v-model="sector.name" />
            </div>  
 
-           <div style="clear: both;"></div> 
-
-
-        </div>
-
-              </div>
-          </div>
-        
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Sector' }} </button>
-      </div>
-
-      </form>
-
-
-    </div>
-  </div>
+<div class="form-group col-md-12" style="margin: 0;">
+   <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Sector' }} </button>
+   <button v-show="edit" @click.prevent="edit = false;sector.name = ''" class="btn btn-warning">Cancel</button>
 </div>
 
 
 
-<!-- comment modal stop -->
+            </form>
 
+           <div style="clear: both;"></div> 
 
-
-     <div class="col-lg-12">
-       
-       <div class="card">
-           <div class="card-body">
-
+<!-- content start -->
         <div class="col-xs-12" style="height: 20px;">
              {{ status }}
         </div>
 
 
-<div class="col-xs-12" align="right">
-
-  <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#sectorModal" data-toggle="modal">Add Sector</a>
-
-</div>
-
-
        <h4>Manage Sectors</h4>
 
         <div class="col-xs-12">
+             
+             <div v-for="sector in sectors" v-bind:key="sector.id">
+               
+               <div class="col-md-6">
+                 {{ sector.name }}
+               </div>
 
+               <div class="col-md-6" align="right">
+
+                     <a href="" @click.prevent="linktoForm(sector)" class="btn btn-sm btn-outline-warning">Edit</a>
+                   <a href="" @click.prevent="removeSector(sector)" class="btn btn-sm btn-outline-danger">Remove</a>
+
+
+               </div>
+
+               <div style="clear: both;">&nbsp;</div>
+
+             </div>
 
         </div>
     
         
-        <table class="table table-striped">
-
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th></th>
-            </tr>
-
-            <tr v-for="sector in sectors" v-bind:key="sector.id">
-               <td>
-                   {{ sector.name }}
-               </td>
-               <td>
-                   <!-- sectorModal -->
-                   <a data-target="#sectorModal" data-toggle="modal" href="" @click.prevent="linktoForm(sector)" class="btn btn-sm btn-warning">Edit</a>
-                   <a href="" @click.prevent="removeSector(sector)" class="btn btn-sm btn-danger">Remove</a>
-               </td>
-            </tr>
-
-
-        </table>
-
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
     <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
@@ -122,18 +87,43 @@
 </nav>
 
 
-           </div>
-       </div>
+
+<!-- content stop -->
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+
+     
+
+
+    </div>
+  </div>
+</div>
 
 
 
-     </div>
+<!-- comment modal stop -->
 
 
 
 <!-- add update section -->
 
-  </div>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-target="#sectorModal11" data-toggle="modal">
+              <i class="fa fa-check-circle"></i>Sectors</a>
+          </li>
+
+
+  </span>
 
 
 
@@ -178,8 +168,8 @@ export default {
 
         hideForm(){
             // $('#form').slideUp();
-            $('.modal').trigger('click');
-            this.toggle = true;
+            // $('.modal').trigger('click');
+            // this.toggle = true;
             //  this.resetForm();
         },
 
@@ -249,7 +239,7 @@ export default {
     
                this.statusBusy('Loading ...');  
                
-               fetch(baseURL + 'sector/' + this.id,{
+               fetch(baseURL + 'sector/' + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.sector),
@@ -283,7 +273,7 @@ export default {
                this.statusBusy('Loading ...');  
 
 
-                fetch(baseURL + 'sector',{
+                fetch(baseURL + 'sector' + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.sector),
@@ -318,7 +308,7 @@ export default {
         removeSector(sector){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch(baseURL + 'sector/' + sector.id,{
+           fetch(baseURL + 'sector/' + sector.id + '?user_id=' + authUser,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'
@@ -343,3 +333,9 @@ export default {
     
 }
 </script>
+
+<style scoped>
+ .page-link{
+   color: #000 !important;
+ }
+</style>

@@ -79,7 +79,7 @@
 
 <!-- comment modal stop -->    
 
- <a  href="#" class="btn btn-sm btn-info" data-target="#importGroupModal" data-toggle="modal">Import Group</a>
+ <a  href="#" class="btn btn-outline-primary" data-target="#importGroupModal" data-toggle="modal">{{ label? label : 'Import Group' }}</a>
 
     </span>
 </template>
@@ -100,6 +100,7 @@
 
         props:[
             'compId',
+            'label',
             // 'apiTransform', //excel-to-json
             'apiBatchCreate',
             'fileValue'

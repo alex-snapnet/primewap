@@ -1,16 +1,11 @@
 <template>
   
-  <div class="row">
-
-
-
-
-
+  <span>
 
 <!-- comment modal start -->
-<div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="groupModal11" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
+    <div class="modal-content" style="color: #000;">
       
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"> {{ edit? 'Edit Group':'Add Group' }} </h5>
@@ -19,7 +14,7 @@
         </button>
       </div>
 
-      <form @submit.prevent="saveGroup">
+      
       <div class="modal-body">
 
           <div class="container">
@@ -27,7 +22,7 @@
 
         <div class="col-md-12">
 
-
+<form @submit.prevent="saveGroup">
            <div class="form-group col-md-12">
                <label for="">
                    Group Name
@@ -35,48 +30,31 @@
                <input placeholder="Group Name" class="form-control" v-model="group.name" />
            </div>  
 
+           <div class="form-group col-md-12">
+               <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Group' }} </button>
+
+   <button v-show="edit" @click.prevent="edit = false;group.name = ''" class="btn btn-warning">Cancel</button>
+
+           </div>
+</form>
            <div style="clear: both;"></div> 
 
 
-        </div>
-
-              </div>
-          </div>
-        
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Group' }} </button>
-      </div>
-
-      </form>
 
 
-    </div>
-  </div>
-</div>
+<!-- content start -->
 
-<!-- comment modal stop -->
-
-
-     
      <div class="col-lg-12">
        
        <div class="card">
            <div class="card-body">
-
-
 
         <div class="col-xs-12" style="height: 20px;">
              {{ status }}
         </div>
 
 
-<div class="col-xs-12" align="right">
-
-  <div class="btn-group" role="group" aria-label="Basic example">
+<div class="col-xs-12" align="right" style="margin-bottom: 12px;">
 
   <export-csv :excelStyle="{'margin-bottom':'0 !important'}" v-bind:data="groups"></export-csv>     
 
@@ -85,12 +63,7 @@
  <excel-import  @batchCreated="batchCreateNotificationAndReload" :compId="23" :apiBatchCreate="batchCreate"></excel-import>
   <!-- <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#importGroupModal" data-toggle="modal">Import Group</a> -->
 
-  <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#groupModal" data-toggle="modal">Add Group</a>
-
-  </div>
-
 </div>
-
 
        <h4>Manage Groups &nbsp;
            <span v-if="hasPrevHistory()">
@@ -104,75 +77,35 @@
 
         </div>
     
+    <div class="col-xs-12">
+
+
+        <div class="col-xs-12">
+             
+             <div v-for="group in groups" v-bind:key="group.id">
+               
+               <div class="col-md-6">
+                 {{ group.name }}
+               </div>
+
+               <div class="col-md-6" align="right">
+
+                   <a href="" @click.prevent="linktoForm(group)" class="btn btn-sm btn-outline-warning">Edit</a>
+                   
+                   <a href="" @click.prevent="removeGroup(group)" class="btn btn-sm btn-outline-danger">Remove</a>
+
+               </div>
+
+               <div style="clear: both;">&nbsp;</div>
+
+             </div>
+
+
+        </div>
+
+
+    </div>
         
-        <table class="table table-striped">
-
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th></th>
-            </tr>
-
-            <tr v-for="group in groups" v-bind:key="group.id">
-               <td>
-                   {{ group.name }}
-               </td>
-               <td>
-                 <!-- <xprogress :label="'Progress'" :percentage = "50"></xprogress> -->
-               </td>
-               <td>
-
-
-
-<!-- Jamie Foxx Interviews Gabrielle Union -- OFF SCR -->
-
-<!-- <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown button
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div> -->
-
-<div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Actions
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
-    <a href="#" @click.prevent="linktoForm(group)" data-target="#groupModal" data-toggle="modal" class="dropdown-item">Edit</a>
-    <!-- <a href="" @click.prevent="selectSub(group)" class="dropdown-item">View Sub Group</a> -->
-    <a href="" @click.prevent="removeGroup(group)" class="dropdown-item">Remove</a>
-
-    <!-- <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a> -->
-
-  </div>
-</div>
-
-
-
-                   <!-- <a href="" @click.prevent="linktoForm(group)" class="btn btn-sm btn-warning">Edit</a>
-                   <a href="" @click.prevent="selectSub(group)" class="btn btn-sm btn-info">Sub</a>
-                   <a href="" @click.prevent="removeGroup(group)" class="btn btn-sm btn-danger">Remove</a> -->
-
-
-
-
-
-
-               </td>
-            </tr>
-
-
-        </table>
-
-
 
 
 
@@ -202,11 +135,49 @@
      </div>
 
 
+<!-- content stop -->
+
+
+
+
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+
+      
+
+
+    </div>
+  </div>
+</div>
+
+<!-- comment modal stop -->
+
+
+     
+<!-- stop -->
+
 
 <!-- excel-to-json -->
 
 
-  </div>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-target="#groupModal11" data-toggle="modal">
+              <i class="fa fa-check-circle"></i>Groups</a>
+          </li>
+
+
+  </span>
 
 
 
@@ -258,8 +229,8 @@ export default {
 
         hideForm(){
             // $('#form').slideUp();
-            $('.modal').trigger('click');
-            this.toggle = true;
+            // $('.modal').trigger('click');
+            // this.toggle = true;
             //  this.resetForm();
         },
 
@@ -343,7 +314,7 @@ export default {
         doSave(){
                this.statusBusy('Loading ...');  
                
-               fetch(baseURL + 'groupname/' + this.id,{
+               fetch(baseURL + 'groupname/' + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.group),
@@ -374,7 +345,7 @@ export default {
                this.group.group_name_id = this.group_name_id;
 
 
-                fetch(baseURL + 'groupname',{
+                fetch(baseURL + 'groupname' + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.group),
@@ -427,7 +398,7 @@ export default {
         removeGroup(group){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch(baseURL + 'groupname/' + group.id,{
+           fetch(baseURL + 'groupname/' + group.id + '?user_id=' + authUser,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'
@@ -462,3 +433,10 @@ export default {
     
 }
 </script>
+
+
+<style scoped>
+ .page-link{
+   color: #000 !important;
+ }
+</style>

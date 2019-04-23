@@ -67,7 +67,7 @@
   <!-- inject:css -->
 
   <!-- bootstrap.min.css -->
-  <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}"> 
+  <!-- <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">  -->
 
   <!-- <link rel="stylesheet" href="{{asset('app_new.css')}}">  -->
 
@@ -75,7 +75,7 @@
 
   <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
 
-  <link rel="stylesheet" href="{{asset('css/select2.min.css')}}">
+  <!-- <link rel="stylesheet" href="{{asset('css/select2.min.css')}}"> -->
 
   <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}">
 
@@ -84,6 +84,10 @@
   <!-- endinject -->
 
    <link href="{{asset('css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
+
+   <link href="{{asset('vendors/iconfonts/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+   
+   <!-- /vendors/iconfonts/font-awesome/css/font-awesome.css" -->
 
   <link rel="shortcut icon" href="{{asset('images/favicon.png')}}" />
 
@@ -106,7 +110,8 @@
     }
 
     .content-wrapper {
-      background: #dbe8ea !important;
+      /* background: #aaced4 !important; */
+      /* background:#0d4d56 !important; */
     }
 
     .btn-success, .btn-info {
@@ -171,6 +176,32 @@
 
 </style>
 
+<style>
+  .tool a{
+    padding: 4px;background-color: #000;color: #fff;text-decoration: none;border-radius: 6px;padding: 3px;    
+  }
+
+  th{
+    background-color: #1459ff;
+    /* background-image: linear-gradient(#777, #fff); */
+    color: #fff;
+  }
+
+  table{
+    margin-bottom: 7px;
+  }
+
+  ul li a,ul li.dsabled a{
+    /* background-color: #000 !important; */
+    color: #eee !important;
+  }
+
+  .modal-backdrop{
+     z-index:2;
+  }
+</style>
+
+
   @yield('css')
 
 </head>
@@ -179,17 +210,18 @@
 
 <body class="">
 
-  <div class="container-scroller">
+  <div class="container-scroller" id="main-app">
 
     <!-- partial:../../partials/_navbar.html -->
 
-    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row" 
+       style="background: #1459ff !important;">
 
-      <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="width: 219px;">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="border: 1px solid #888;">
 
         <a class="navbar-brand brand-logo">
 
-          <img src="../../images/logo.png" alt="logo" />
+          <img src="../../images/prime.png" alt="logo" />
 
         </a>
 
@@ -201,19 +233,12 @@
 
       </div>
 
+      <!-- navbar-menu-wrapper d-flex align-items-center -->
       <div class="navbar-menu-wrapper d-flex align-items-center">
-
-        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-
-          <span class="mdi mdi-menu"></span>
-
-        </button>
-
-
-
+        <!-- navbar-nav navbar-nav-left header-links d-none d-md-flex -->
         <ul class="navbar-nav navbar-nav-left header-links d-none d-md-flex">
 
-          <li class="nav-item active">
+          <li class="nav-item">
 
             <a href="{{url('home')}}" class="nav-link">
 
@@ -221,7 +246,16 @@
 
           </li>
 
-         
+          <li class="nav-item">
+            <a href="{{ route('agrolytic.index') }}" class="nav-link">
+              <i class="fa fa-check-circle"></i>Tasks</a>
+          </li>          
+
+    <sector></sector>       
+    <group></group>
+    <category></category>
+    <user></user>
+
 
         </ul>
 
@@ -305,146 +339,9 @@
 
       <!-- partial:../../partials/_sidebar.html -->
 
-      
-
-      <nav class="sidebar sidebar-offcanvas" id="sidebar" style="width: 219px;">
-
-        <ul class="nav">
-
-          <li class="nav-item nav-profile">
-
-            <div class="nav-link">
-
-              <div class="user-wrapper">
-
-                <div class="profile-image">
-
-                  <img src="../../images/faces/face1.jpg" alt="profile image">
-
-                </div>
-
-                <div class="text-wrapper">
-
-                  <p class="profile-name">{{Auth::user()->name}}</p>
-
-                  <div>
-
-                    <small class="designation text-muted">{{ucfirst(str_replace('_',' ',Auth::user()->type))}}</small>
-
-                    <span class="status-indicator online"></span>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              @if (Auth::user()->type == 'prime_admin')
-
-              <a href="{{ route('agrolytic.index') }}" class="btn btn-success btn-block">New Agrolytic
-
-              @endif 
-
-                <i class="mdi mdi-plus"></i>
-
-              </a>
-
-            </div>
-
-          </li>
-
-          <li class="nav-item">
-
-            <a class="nav-link" href="{{ route('agrolytic.index') }}">
-
-              <i class="menu-icon mdi mdi-television"></i>
-
-              <span class="menu-title">View Agrolytic</span>
-
-            </a>
-
-          </li>
-
-      
-
-          @if (Auth::user()->type == 'prime_admin')
-
-          <li class="nav-item">
-
-            <a class="nav-link" href="{{ route('group.index') }}">
-
-              <i class="menu-icon mdi mdi-television"></i>
-
-              <span class="menu-title">Agrolytic Groups</span>
-
-            </a>
-
-          </li>
-
-          
-
-           <li class="nav-item">
-
-            <a class="nav-link" href="{{ route('category.index') }}">
-
-              <i class="menu-icon mdi mdi-television"></i>
-
-              <span class="menu-title">Categories</span>
-
-            </a>
-
-          </li>
-
-
-          <li class="nav-item">
-
-            <a class="nav-link" href="{{ route('sector.index') }}">
-
-            <i class="menu-icon mdi mdi-television"></i>
-
-            <span class="menu-title">Sectors</span>
-
-            </a>
-
-          </li>
-
-
-
-           <li class="nav-item">
-
-            <a class="nav-link" href="{{ route('user.index') }}">
-
-              <i class="menu-icon mdi mdi-television"></i>
-
-              <span class="menu-title">Manage User(s)</span>
-
-            </a>
-
-          </li>
-
-         <li class="nav-item">
-
-            <a class="nav-link" href="{{ route('customer.index') }}">
-
-              <i class="menu-icon mdi mdi-television"></i>
-
-              <span class="menu-title">Customers</span>
-
-            </a>
-
-          </li>
-
-          @endif
-
-        </ul>
-
-      </nav>
-
-      
-
       <!-- partial -->
-
-      <div class="main-panel" style="width: calc(100% - 219px)">
+      <!-- 219px -->
+      <div class="main-panel" style="width: calc(100%)">
 
         <div class="content-wrapper" style="padding: 5px;">
 
@@ -497,9 +394,6 @@
   <!-- <script src="{{ asset('js/mixins/sectors-mixin.js') }}"></script> -->
 
 
-  <script src="{{asset('vendors/js/vendor.bundle.base.js')}}"></script>
-
-  <script src="{{asset('vendors/js/vendor.bundle.addons.js')}}"></script>
 
 
   
@@ -512,312 +406,43 @@
 
   <!-- inject:js -->
 
+
+  <script src="{{ asset('js/moment.js') }}"></script>
+
+<script src="{{asset('vendors/js/vendor.bundle.base.js')}}"></script>
+
+<script src="{{asset('vendors/js/vendor.bundle.addons.js')}}"></script>
+
+
+  <!-- <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>  -->
+
   <script src="{{asset('js/off-canvas.js')}}"></script>
-
-  <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script> 
-
-
-
-  <script src="{{asset('js/bootstrap.min.js')}}"></script>
 
   <script src="{{asset('js/misc.js')}}"></script> 
 
-   <script type="text/javascript" src="{{asset('js/bootstrap-datetimepicker.min.js')}}"></script>
+  <script src="{{asset('js/dashboard.js')}}"></script>
+
+  <script src="{{ asset('js/jquery-ui.js') }}"></script>
+
+
+  <!-- <script src="{{asset('js/bootstrap.min.js')}}"></script> -->
+
+
+   <!-- <script type="text/javascript" src="{{asset('js/bootstrap-datetimepicker.min.js')}}"></script> -->
 
    <script type="text/javascript" src="{{asset('js/toastr.min.js')}}"></script>
 
-   <script type="text/javascript" src="{{asset('js/select2.full.min.js')}}"></script>
+   <!-- <script type="text/javascript" src="{{asset('js/select2.full.min.js')}}"></script> -->
 
 
+<!-- consider -->
+
+<!-- consider -->
+    
      @yield('script')
 
 
-   <script src="{{ asset('js/jquery-ui.js') }}"></script>
-
    <script src="{{ asset('js/app.js') }}"></script>
-
-
-  <script type="text/javascript">
-
-
-
-  var   $type= window.location.href=='{{url('agrolytic/viewAgrolytic')}}' ? 1 : 0 ;
-
-    $(function(){
-
-
-
-      $('#submitForm').click(function(){
-
-           
-
-              submitForm('addAgrolyticForm','{{url('agrolytic')}}','progress');
-
-       });
-
-
-
-      $('[data-toggle="tooltip"]').tooltip();
-
-    
-
-      $('.navbar-toggler').click(function(){
-
-            $('body').toggleClass('sidebar-icon-only');
-
-      })
-
-
-
-      //  select2Populate('ospA','{{url('agrolytic')}}/searchAcrolytic');
-
-      //  $('#type2').val($type);
-
-      $('#submitManagerComment').click(function(){
-
-
-
-            submitForm('addManagerComment',"{{url('agrolytic')}}",'progress');
-
-
-
-       })
-
-        });
-
-
-
- 
-
-  function dispComment(id){
-
-    $('#dispCommentTrail').html('Loading...');
-
-    $('#dispCommentTrail').load('{{url('agrolytic')}}/comments?id='+id+'&type='+$type);
-
-  }
-
-
-
-  function setId(id){
-
-    sessionStorage.setItem('id',id);
-
-    $('.agro_id').val(id);
-
-  }
-
-  
-
-  function loadUrl(url){
-
-      window.location=url;
-
-   }
-
-   
-
-    function reset(id){
-
-      $('.form-control').attr('disabled',false);
-
-      $('.addedBy').hide();
-
-      $('#'+id)[0].reset();
-
-    }
-
-
-
-function deleteRecord(id,model,relation){
-
-
-
-    formdata = {
-
-        id:id,
-
-        model:model,
-
-        relation:relation,
-
-        _token:'{{csrf_token()}}',
-
-        type:'delete'
-
-    }
-
-    if(confirm('Are Sure You want to delete record!!')){
-
-      
-
-       $.post('{{url('agrolytic')}}',formdata,function(data){
-
-        if(data.status=='success'){
-
-          window.location.reload();
-
-        return   toastr.success(data.message);
-
-        }
-
-        return  toastr.error(data.message);
-
-
-
-       });
-
-    }
-
-    else{
-
-       toastr.error('Operation Cancelled');
-
-    }
-
-
-
-}
-
-    function select2Populate(id,url){
-
-               $('#'+id).select2({
-
-                 ajax: {
-
-                   delay: 250,
-
-                   processResults: function (data) {
-
-
-
-                    return {
-
-
-
-                        results: data
-
-                    };
-
-                },
-
-                data: function(params){
-
-                    return {
-
-                    q:params.term,
-
-                    page_limit:10
-
-                };
-
-                },
-
-
-
-                url: function (params) {
-
-                    return url;
-
-                }
-
-
-
-            }
-
-        });
-
-    }
-
-
-
-   function submitForm(formid,url,progress){
-
-
-
-           formdata= new FormData($('#'+formid)[0]);
-
-           formdata.append('_token','{{csrf_token()}}'); 
-
-           
-
-           $.ajax({
-
-            url: url,
-
-               type: 'POST',
-
-               data: formdata,
-
-               cache: false,
-
-               contentType: false,
-
-               processData: false,
-
-               success:function(data,status,xhr){
-
-                    if(data.status=='success'){
-
-                        toastr.success(data.message);
-
-                        setTimeout(function(){
-
-                            window.location.reload();
-
-
-
-                        },2000);
-
-                        return;
-
-                    } 
-
-                    return toastr.error(data.message);
-
-               },
-
-                 xhr: function() {
-
-                    var myXhr = $.ajaxSettings.xhr();
-
-                    if (myXhr.upload) {
-
-                // For handling the progress of the upload
-
-                myXhr.upload.addEventListener('progress', function(e) {
-
-                    if (e.lengthComputable) {
-
-                        percent=Math.round((e.loaded/e.total)*100,2);
-
-                        $('#'+progress).css('width',percent+'%');
-
-                        $('#'+progress+'_text').text(percent+'%');
-
-                    }
-
-                } , false);
-
-            }
-
-            return myXhr;
-
-        }
-
-    });
-
- 
-
-        }
-
-
-
-
-
-  </script>
-
-
 
   <!-- endinject -->
 

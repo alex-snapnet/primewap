@@ -1,11 +1,11 @@
 <template>
   
-  <div class="row">
+  <span>
 
 <!-- comment modal start -->
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="categoryModal11" tabindex="10" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
+    <div class="modal-content" style="color: #000;"> 
       
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"> {{ edit? 'Edit Category':'Add Category' }} </h5>
@@ -14,13 +14,14 @@
         </button>
       </div>
 
-      <form @submit.prevent="saveCategory">
       <div class="modal-body">
 
           <div class="container">
               <div class="row">
 
         <div class="col-md-12">
+
+      <form @submit.prevent="saveCategory">
 
 
            <div class="form-group col-md-12">
@@ -30,35 +31,23 @@
                <input placeholder="Category Name" class="form-control" v-model="category.name" />
            </div>  
 
+<div class="form-group col-md-12" style="margin: 0;">
+   <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Category' }} </button>
+   <button v-show="edit" @click.prevent="edit = false;category.name = ''" class="btn btn-warning">Cancel</button>
+</div>
+   
+                 </form>
+
+
            <div style="clear: both;"></div> 
 
+<!-- content -->
 
-        </div>
-
-              </div>
-          </div>
-        
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Category' }} </button>
-      </div>
-
-      </form>
-
-
-    </div>
-  </div>
-</div>
-
-<!-- comment modal stop -->
-     
      <div class="col-lg-12">
        
-       <div class="card">
-           <div class="card-body">
+       <div class="card" style="
+    font-size: 12px;">
+           <div class="card-body" style="padding: 0;">
 
 
 
@@ -67,42 +56,34 @@
         </div>
 
 
-<div class="col-xs-12" align="right">
-
-  <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#commentModal" data-toggle="modal">Add Category</a>
-
-</div>
-
-       <h4>Manage Categories</h4>
+       <h4 style="
+    font-size: 12px;
+    text-transform: uppercase;
+"><u>Manage Categories</u></h4>
 
         <div class="col-xs-12">
+             
+             <div v-for="category in categories" v-bind:key="category.id">
+               
+               <div class="col-md-6">
+                 {{ category.name }}
+               </div>
 
+               <div class="col-md-6" align="right">
+
+                     <a href="" @click.prevent="linktoForm(category)" class="btn btn-sm btn-outline-warning">Edit</a>
+                   <a href="" @click.prevent="removeCategory(category)" class="btn btn-sm btn-outline-danger">Remove</a>
+
+
+               </div>
+
+               <div style="clear: both;">&nbsp;</div>
+
+             </div>
 
         </div>
     
         
-        <table class="table table-striped">
-
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th></th>
-            </tr>
-
-            <tr v-for="category in categories" v-bind:key="category.id">
-               <td>
-                   {{ category.name }}
-               </td>
-               <td>
-                   <a  data-target="#commentModal" data-toggle="modal" href="" @click.prevent="linktoForm(category)" class="btn btn-sm btn-warning">Edit</a>
-                   <a href="" @click.prevent="removeCategory(category)" class="btn btn-sm btn-danger">Remove</a>
-               </td>
-            </tr>
-
-
-        </table>
-
 
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
@@ -130,10 +111,41 @@
      </div>
 
 
+<!-- content -->
+
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
 
 
 
+    </div>
   </div>
+</div>
+
+<!-- comment modal stop -->
+     
+
+
+<!-- stop -->
+
+
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-target="#categoryModal11" data-toggle="modal">
+              <i class="fa fa-check-circle"></i>Categories</a>
+          </li>
+
+  </span>
 
 
 
@@ -231,8 +243,8 @@ export default {
 
         hideForm(){
             // $('#form').slideUp();
-            $('.modal').trigger('click');
-            this.toggle = true;
+            // $('.modal').trigger('click');
+            // this.toggle = true;
             //  this.resetForm();
         },
 
@@ -242,7 +254,7 @@ export default {
     
                this.statusBusy('Loading ...');  
                
-               fetch(baseURL + 'category/' + this.id,{
+               fetch(baseURL + 'category/' + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.category),
@@ -278,7 +290,7 @@ export default {
                this.statusBusy('Loading ...');  
 
 
-                fetch(baseURL + 'category',{
+                fetch(baseURL + 'category' + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.category),
@@ -312,7 +324,7 @@ export default {
         removeCategory(category){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch(baseURL + 'category/' + category.id,{
+           fetch(baseURL + 'category/' + category.id + '?user_id=' + authUser,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'
@@ -337,3 +349,9 @@ export default {
     
 }
 </script>
+
+<style scoped>
+ .page-link{
+   color: #000 !important;
+ }
+</style>

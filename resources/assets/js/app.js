@@ -5,18 +5,36 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+
+// require('../../../public/js/jquery');
+
+// require('./bootstrap');
 
 // window.SectorMixin = require('./mixins/sectors-mixin');
 
 import SectorMixin from './mixins/sectors-mixin';
 
+// import '../../../public/js/jquery-ui.js';
+
+
+// import '../../../public/js/select2';
 
 window.Vue = require('vue');
 window.SectorMixin = SectorMixin.SectorMixin;
 
-import ProgressBar from 'vuejs-progress-bar';
-Vue.use(ProgressBar);
+Vue.directive('modal',{
+    bind(el,binding,vnode){
+        alert(binding);
+        $(el).on('click', (e) => {
+            $(binding.value).modal();
+            return e.preventDefault();
+        });
+    }
+});
+
+
+// import ProgressBar from 'vuejs-progress-bar';
+// Vue.use(ProgressBar);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -26,24 +44,45 @@ Vue.use(ProgressBar);
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
-Vue.component('category', require('./components/CategoryComponent.vue'));
-Vue.component('sector', require('./components/SectorComponent.vue'));
-Vue.component('customer', require('./components/CustomerComponent.vue'));
-Vue.component('group', require('./components/GroupComponent.vue'));
-Vue.component('group-select', require('./components/GroupSelectComponent.vue'));
-Vue.component('user', require('./components/UserComponent.vue'));
-Vue.component('agrolytic', require('./components/AgrolyticComponent.vue'));
-Vue.component('customer-field', require('./components/CustomerFieldComponent.vue'));
-Vue.component('comment', require('./components/CommentComponent.vue'));
-Vue.component('export-csv', require('./components/CsvDownloadComponent.vue'));
-Vue.component('report', require('./components/ReportComponent.vue'));
-Vue.component('excel-import', require('./components/ExcelImportComponent.vue'));
+Vue.component('category', require('./components/CategoryComponent.vue').default);
+Vue.component('sector', require('./components/SectorComponent.vue').default);
+Vue.component('customer', require('./components/CustomerComponent.vue').default);
+Vue.component('group', require('./components/GroupComponent.vue').default);
+Vue.component('group-select', require('./components/GroupSelectComponent.vue').default);
+Vue.component('user', require('./components/UserComponent.vue').default);
+Vue.component('agrolytic', require('./components/AgrolyticComponent.vue').default);
+Vue.component('customer-field', require('./components/CustomerFieldComponent.vue').default);
+Vue.component('comment', require('./components/CommentComponent.vue').default);
+Vue.component('export-csv', require('./components/CsvDownloadComponent.vue').default);
+Vue.component('report', require('./components/ReportComponent.vue').default);
+Vue.component('excel-import', require('./components/ExcelImportComponent.vue').default);
 
-Vue.component('xprogress', require('./components/ProgressComponent.vue'));
+Vue.component('xprogress', require('./components/ProgressComponent.vue').default);
 
-Vue.component('dash-board-metrics', require('./components/DashboardMetricsComponent.vue'));
+Vue.component('dash-board-metrics', require('./components/DashboardMetricsComponent.vue').default);
+
+Vue.component('agrolytic-action', require('./components/AgrolyticActionComponent.vue').default);
+
+Vue.component('agrolytic-form', require('./components/AgrolyticFormComponent.vue').default);
+
+Vue.component('date-picker', require('./components/DatePickerComponent.vue').default);
+
+Vue.component('comment-input', require('./components/CommentInputComponent.vue').default);
+
+Vue.component('comment-modal', require('./components/CommentModalComponent.vue').default);
+
+Vue.component('report-input',require('./components/ReportInputComponent.vue').default);
+
+Vue.component('op-rep-input',require('./components/OperationRepInputComponent.vue').default);
+
+Vue.component('assign-to-op-rep',require('./components/AssignToOpRepComponent.vue').default);
+
+Vue.component('milestones',require('./components/MilestonesComponent.vue').default);
 
 
+//AssignToOpRepComponent
+
+//OperationRepInputComponent
 // mixins:[SectorMixin],
 // console.log(SectorMixin);
 
@@ -54,5 +93,5 @@ Vue.component('dash-board-metrics', require('./components/DashboardMetricsCompon
 // });
 
 const app = new Vue({
-    el: '#app'    
+    el: '#main-app'    
 });

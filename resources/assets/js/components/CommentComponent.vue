@@ -63,7 +63,11 @@
 
 
 <div class="col-lg-12">
-    <h4><u>Comments</u></h4>
+    <h4><u>Comments ({{ commentCount.toLocaleString() }})</u>
+    
+<img v-show="busy" src="/images/loader.gif" style="height: 45px;"/>
+    
+    </h4>
 </div>
 <div class="col-lg-12" align="right">
     <!-- <a href="/manage-agrolytic"  class="btn btn-info" style="margin-bottom: 7px;">Back To Agrolytic</a> -->
@@ -75,7 +79,7 @@
     <!-- <a v-show="canModify" href="#" data-target="#commentModalSelf" data-toggle="modal" class="btn btn-success" style="margin-bottom: 7px;"> + Add Comment</a> -->
 </div>
 
-<span style="height: 380px;overflow-y: scroll;display:inline-block;width: 100%;">
+<span style="height: 300px;overflow-y: scroll;display:inline-block;width: 100%;">
     <!-- start loop -->
     <div class="col-lg-12" v-for="com in comments" v-bind:key="com.id">
   
@@ -83,13 +87,14 @@
          <div class="alert alert-info" style="background-color: #fff;border: 1px solid #ddd;">
              <div><b><u>{{ com.user.name }}</u></b></div>
              <p>{{ com.comment }}</p>
+             <!-- {{ inMinutes(com.created_at) }} -->
              <div>
                <small> {{ com.created_at | ago }} </small>
              </div>
              <div align="right">
 <!-- data-target="#commentModalSelf" data-toggle="modal" -->
-                 <a v-show="canModify" href="#" @click.prevent="linktoForm(com)" class="btn btn-info btn-sm" style="background-color: #8a8aca;border: 0;">Edit</a>
-                 <a v-show="canModify" href="" @click.prevent="removeComment(com)" class="btn btn-danger btn-sm" style="background-color: #e29292;border: 0;">Remove</a> 
+                 <a v-show="canModifySingle(com) && inMinutes(com.created_at)" href="#" @click.prevent="linktoForm(com)" class="btn btn-info btn-sm" style="background-color: #8a8aca;border: 0;">Edit</a>
+                 <a v-show="canModifySingle(com) && inMinutes(com.created_at)" href="" @click.prevent="removeComment(com)" class="btn btn-danger btn-sm" style="background-color: #e29292;border: 0;">Remove</a> 
              </div>
          </div>
 
@@ -140,6 +145,7 @@ export default {
 
     watch:{
        agro_id(newValue,oldValue){
+        //  alert('agro-change.');
         this.cacheUrl = ''; 
         this.fetchComments();
         this.fetchAgrolytic();          
@@ -155,12 +161,15 @@ export default {
     data(){
          
          return {
+             busy:false,
+             agro_id_cache:'',
              list:[],
              index:'',
              canModify:false,
              baseUrl:baseURL,
              cacheUrl:'',
              comments:[],
+             commentCount:0,
              comment:{
                id:'',  
                agro_id:'',
@@ -185,19 +194,37 @@ export default {
       //this.commentModalSelf();
       this.fetchComments();
       this.fetchAgrolytic();
+
+      this.$root.$on('reloadComment',(agro_id)=>{
+        //  console.log(agro_id,this.agro_id);  
+          // alert('agro-change--root.');
+          this.agro_id_cache = agro_id;
+          this.fetchComments();
+          this.fetchAgrolytic();
+        // if (this.agro_id == agro_id){}
+
+      });
     },
 
     methods: {
 
+        inMinutes(d1){
+         let t2 = (new Date).getTime();
+         let t1 = (new Date(d1)).getTime();
+         return (parseInt((t2-t1)/(60*1000)) <= 1);
+        },
+        canModifySingle(data){
+          return (data.user_id == authUser);
+        },
 
         fetchAgrolytic(){
-           fetch(this.baseUrl + 'agrolytic/' + this.agro_id,{
+           fetch(this.baseUrl + 'agrolytic/' + ((this.agro_id)? this.agro_id : this.agro_id_cache),{
                method:'Get'
            })
            .then(res=>res.json())
            .then(res=>{
                this.agrolytic = res.data;
-               if (this.user_id == this.agrolytic.user_id){
+               if (this.user_id == this.agrolytic.user_id || this.user_id == this.agrolytic.op_rep){
                  this.canModify = true;
                }else{
                  this.canModify = false;  
@@ -213,6 +240,8 @@ export default {
            this.pagination.next = links.next;
            this.pagination.current = meta.current_page;
            this.pagination.total = meta.last_page;   
+           this.commentCount = meta.total;
+           
 
         },
 
@@ -222,27 +251,32 @@ export default {
         },
 
         fetchComments(url){
-
+            this.busy = true; 
             let api = '';
             if (url){
-             api = url + '&agro_id=' + this.agro_id;
+             api = url + '&agro_id=' + ((this.agro_id)? this.agro_id : this.agro_id_cache);
              this.cacheUrl = api;
             }else{
-               if (this.cacheUrl){
-                //do nothing..., simply retain the cacheUrl.  
-               }else{
                 api = this.baseUrl + 'comment?agro_id=' + this.agro_id;   
-                this.cacheUrl = api;
-               } 
+              //  if (this.cacheUrl){
+              //   //do nothing..., simply retain the cacheUrl.  
+              //   console.log(this.cacheUrl);
+              //  }else{
+              //   this.cacheUrl = api;
+              //  }
             }
 
-            fetch(this.cacheUrl)
+            console.log(this.cacheUrl);
+
+            fetch(api)
             .then(res=>res.json())
             .then(res=>{
 
                 this.comments = res.data;
                 // this.statusBusy('');  
                 this.makePagination(res.meta,res.links);
+                this.$root.$emit('fetchAgrolytic'); //wicked code.
+                this.busy = false;
 
             })
             .catch(e=>console.log(e));
@@ -278,6 +312,7 @@ export default {
             this.edit = true;
         },
         saveComment(){
+          this.busy = true;
              if (this.edit){
                this.doSave();   
                this.edit = false;
@@ -291,7 +326,7 @@ export default {
           this.comment.agro_id = this.agro_id;
           this.comment.user_id = this.user_id;
 
-          fetch(this.baseUrl + 'comment/' + this.comment.id,{
+          fetch(this.baseUrl + 'comment/' + this.comment.id + '?user_id=' + authUser,{
               method:'PUT',
               body:JSON.stringify(this.comment),
               headers:{
@@ -310,7 +345,7 @@ export default {
           this.comment.agro_id = this.agro_id;
           this.comment.user_id = this.user_id;
 
-          fetch(this.baseUrl + 'comment',{
+          fetch(this.baseUrl + 'comment' + '?user_id=' + authUser,{
               method:'POST',
               body:JSON.stringify(this.comment),
               headers:{
@@ -326,11 +361,12 @@ export default {
           }).catch(e=>console.log(e));
         }, 
         doRemove(comment){
+          this.busy = true;
           this.linktoForm(comment);   
         //   this.comment.agro_id = this.agro_id;
         //   this.comment.user_id = this.user_id;
 
-          fetch(this.baseUrl + 'comment/' + this.comment.id,{
+          fetch(this.baseUrl + 'comment/' + this.comment.id + '?user_id=' + authUser,{
               method:'DELETE',
               headers:{
                   'content-Type':'application/json'
@@ -348,6 +384,7 @@ export default {
         removeComment(comment){
           if (confirm('You you want to confirm this action?')){
              this.doRemove(comment);
+             this.edit = false;
           }
         },
 

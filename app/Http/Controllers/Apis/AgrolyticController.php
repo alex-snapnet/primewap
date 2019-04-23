@@ -25,7 +25,7 @@ class AgrolyticController extends Controller
         // return $now->format('Y M d h:i:s A');
         //
         
-        $query = Agrolytic::with('clientCustomer')->with('reports')->with('comments');
+        $query = Agrolytic::with('clientCustomer')->with('reports')->with('comments')->with('oprep');
         
         if ($request->filled('user_id')){
            $query = $query->where('user_id',$request->user_id);  
@@ -37,6 +37,7 @@ class AgrolyticController extends Controller
 
         if ($request->filled('cat_id')){
            $query = $query->where('cat_id',$request->cat_id);
+        //    echo 'cat_id query.';
         }
 
         if ($request->filled('sec_id')){
@@ -139,6 +140,46 @@ class AgrolyticController extends Controller
 
     }
 
+
+    function storeBulk(Request $request){
+
+        $countRows = 0; 
+        $k = -1;
+        $bulkRequest = $request->blob;
+        
+        // dd($bulkRequest);
+
+         foreach ($bulkRequest as $k=>$v){
+         
+           $agrolytic = new Agrolytic;
+           
+        //    $agrolytic->group_name_id = $v['group_name_id']; // $request->group_name_id;
+           $agrolytic->pag_objective = $v['pag_objective']; //$request->pag_objective;
+           $agrolytic->cat_id = $v['cat_id']; //$request->cat_id;
+           $agrolytic->sec_id = $v['sec_id']; //$request->sec_id;
+           $agrolytic->customer_id = $v['customer_id']; //$request->customer_id;
+           $agrolytic->prospect = $v['prospect']; //$request->prospect;
+           $agrolytic->comp_objective = $v['comp_objective']; //$request->comp_objective;
+           $agrolytic->initiative = $v['initiative']; //$request->initiative;
+           $agrolytic->user_id =  $request->user_id; //Auth::user()->id;
+        //    $agrolytic->date_created = date('Y-m-d h:i:s');
+        //    $agrolytic->op_rep = $v['op_rep']; //$request->op_rep;
+        //    $agrolytic->status = $v['status']; //$request->status;
+   
+           $agrolytic->save(); 
+
+         }
+
+       $countRows = $k + 1;
+       
+       return [
+           'message'=>'Processed ' . $countRows . ' - Rows.'
+       ];
+
+
+    }
+
+
     /**
      * Display the specified resource.
      *
@@ -190,6 +231,19 @@ class AgrolyticController extends Controller
         }
 
     }
+
+
+    public function assignToOpRep(Request $request,Agrolytic $agrolytic)
+    {
+
+        $agrolytic->op_rep = $request->op_rep;
+
+        if ($agrolytic->save()){
+            return new AgrolyticResource($agrolytic);
+        }
+
+    }
+
 
     /**
      * Remove the specified resource from storage.

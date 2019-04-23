@@ -15,10 +15,25 @@ class SectorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+
+
+        if ($request->filled('return_type')){
+            if ($request->return_type == 'count'){
+              return [
+                  'count'=>Sector::count()
+              ]; 
+            }else if ($request->return_type == 'all'){
+              return SectorResource::collection(Sector::orderBy('id','desc')->get());
+            }else{
+              return SectorResource::collection(Sector::orderBy('id','desc')->paginate(5));
+            }   
+        }else{
+            return SectorResource::collection(Sector::orderBy('id','desc')->paginate(5));
+        }
+        
         //
-        return SectorResource::collection(Sector::orderBy('id','desc')->paginate(5));
 
     }
 

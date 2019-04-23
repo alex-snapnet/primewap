@@ -16,4 +16,8 @@ class Comment extends Model
     public function agrolytic(){
     	return $this->belongsTo('App\Agrolytic','agro_id')->withDefault();
     }
+
+    function replies(){
+        return $this->hasMany(Reply::class,'comment_id');
+    }
 }

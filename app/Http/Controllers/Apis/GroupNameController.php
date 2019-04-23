@@ -18,11 +18,26 @@ class GroupNameController extends Controller
     public function index(Request $request)
     {
         //
-        $query = GroupName::orderBy('id','desc');
-        if ($request->filled('group_name_id')){//group_name_id
-           $query = $query->where('group_name_id',$request->group_name_id);
+        // $query = GroupName::orderBy('id','desc');
+        // if ($request->filled('group_name_id')){//group_name_id
+        //    $query = $query->where('group_name_id',$request->group_name_id);
+        // }
+
+        if ($request->filled('return_type')){
+            if ($request->return_type == 'count'){
+              return [
+                  'count'=>GroupName::count()
+              ]; 
+            }else if ($request->return_type == 'all'){
+              return GroupNameResource::collection(GroupName::orderBy('id','desc')->get());
+            }else{
+              return GroupNameResource::collection(GroupName::orderBy('id','desc')->paginate(5));
+            }   
+        }else{
+            return GroupNameResource::collection(GroupName::orderBy('id','desc')->paginate(5));
+            // return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
         }
-        return GroupNameResource::collection($query->paginate(5));
+        // return GroupNameResource::collection($query->paginate(5));
     }
 
     /**

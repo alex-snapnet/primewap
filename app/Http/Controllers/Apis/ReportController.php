@@ -93,9 +93,10 @@ class ReportController extends Controller
         $report->report = $request->report;
         $report->user_id = $request->user_id;
         $report->agro_id = $request->agro_id;
-        $report->status = $request->status;
-        $report->day_week =  date('Y-m-d'); //2018-07-27
-        $report->prog_status = $request->prog_status;
+        $report->notes = $request->notes;
+        // $report->status = $request->status;
+        // $report->day_week =  date('Y-m-d'); //2018-07-27
+        // $report->prog_status = $request->prog_status;
         // $report->report = $request->report;
 
 
@@ -112,9 +113,9 @@ class ReportController extends Controller
 
     private function updateAgrolyticWithRecentReport(Report $report){
        $agrolyticObj = Agrolytic::find($report->agro_id);
-       $agrolyticObj->status = $report->status;
-       $agrolyticObj->prog_status = $report->prog_status;
-       $agrolyticObj->save();
+       $agrolyticObj->recomputeProgress(); // = $report->status;
+    //    $agrolyticObj->prog_status = $report->prog_status;
+    //    $agrolyticObj->save();
     }
 
     /**
@@ -151,15 +152,17 @@ class ReportController extends Controller
     {
         //
 
-        $report->report = $request->report;
+        if ($request->filled('report'))$report->report = $request->report;
+        if ($request->filled('done'))$report->done = $request->done;
         // $report->user_id = $request->user_id;
         // $report->agro_id = $request->agro_id;
-        $report->status = $request->status;
+        // $report->status = $request->status;
         // $report->day_week =  date('Y-m-d'); //2018-07-27
-        $report->prog_status = $request->prog_status;
+        if ($request->filled('notes'))$report->notes = $request->notes;
 
 
         if ($report->save()){
+           $this->updateAgrolyticWithRecentReport($report);
            return new ReportResource($report);
         }else{
            return [
@@ -180,6 +183,7 @@ class ReportController extends Controller
     {
         //
         $report->delete();
+        $this->updateAgrolyticWithRecentReport($report);
         return $this->index($request);
 
     }

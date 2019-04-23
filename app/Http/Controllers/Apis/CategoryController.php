@@ -9,6 +9,8 @@ use App\Http\Resources\CategoryResource;
 use App\Category;
 use Exception;
 
+use App\AuditTrail;
+
 class CategoryController extends Controller
 {
     /**
@@ -16,10 +18,24 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        return CategoryResource::collection(Category::orderBy('id','desc')->paginate(5));
+
+        if ($request->filled('return_type')){
+            if ($request->return_type == 'count'){
+              return [
+                  'count'=>Category::count()
+              ]; 
+            }else if ($request->return_type == 'all'){
+              return CategoryResource::collection(Category::orderBy('id','desc')->get());
+            }else{
+              return CategoryResource::collection(Category::orderBy('id','desc')->paginate(5));
+            }   
+        }else{
+            return CategoryResource::collection(Category::orderBy('id','desc')->paginate(5));
+        }
+
     }
 
     /**
@@ -46,6 +62,8 @@ class CategoryController extends Controller
         $categoryObject->name = $request->name;
 
         if ($categoryObject->save()){
+          $id = $categoryObject->id;
+          (new AuditTrail)->logCategory($id,$request->user_id,'store');  
           return new CategoryResource($categoryObject);             
         }
     }
@@ -83,6 +101,10 @@ class CategoryController extends Controller
     public function update(Request $request,Category $category)
     {
         //
+
+        $id = $category->id;
+        (new AuditTrail)->logCategory($id,$request->user_id,'update');
+
         $category->name = $request->name;
         if ($category->save()){
            return new CategoryResource($category);
@@ -95,9 +117,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category,Request $request)
     {
         //
+        $id = $category->id;
+        (new AuditTrail)->logCategory($id,$request->user_id,'destroy');
         if ($category->delete()){
           return new CategoryResource($category);
         }
