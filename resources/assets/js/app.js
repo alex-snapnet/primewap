@@ -79,6 +79,8 @@ Vue.component('assign-to-op-rep',require('./components/AssignToOpRepComponent.vu
 
 Vue.component('milestones',require('./components/MilestonesComponent.vue').default);
 
+Vue.component('reply',require('./components/ReplyComponent.vue').default);
+
 
 //AssignToOpRepComponent
 

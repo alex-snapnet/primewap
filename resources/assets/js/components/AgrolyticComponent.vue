@@ -184,7 +184,11 @@
                  </milestones>
                </td>
                <td>
-                  {{ data_.reports? data_.comments.length.toLocaleString() : 0 }}
+                 <comment
+                   :agro_id="data_.id"
+                   :user_id="user_id"
+                   :comp_id="data_.id"
+                   :count="data_.reports? data_.comments.length.toLocaleString() : 0"></comment>
                </td>
                <td>
                    {{ data_.oprep? data_.oprep.name : 'N/A' }}

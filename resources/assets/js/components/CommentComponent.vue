@@ -1,21 +1,24 @@
 <template>
   
-  <div class="row">
+  <span>
 
 
 <!-- comment modal start -->
-<div class="modal fade" id="commentModalSelf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" :id="'commentListModal' + comp_id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Comment</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Comment{{ commentCount > 1 ? 's':'' }} ({{ commentCount.toLocaleString() }}) 
+
+        <img v-show="busy" src="/images/loader.gif" style="height: 30px;"/>
+        
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
-      <form @submit.prevent="saveComment">
       <div class="modal-body">
 
           <div class="container">
@@ -24,51 +27,19 @@
         <div class="col-md-12">
 
 
-           <div class="form-group col-md-12">
-               <label for="">
-                   Comment
-               </label>
-               <input placeholder="Your comment" class="form-control" v-model="comment.comment" />
-           </div>  
-
-           <div style="clear: both;"></div> 
+<!-- content start -->
 
 
-        </div>
-
-              </div>
-          </div>
-        
-
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary" data-target="#commentModal" data-toggle="modal">Post Comment</button>
-      </div>
-
-      </form>
-
-
-    </div>
-  </div>
-</div>
-<!-- comment modal stop -->
-
-
-
-<div class="col-lg-12">
+<div class="col-lg-12" style="padding: 0;">
       <div class="card">
           <div class="card-body" style="padding-left: 7px;padding-right: 7px;">
 
 
-<div class="col-lg-12">
-    <h4><u>Comments ({{ commentCount.toLocaleString() }})</u>
-    
-<img v-show="busy" src="/images/loader.gif" style="height: 45px;"/>
-    
+<!-- <div class="col-lg-12">
+    <h4>    
     </h4>
-</div>
+</div> -->
+
 <div class="col-lg-12" align="right">
     <!-- <a href="/manage-agrolytic"  class="btn btn-info" style="margin-bottom: 7px;">Back To Agrolytic</a> -->
 
@@ -93,8 +64,14 @@
              </div>
              <div align="right">
 <!-- data-target="#commentModalSelf" data-toggle="modal" -->
-                 <a v-show="canModifySingle(com) && inMinutes(com.created_at)" href="#" @click.prevent="linktoForm(com)" class="btn btn-info btn-sm" style="background-color: #8a8aca;border: 0;">Edit</a>
-                 <a v-show="canModifySingle(com) && inMinutes(com.created_at)" href="" @click.prevent="removeComment(com)" class="btn btn-danger btn-sm" style="background-color: #e29292;border: 0;">Remove</a> 
+<!-- v-show="canModifySingle(com) && inMinutes(com.created_at)" -->
+
+                 <a href="#" @click.prevent="linktoForm(com)" class="btn btn-sm btn-outline-warning">
+                   <i class="fa fa-pencil"></i>
+                 </a>
+                 <a href="" @click.prevent="removeComment(com)" class="btn btn-sm btn-outline-danger">
+                   <i class="fa fa-times"></i>  
+                 </a> 
              </div>
          </div>
 
@@ -130,8 +107,45 @@
 </nav>
 </div>
 
+<!-- content stop -->
 
+           <div style="clear: both;"></div> 
+
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal">Close</button>
+      </div>
+
+      
+
+
+    </div>
   </div>
+</div>
+<!-- comment modal stop -->
+
+
+<!-- content start -->
+
+<!-- content stop -->
+
+
+                 <a @click.prevent="init" href="" style="
+color: rgb(255, 255, 255);background-color: rgb(0, 0, 0);padding: 4px;border-radius: 50%;display: inline-block;text-align: center;
+"  class="count-indicator" :data-target="'#commentListModal' + comp_id" data-toggle="modal">
+                  <span class="count">{{ count?  count.toLocaleString() : 0 }}</span>
+                 </a>  
+
+
+  </span>
 
 </template>
 
@@ -140,7 +154,9 @@ export default {
     
     props:[
         'agro_id',
-        'user_id'
+        'user_id',
+        'comp_id',
+        'count'
     ],
 
     watch:{
@@ -192,21 +208,24 @@ export default {
 
     mounted(){
       //this.commentModalSelf();
-      this.fetchComments();
-      this.fetchAgrolytic();
 
       this.$root.$on('reloadComment',(agro_id)=>{
         //  console.log(agro_id,this.agro_id);  
           // alert('agro-change--root.');
           this.agro_id_cache = agro_id;
-          this.fetchComments();
-          this.fetchAgrolytic();
+          // this.fetchComments();
+          // this.fetchAgrolytic();
         // if (this.agro_id == agro_id){}
 
       });
     },
 
     methods: {
+          
+        init(){
+          this.fetchComments();
+          this.fetchAgrolytic();
+        }, 
 
         inMinutes(d1){
          let t2 = (new Date).getTime();
@@ -275,7 +294,7 @@ export default {
                 this.comments = res.data;
                 // this.statusBusy('');  
                 this.makePagination(res.meta,res.links);
-                this.$root.$emit('fetchAgrolytic'); //wicked code.
+                // this.$root.$emit('fetchAgrolytic'); //wicked code.
                 this.busy = false;
 
             })
@@ -339,6 +358,7 @@ export default {
              this.comment.comment = '';
             //  this.closeForm();
              this.fetchComments(); 
+             this.$root.$emit('fetchAgrolytic'); //wicked code.
           }).catch(e=>console.log(e));
         },
         doCreate(){
@@ -358,6 +378,7 @@ export default {
              this.comment.comment = '';
             //  this.closeForm();
              this.fetchComments();
+             this.$root.$emit('fetchAgrolytic'); //wicked code.
           }).catch(e=>console.log(e));
         }, 
         doRemove(comment){
@@ -378,6 +399,7 @@ export default {
             //  this.comment.comment = '';
             //  this.closeForm();
              this.fetchComments();
+             this.$root.$emit('fetchAgrolytic'); //wicked code.
           }).catch(e=>console.log(e));
         },
 
@@ -396,3 +418,9 @@ export default {
     
 }
 </script>
+
+<style scoped>
+ .page-link{
+   color: #000 !important;
+ }
+</style>

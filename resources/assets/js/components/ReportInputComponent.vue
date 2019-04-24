@@ -30,6 +30,15 @@
                <input type="text" class="form-control" v-model="reportData.report" placeholder="Milestone"/>
            </div>  
 
+
+           <div class="form-group col-md-12">
+               <label for="">
+                   Hint
+               </label>
+               <input type="text" class="form-control" v-model="reportData.additional_notes" placeholder="Hint"/>
+           </div>  
+
+
            <div style="clear: both;"></div> 
 
            <!-- <div class="form-group col-md-12">
@@ -83,8 +92,8 @@
        <img v-show="busy" src="/images/loader.gif" style="height: 45px;"/>
 
 
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary">Post Milestone</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal">Close</button>
+        <button class="btn btn-sm btn-outline-primary">Post Milestone</button>
       </div>
 
       </form>

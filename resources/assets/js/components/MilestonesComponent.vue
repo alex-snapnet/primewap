@@ -17,9 +17,9 @@
  <!-- content start -->
 
 <!-- start -->
-<div class="col-lg-12">
+<div class="col-lg-12" style="padding: 0;">
       <div class="card">
-          <div class="card-body" style="padding-left: 7px;padding-right: 7px;">
+          <div class="card-body" style="padding-left: 7px;padding-right: 7px;padding: 0;">
 
 
 <div class="col-lg-12">
@@ -43,8 +43,9 @@
 
 
 <div class="form-group col-md-12" style="margin: 0;">
-   <button class="btn btn-primary"> {{ edit? 'Save' : 'Add Milestone' }} </button>
-   <button v-show="edit" @click.prevent="edit = false;resetForm();" class="btn btn-warning">Cancel</button>
+   <button class="btn btn-sm btn-outline-primary"> {{ edit? 'Save' : 'Add Milestone' }} </button>
+   
+   <button v-show="edit" @click.prevent="edit = false;resetForm();" class="btn btn-sm btn-outline-warning">Cancel</button>
 </div>
 
 
@@ -52,7 +53,7 @@
             </form>
       
 
-        <div class="col-xs-12" style="padding-top: 20px;height: 300px;overflow-y: scroll;">
+        <div class="col-xs-12" style="padding-top: 20px;height: 300px;overflow-y: scroll;/* border: 1px solid #bbb; */background-color: #eee;margin-top: 10px;border-radius: 14px;margin-bottom: 10px;">
              
              <div v-for="item in list" v-bind:key="item.id" style="
     border: 1px solid #bbb;
@@ -61,11 +62,12 @@
 ">
                
                <div class="col-md-12">
-                <b>Milestone: </b> {{ item.report }}
+                <b>#</b> {{ item.report }}
                </div>
 
-               <div class="col-md-12">
-                 <b>Hint: </b>{{ item.notes }}
+
+               <div class="col-md-12" style="margin-top: 5px;">
+                 <b>!</b>{{ item.notes }}
                </div>
 
 
@@ -85,7 +87,7 @@
 
               <form @submit.prevent="markAsCompleted(item)">
               
-              </form>
+              
                <div class="col-md-12">
                  <label>Done? <input type="checkbox" v-model="item.done"/> </label>
                </div>
@@ -96,6 +98,33 @@
 
                <div class="col-md-12" v-show="+item.done == 1">
                  <button class="btn btn-sm btn-outline-warning">Mark As Completed</button>
+               </div>
+
+               </form>
+
+
+
+               <div class="col-md-6 box" align="right" style="
+    text-align: left;
+    color: #aaa;
+">
+                Created: <small>{{ item.created_at | ago }} </small><br />
+               </div>
+
+               <div class="col-md-6 box" align="right" style="
+    text-align: right;
+    color: #aaa;
+">
+                Last Updated: <small>{{ item.updated_at | ago }}</small>
+               </div>
+
+              <div style="clear: both;"></div>
+
+               <div class="col-md-12" align="right" style="
+    text-align: left;
+    color: #aaa;
+">
+                <b>Executed By <small>{{ item.user.email? item.user.email : "?" }}</small></b>
                </div>
 
 
@@ -145,7 +174,7 @@
 
 <!-- link start -->
 
-                 <a href="" style="
+                 <a @click.prevent="init" href="" style="
 color: rgb(255, 255, 255);background-color: rgb(0, 0, 0);padding: 4px;border-radius: 50%;display: inline-block;text-align: center;
 "  class="count-indicator" :data-target="'#milestonesListModal' + comp_id" data-toggle="modal">
                   <span class="count">{{ count?  count.toLocaleString() : 0 }}</span>
@@ -182,6 +211,11 @@ export default {
        };
     },
 
+    filters:{
+       ago(value){
+          return moment(new Date(value)).fromNow();
+       }
+    },
     
 
     watch:{
@@ -194,11 +228,21 @@ export default {
 
     mounted(){
       //  alert('Agro-ID:' + this.agro_id);    
-      this.fetchMileStones();
+
+      this.$root.$on('openMilestone',(id)=>{
+         //milestonesListModal
+         if (id == this.comp_id){
+            $('#milestonesListModal' + id).modal();
+         }
+      });
 
     },
 
     methods:{
+       
+       init(){
+          this.fetchMileStones();           
+       },
 
         makePagination(meta,links){
            
@@ -225,6 +269,7 @@ export default {
             .then(res=>{
                 this.list = res.data;
                 this.makePagination(res.meta,res.links);
+                
             });
       },
       save(){
@@ -252,6 +297,7 @@ export default {
            this.fetchMileStones();
            this.scanResponse(res);
            this.resetForm();
+           this.$root.$emit('fetchAgrolytic');
          });
       },
       updateMileStone(){
@@ -268,6 +314,7 @@ export default {
            this.fetchMileStones();
            this.scanResponse(res);
            this.resetForm();
+           this.$root.$emit('fetchAgrolytic');
          });
       },
       removeMileStone(data){
@@ -296,6 +343,25 @@ export default {
       linktoFormForReply(data){
          this.taskReply.done = true;
          this.taskReply.additional_notes = data.additional_notes;
+      },
+      markAsCompleted(data){
+        toastr.success('Saving Status ...');
+          fetch(baseURL + 'report/' + data.id,{
+           method:'PUT',
+           headers:{
+             'content-Type':'application/json'
+           },
+           body:JSON.stringify({
+             done:data.done,
+             additional_notes:data.additional_notes,
+             user_id:this.user_id
+           })
+         }).then(res=>res.json()).then(res=>{
+           this.fetchMileStones();
+           this.scanResponse(res);
+           this.resetForm();
+           this.$root.$emit('fetchAgrolytic'); //wicked code.
+         });
       },
       scanResponse(res){
           if (res.message){

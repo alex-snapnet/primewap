@@ -81,6 +81,8 @@ class AgrolyticController extends Controller
 
         // echo $query->toSql();
 
+        $recordsPerPage = 7;
+
         if ($request->filled('return_type')){
           if ($request->return_type == 'count'){
             return [
@@ -89,10 +91,10 @@ class AgrolyticController extends Controller
           }else if ($request->return_type == 'all'){
             return AgrolyticResource::collection($query->orderBy('id','desc')->get());
           }else{
-            return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
+            return AgrolyticResource::collection($query->orderBy('id','desc')->paginate($recordsPerPage));
           }   
         }else{
-          return AgrolyticResource::collection($query->orderBy('id','desc')->paginate(5));
+          return AgrolyticResource::collection($query->orderBy('id','desc')->paginate($recordsPerPage));
         }
  
     }

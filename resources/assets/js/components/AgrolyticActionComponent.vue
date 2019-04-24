@@ -160,8 +160,9 @@ export default {
             }else if (n == 'add-comment'){
                this.$emit('selectAgrolyticRow',this.data);
                $('#a-add-comment').trigger('click');
-            }else if (n == 'view-report'){
-               location.href = this.getReportLink(); 
+            }else if (n == 'view-report'){ //this is for view milestones as a popup
+               this.$root.$emit('openMilestone',this.data.id);
+              //  location.href = this.getReportLink(); 
             }else if (n == 'view-comment'){
                this.$emit('linktoForm',this.data);
                this.$root.$emit('reloadComment',this.data.id);

@@ -91,7 +91,7 @@ class ReportController extends Controller
     {
         //
         $report->report = $request->report;
-        $report->user_id = $request->user_id;
+        // $report->user_id = $request->user_id;
         $report->agro_id = $request->agro_id;
         $report->notes = $request->notes;
         // $report->status = $request->status;
@@ -154,7 +154,8 @@ class ReportController extends Controller
 
         if ($request->filled('report'))$report->report = $request->report;
         if ($request->filled('done'))$report->done = $request->done;
-        // $report->user_id = $request->user_id;
+        $report->user_id = $request->user_id;
+        if ($request->filled('additional_notes'))$report->additional_notes = $request->additional_notes;
         // $report->agro_id = $request->agro_id;
         // $report->status = $request->status;
         // $report->day_week =  date('Y-m-d'); //2018-07-27

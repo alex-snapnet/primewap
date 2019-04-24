@@ -56,11 +56,11 @@
 
 <div class="col-xs-12" align="right" style="margin-bottom: 12px;">
 
-  <export-csv :excelStyle="{'margin-bottom':'0 !important'}" v-bind:data="groups"></export-csv>     
+  <!-- <export-csv :excelStyle="{'margin-bottom':'0 !important'}" v-bind:data="groups"></export-csv>      -->
 
   <!-- importGroupModal -->
 
- <excel-import  @batchCreated="batchCreateNotificationAndReload" :compId="23" :apiBatchCreate="batchCreate"></excel-import>
+ <!-- <excel-import  @batchCreated="batchCreateNotificationAndReload" :compId="23" :apiBatchCreate="batchCreate"></excel-import> -->
   <!-- <a @click.prevent="doAdd" href="#" class="btn btn-sm btn-info" data-target="#importGroupModal" data-toggle="modal">Import Group</a> -->
 
 </div>
