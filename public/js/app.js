@@ -1983,6 +1983,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['agro_id', 'user_id', 'comp_id', 'count'],
   watch: {
@@ -4515,6 +4540,46 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4539,21 +4604,31 @@ __webpack_require__.r(__webpack_exports__);
         content: ''
       },
       edit: false,
-      id: ''
+      id: '',
+      clicked: false,
+      pagination: {}
     };
   },
-  props: ['comp_id', 'comment_id'],
+  props: ['comp_id', 'comment_id', 'user_id'],
+  filters: {
+    ago: function ago(value) {
+      return moment(new Date(value)).fromNow();
+    }
+  },
   mounted: function mounted() {
     var _this = this;
 
     this.$root.$on('openReplies', function (id) {
       if (id == _this.comp_id) {
         _this.fetchReplies();
+
+        _this.clicked = true;
       }
     });
   },
-  methods: {
+  methods: _defineProperty({
     makePagination: function makePagination(meta, links) {
+      console.log(meta, links);
       this.pagination.first = links.first;
       this.pagination.last = links.last;
       this.pagination.prev = links.prev;
@@ -4580,10 +4655,14 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (res) {
         return res.json();
       }).then(function (res) {
+        _this2.list = res.data;
+
         _this2.makePagination(res.meta, res.links);
       }); // this.makePagination(res.meta,res.links);
     },
     saveReply: function saveReply() {
+      toastr.success('Replying ...');
+
       if (this.edit) {
         this.updateReply();
       } else {
@@ -4591,17 +4670,68 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.edit = false;
+      this.data.content = '';
     },
     addReply: function addReply() {
-      fetch(baseURL + 'reply?comment_id=' + this.comment_id, {
-        method: 'GET'
+      var _this3 = this;
+
+      fetch(baseURL + 'reply', {
+        method: 'POST',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          comment_id: this.comment_id,
+          user_id: this.user_id,
+          content: this.data.content
+        })
       }).then(function (res) {
         return res.json();
-      }).then(function (res) {});
+      }).then(function (res) {
+        _this3.scanResponse(res);
+
+        toastr.success('Reply Added');
+
+        _this3.fetchReplies();
+      });
     },
-    updateReply: function updateReply() {},
-    linkToForm: function linkToForm(data) {}
-  }
+    updateReply: function updateReply() {
+      var _this4 = this;
+
+      fetch(baseURL + 'reply/' + this.id, {
+        method: 'PUT',
+        headers: {
+          'content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: this.data.content
+        })
+      }).then(function (res) {
+        return res.json();
+      }).then(function (res) {
+        _this4.scanResponse(res);
+
+        toastr.success('Reply Updated');
+
+        _this4.fetchReplies();
+      });
+    },
+    linkToForm: function linkToForm(data) {
+      this.id = data.id;
+      this.data.content = data.content;
+      this.edit = true;
+    }
+  }, "scanResponse", function scanResponse(res) {
+    if (res.message) {
+      if (res.error) {
+        toastr.error(res.message);
+      } else {
+        toastr.success(res.message);
+      }
+    } else {
+      toastr.success('Done');
+    }
+  })
 });
 
 /***/ }),
@@ -10141,9 +10271,20 @@ var render = function() {
                                           [
                                             _c("div", [
                                               _c("b", [
-                                                _c("u", [
-                                                  _vm._v(_vm._s(com.user.name))
-                                                ])
+                                                _c(
+                                                  "u",
+                                                  {
+                                                    staticStyle: {
+                                                      display: "inline-block",
+                                                      "margin-bottom": "6px"
+                                                    }
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      _vm._s(com.user.name)
+                                                    )
+                                                  ]
+                                                )
                                               ])
                                             ]),
                                             _vm._v(" "),
@@ -10169,6 +10310,36 @@ var render = function() {
                                               "div",
                                               { attrs: { align: "right" } },
                                               [
+                                                _c(
+                                                  "a",
+                                                  {
+                                                    staticClass:
+                                                      "btn btn-sm btn-outline-success",
+                                                    staticStyle: {
+                                                      "font-size": "12px"
+                                                    },
+                                                    attrs: { href: "#" },
+                                                    on: {
+                                                      click: function($event) {
+                                                        $event.preventDefault()
+                                                        return _vm.$root.$emit(
+                                                          "openReplies",
+                                                          com.id
+                                                        )
+                                                      }
+                                                    }
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      "\n                   Replies (" +
+                                                        _vm._s(
+                                                          com.replies_count
+                                                        ) +
+                                                        ")\n                 "
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
                                                 _c(
                                                   "a",
                                                   {
@@ -10214,8 +10385,17 @@ var render = function() {
                                                   ]
                                                 )
                                               ]
-                                            )
-                                          ]
+                                            ),
+                                            _vm._v(" "),
+                                            _c("reply", {
+                                              attrs: {
+                                                comp_id: com.id,
+                                                comment_id: com.id,
+                                                user_id: _vm.user_id
+                                              }
+                                            })
+                                          ],
+                                          1
                                         )
                                       ]
                                     )
@@ -13006,14 +13186,111 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("span", [
-    _c("img", {
-      directives: [
-        { name: "show", rawName: "v-show", value: _vm.busy, expression: "busy" }
+    _vm._v("\n  \n    \n\n   "),
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.clicked,
+            expression: "clicked"
+          }
+        ],
+        staticClass: "col-md-12"
+      },
+      [
+        _c("div", { staticClass: "form-group" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.data.content,
+                expression: "data.content"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", placeholder: "Reply Here." },
+            domProps: { value: _vm.data.content },
+            on: {
+              keyup: function($event) {
+                if (
+                  !$event.type.indexOf("key") &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                return _vm.saveReply($event)
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.data, "content", $event.target.value)
+              }
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.list, function(lst) {
+          return _c(
+            "div",
+            {
+              key: lst.id,
+              staticClass: "col-md-12",
+              staticStyle: { "padding-right": "0" }
+            },
+            [
+              _c(
+                "div",
+                {
+                  staticStyle: {
+                    "background-color": "#eee",
+                    padding: "6px",
+                    "margin-bottom": "3px"
+                  }
+                },
+                [
+                  _c("div", [
+                    _c(
+                      "b",
+                      {
+                        staticStyle: {
+                          "margin-bottom": "6px",
+                          display: "inline-block"
+                        }
+                      },
+                      [
+                        _vm._v(
+                          _vm._s(
+                            lst.user.email ? lst.user.email : "anonymous-err"
+                          )
+                        )
+                      ]
+                    )
+                  ]),
+                  _vm._v(
+                    "\n\n            " + _vm._s(lst.content) + "\n            "
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticStyle: { color: "#888", "font-size": "11px" },
+                      attrs: { align: "right" }
+                    },
+                    [_c("b", [_vm._v(_vm._s(_vm._f("ago")(lst.created_at)))])]
+                  )
+                ]
+              )
+            ]
+          )
+        })
       ],
-      staticStyle: { height: "45px" },
-      attrs: { src: "/images/loader.gif" }
-    }),
-    _vm._v("\n\n  \n\n")
+      2
+    )
   ])
 }
 var staticRenderFns = []

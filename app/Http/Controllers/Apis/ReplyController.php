@@ -19,18 +19,20 @@ class ReplyController extends Controller
     public function index(Request $request)
     {
         //
-        $query = null;  
+        $query = Reply::orderBy('id','desc')->with('user');  
         if ($request->has('comment_id')){
-            $query = Reply::where('comment_id',$request->comment_id);
+            $query = $query->where('comment_id',$request->comment_id);
         }
 
-        if (is_null($query)){
-            $query = Reply::with('comment');
-            return ReplyResource::collection($query->paginate(5));                        
-        }else{
-            $query = Reply::with('comment');
-            return ReplyResource::collection($query->paginate(5));                        
-        }
+
+        $query = $query->with('comment');
+        return ReplyResource::collection($query->paginate(5));    
+
+        // if (is_null($query)){
+        //     $query = Reply::with('comment');
+        //     return ReplyResource::collection($query->paginate(5));                        
+        // }else{
+        // }
 
     }
 

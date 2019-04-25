@@ -20,7 +20,7 @@ class CommentController extends Controller
     {
         //
 
-        $query = Comment::orderBy('id','desc')->with('user')->with('agrolytic');
+        $query = Comment::orderBy('id','desc')->with('user')->with('agrolytic')->withCount('replies')->with('replies');
         if ($request->has('agro_id') && $request->filled('agro_id')){
           $query = $query->where('agro_id',$request->agro_id);
         }

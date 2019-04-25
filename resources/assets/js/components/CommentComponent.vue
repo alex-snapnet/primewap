@@ -56,7 +56,13 @@
   
 
          <div class="alert alert-info" style="background-color: #fff;border: 1px solid #ddd;">
-             <div><b><u>{{ com.user.name }}</u></b></div>
+             <div>
+               <b>
+                <u style="
+    display: inline-block;
+    margin-bottom: 6px;
+">{{ com.user.name }}</u>
+               </b></div>
              <p>{{ com.comment }}</p>
              <!-- {{ inMinutes(com.created_at) }} -->
              <div>
@@ -65,6 +71,11 @@
              <div align="right">
 <!-- data-target="#commentModalSelf" data-toggle="modal" -->
 <!-- v-show="canModifySingle(com) && inMinutes(com.created_at)" -->
+<!-- //openReplies -->
+
+                 <a style="font-size: 12px;" href="#" @click.prevent="$root.$emit('openReplies',com.id)" class="btn btn-sm btn-outline-success">
+                   Replies ({{ com.replies_count }})
+                 </a>
 
                  <a href="#" @click.prevent="linktoForm(com)" class="btn btn-sm btn-outline-warning">
                    <i class="fa fa-pencil"></i>
@@ -73,7 +84,21 @@
                    <i class="fa fa-times"></i>  
                  </a> 
              </div>
+
+
+         <!-- reply component here -->
+         <reply
+          :comp_id="com.id"
+          :comment_id="com.id"
+          :user_id="user_id"
+         ></reply> 
+
+
          </div>
+
+
+         <!-- openReplies -->
+          
 
 
     </div>
