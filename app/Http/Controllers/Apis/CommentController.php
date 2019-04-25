@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Comment;
 use App\Http\Resources\CommentResource;
 
+use App\User;
+
 
 class CommentController extends Controller
 {
@@ -51,6 +53,8 @@ class CommentController extends Controller
         $comment->user_id = $request->user_id;
         $comment->agro_id = $request->agro_id;
         $comment->comment = $request->comment;
+
+
         // $comment->type = $request->type;
         if ($comment->save()){
            return new CommentResource($comment);
@@ -93,10 +97,20 @@ class CommentController extends Controller
         //
         // $comment->user_id = $request->user_id;
         // $comment->agro_id = $request->agro_id;
-        $comment->comment = $request->comment;
-        // $comment->type = $request->type;
-        if ($comment->save()){
-           return new CommentResource($comment);
+        $userObj = User::find($request->user_id);
+        //canAlterComment
+        if ($userObj->canAlterComment($comment)){
+            
+            $comment->comment = $request->comment;
+            // $comment->type = $request->type;
+            if ($comment->save()){
+               return new CommentResource($comment);
+            }    
+            
+        }else{
+            return [
+                'message'=>'You do not have the permission to perform this action?'
+            ];
         }
 
     }
@@ -107,12 +121,22 @@ class CommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Comment $comment)
+    public function destroy(Comment $comment,Request $request)
     {
-        //
-        if ($comment->delete()){
-           return new CommentResource($comment); 
+
+        $userObj = User::find($request->user_id);
+        //canAlterComment
+        if ($userObj->canAlterComment($comment)){
+            if ($comment->delete()){
+                return new CommentResource($comment); 
+             }     
+        }else{
+            return [
+                'message'=>'You do not have the permission to perform this action?'
+            ];
         }
+
+        //
 
     }
 

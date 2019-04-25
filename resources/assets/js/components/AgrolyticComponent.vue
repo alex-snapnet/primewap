@@ -238,13 +238,17 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
     <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
-        <a @click.prevent="fetchAgrolytic(pagination.prev)" class="page-link" href="#">Previous</a>
+        <a @click.prevent="fetchAgrolytic(pagination.prev)" class="page-link" href="#">
+          <i class="fa fa-angle-left"></i>
+        </a>
     </li>
     <li class="page-item"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
     <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
     <li class="page-item"><a class="page-link" href="#">3</a></li>-->
     <li class="page-item" v-bind:class="[{disabled: !pagination.next}]"> 
-        <a @click.prevent="fetchAgrolytic(pagination.next)" class="page-link" href="#">Next</a>
+        <a @click.prevent="fetchAgrolytic(pagination.next)" class="page-link" href="#">
+          <i class="fa fa-angle-right"></i>
+        </a>
     </li>
   </ul>
 </nav>

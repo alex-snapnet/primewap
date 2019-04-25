@@ -217,7 +217,7 @@
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row" 
        style="background: #1459ff !important;">
 
-      <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="border: 1px solid #888;">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="border: 1px solid #888;width: 185px;">
 
         <a class="navbar-brand brand-logo">
 
@@ -234,7 +234,7 @@
       </div>
 
       <!-- navbar-menu-wrapper d-flex align-items-center -->
-      <div class="navbar-menu-wrapper d-flex align-items-center">
+      <div class="navbar-menu-wrapper d-flex align-items-center" style="width:calc(100% - 185px)">
         <!-- navbar-nav navbar-nav-left header-links d-none d-md-flex -->
         <ul class="navbar-nav navbar-nav-left header-links d-none d-md-flex">
 
@@ -255,6 +255,7 @@
     <group></group>
     <category></category>
     <user></user>
+    <customer></customer>
 
 
         </ul>

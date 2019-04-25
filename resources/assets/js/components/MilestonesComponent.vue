@@ -89,7 +89,7 @@
               
               
                <div class="col-md-12">
-                 <label>Done? <input type="checkbox" v-model="item.done"/> </label>
+                 <label>Done? <input type="checkbox" :checked="+item.done == 1" v-model="item.done"/> </label>
                </div>
 
                <div class="col-md-12" v-show="+item.done == 1">
@@ -148,11 +148,15 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
     <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
-        <a @click.prevent="fetchMileStones(pagination.prev)" class="page-link" href="#">Previous</a>
+        <a @click.prevent="fetchMileStones(pagination.prev)" class="page-link" href="#">
+          <i class="fa fa-angle-left"></i>
+        </a>
     </li>
     <li class="page-item disabled"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
     <li class="page-item" v-bind:class="[{disabled: !pagination.next}]"> 
-        <a @click.prevent="fetchMileStones(pagination.next)" class="page-link" href="#">Next</a>
+        <a @click.prevent="fetchMileStones(pagination.next)" class="page-link" href="#">
+          <i class="fa fa-angle-right"></i>
+        </a>
     </li>
   </ul>
 </nav>

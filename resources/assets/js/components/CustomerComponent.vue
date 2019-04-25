@@ -1,31 +1,32 @@
 <template>
   
-  <div class="row">
+  <span>
 
 
+<!-- comment modal start -->
+<div class="modal fade" id="customerModal11" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color: #000;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> {{ edit? 'Edit Customer':'Add Customer' }} </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
-<!-- add update section -->
-     <div class="col-lg-12">
+      <div class="modal-body">
 
- <div align="right">
-    
-     <a v-show="toggle" id="form-btn" href="" class="btn btn-sm btn-info mb-2" @click.prevent="showForm" >Add / Save Customer</a>
+          <div class="container">
+              <div class="row">
 
-     <a v-show="!toggle" id="form-btn" href="" class="btn btn-sm btn-danger mb-2" @click.prevent="hideForm" >Close</a>
- 
- </div>
+        <div class="col-md-12" style="padding: 0;">
 
-       <div class="card mb-2" id="form" style="display: none;">
-           <div class="card-body">
+            <!-- col-1 -->
+            <div class="col-md-3 box">
 
-
-       <h4>Add/Save Customer Data</h4>
-
-        <div class="col-xs-12">
-        </div>
-    
         <form @submit.prevent="saveSector">
-  
+
            <div class="form-group">
               <input v-bind:style="{border: error}" type="text" class="form-control" placeholder="Customer Name" v-model="customer.name" />    
            </div>  
@@ -45,43 +46,26 @@
            </div>  
 
 
-           <div align="right">
-                <button class="btn btn-sm btn-success">{{ text }}</button>
-           </div>
+
+<div class="form-group">
+   <button class="btn btn-sm btn-outline-primary"> {{ edit? 'Save' : 'Add User' }} </button>
+   <button v-show="edit" @click.prevent="edit = false;resetForm()" class="btn btn-sm btn-outline-warning">Cancel</button>
+</div>
+
 
 
         </form>
 
+            </div>
+            <!-- col-1 -->
+
+            <!-- col-2 -->
+            <div class="col-md-9 box">
 
 
-           </div>
-       </div>
+<!-- table content here .     -->
 
-
-
-     </div>
-     <!-- add update section -->
-
-     
-     <div class="col-lg-12">
-       
-       <div class="card">
-           <div class="card-body">
-
-        <div class="col-xs-12" style="height: 20px;">
-             {{ status }}
-        </div>
-
-
-       <h4>Manage Customers</h4>
-
-        <div class="col-xs-12">
-
-
-        </div>
-    
-        
-        <table class="table table-striped">
+        <table class="table table-striped" style="border: 1px solid rgb(20, 89, 255);margin-bottom: 5px;">
 
             <tr>
                 <th>
@@ -90,52 +74,121 @@
                 <th>
                     Contact E-mail
                 </th>
+
+                <th>
+                    Phone
+                </th>
+
                 <th></th>
+                
+                
             </tr>
 
-            <tr v-for="customer in customers" v-bind:key="customer.id">
+            <tr v-for="data_ in customers" v-bind:key="data_.id">
                <td>
-                   {{ customer.name }}
+                   {{ data_.name }}
                </td>
                <td>
-                   {{ customer.contact_email }}
+                   {{ data_.contact_email }}
                </td>
+
                <td>
-                   <a href="" @click.prevent="linktoForm(customer)" class="btn btn-sm btn-warning">Edit</a>
-                   <a href="" @click.prevent="removeCustomer(customer)" class="btn btn-sm btn-danger">Remove</a>
+                   {{ data_.phone_num }}
+               </td>
+
+               <td>
+
+
+
+<div class="dropdown">
+    <button type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sm btn-outline-info btn-secondary dropdown-toggle">
+    Actions
+   </button> 
+   <div aria-labelledby="dropdownMenuButton" class="dropdown-menu" style="position: absolute;">
+        
+        <a href="" @click.prevent="linktoForm(data_)" class="dropdown-item">Edit</a>
+        
+        <a href="" @click.prevent="removeCustomer(data_)" class="dropdown-item">Remove</a>                
+    </div>
+</div>
+
+
+
                </td>
             </tr>
 
 
         </table>
 
+
+
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
     <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
-        <a @click.prevent="fetchCustomers(pagination.prev)" class="page-link" href="#">Previous</a>
+        <a @click.prevent="fetchCustomers(pagination.prev)" class="page-link" href="#">
+            <i class="fa fa-angle-left"></i>
+        </a>
     </li>
     <li class="page-item disabled"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
     <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
     <li class="page-item"><a class="page-link" href="#">3</a></li>-->
     <li class="page-item" v-bind:class="[{disabled: !pagination.next}]"> 
-        <a @click.prevent="fetchCustomers(pagination.next)" class="page-link" href="#">Next</a>
+        <a @click.prevent="fetchCustomers(pagination.next)" class="page-link" href="#">
+            <i class="fa fa-angle-right"></i>
+        </a>
     </li>
   </ul>
 </nav>
 
-
-           </div>
-       </div>
-
-
-
-     </div>
+            </div>
+            <!-- col-2 -->
 
 
 
+<!-- content start -->
+
+<!-- table content stop  -->
 
 
+<!-- content stop -->
+
+        </div>
+
+              </div>
+          </div>
+        
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal">Close</button>
+      </div>
+
+     
+
+
+    </div>
   </div>
+</div>
+
+
+
+<!-- comment modal stop -->
+
+
+
+
+
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-target="#customerModal11" data-toggle="modal">
+              <i class="fa fa-check-circle"></i>Company</a>
+          </li>
+
+
+
+
+
+  </span>
 
 
 
@@ -384,3 +437,9 @@ export default {
     
 }
 </script>
+
+<style scoped>
+ .page-link{
+   color: #000 !important;
+ }
+</style>

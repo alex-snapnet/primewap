@@ -154,7 +154,7 @@ class ReportController extends Controller
 
         if ($request->filled('report'))$report->report = $request->report;
         if ($request->filled('done'))$report->done = $request->done;
-        $report->user_id = $request->user_id;
+        if ($request->filled('user_id'))$report->user_id = $request->user_id;
         if ($request->filled('additional_notes'))$report->additional_notes = $request->additional_notes;
         // $report->agro_id = $request->agro_id;
         // $report->status = $request->status;

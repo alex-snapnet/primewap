@@ -74,7 +74,11 @@
 <!-- //openReplies -->
 
                  <a style="font-size: 12px;" href="#" @click.prevent="$root.$emit('openReplies',com.id)" class="btn btn-sm btn-outline-success">
-                   Replies ({{ com.replies_count }})
+                   
+                   <!-- com.replies_count -->
+
+                   Replies ({{ recieveReplyCountChanged(com.id,com) }})
+                   
                  </a>
 
                  <a href="#" @click.prevent="linktoForm(com)" class="btn btn-sm btn-outline-warning">
@@ -120,13 +124,17 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination pagination-sm">
     <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
-        <a @click.prevent="fetchComments(pagination.prev)" class="page-link" href="#">Previous</a>
+        <a @click.prevent="fetchComments(pagination.prev)" class="page-link" href="#">
+          <i class="fa fa-angle-left"></i>
+        </a>
     </li>
     <li class="page-item disabled"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
     <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
     <li class="page-item"><a class="page-link" href="#">3</a></li>-->
     <li class="page-item" v-bind:class="[{disabled: !pagination.next}]"> 
-        <a @click.prevent="fetchComments(pagination.next)" class="page-link" href="#">Next</a>
+        <a @click.prevent="fetchComments(pagination.next)" class="page-link" href="#">
+          <i class="fa fa-angle-right"></i>
+        </a>
     </li>
   </ul>
 </nav>
@@ -202,6 +210,8 @@ export default {
     data(){
          
          return {
+             hotPotatoeCount:0,
+             hotPotatoeCountId:0,
              busy:false,
              agro_id_cache:'',
              list:[],
@@ -243,6 +253,11 @@ export default {
         // if (this.agro_id == agro_id){}
 
       });
+
+      this.$root.$on('replyCountChanged',(bucket)=>{
+        this.hotPotatoeCount = bucket.count;
+        this.hotPotatoeCountId = bucket.comp_id;
+      });
     },
 
     methods: {
@@ -251,6 +266,15 @@ export default {
           this.fetchComments();
           this.fetchAgrolytic();
         }, 
+
+        recieveReplyCountChanged(id,obj){ //replyCountChanged
+           if (id == this.hotPotatoeCountId){
+              obj.replies_count = this.hotPotatoeCount;
+              return this.hotPotatoeCount;
+           }else{
+              return obj.replies_count;
+           }
+        },
 
         inMinutes(d1){
          let t2 = (new Date).getTime();

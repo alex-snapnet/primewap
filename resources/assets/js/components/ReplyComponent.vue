@@ -38,9 +38,41 @@
 ">
                  <b>{{ lst.created_at | ago }}</b>
             </div>
+
+<div class="col-xs-12">
+    <a href="#" @click.prevent="linkToForm(lst)" class="btn btn-sm btn-outline-warning">
+      <i class="fa fa-pencil"></i>
+    </a>
+    <a href="" @click.prevent="removeReply(lst)" class="btn btn-sm btn-outline-danger">
+      <i class="fa fa-times"></i>  
+    </a> 
+</div>
+
           </div>
 
       </div>
+
+
+<div class="col-lg-12">
+<nav aria-label="Page navigation example">
+  <ul class="pagination pagination-sm">
+    <li v-bind:class="[{disabled: !pagination.prev}]" class="page-item">
+        <a @click.prevent="fetchReplies(pagination.prev)" class="page-link" href="#">
+          <i class="fa fa-angle-left"></i>
+        </a>
+    </li>
+    <li class="page-item disabled"><a class="page-link">Page {{ pagination.current }} of  {{ pagination.total }}</a></li>
+    <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+    <li class="page-item" v-bind:class="[{disabled: !pagination.next}]"> 
+        <a @click.prevent="fetchReplies(pagination.next)" class="page-link" href="#">
+          <i class="fa fa-angle-right"></i>
+        </a>
+    </li>
+  </ul>
+</nav>
+</div>
+
 
    </div>
 
@@ -115,14 +147,26 @@ export default {
           }  
         },
 
-        fetchReplies(){
+        fetchReplies(url){
+          
+          let api = '';
+          
+          if (url){
+             api = url + '&comment_id=' + this.comment_id;
+          }else{
+             api = baseURL + 'reply?comment_id=' + this.comment_id;
+          }
 
-          fetch(baseURL + 'reply?comment_id=' + this.comment_id,{
+          fetch(api,{
             method:'GET'
           }).then(res=>res.json())
           .then(res=>{
               this.list = res.data;
               this.makePagination(res.meta,res.links);
+              this.$root.$emit('replyCountChanged',{
+                count:res.meta.total,
+                comp_id:this.comp_id
+              });
           });
 
 // this.makePagination(res.meta,res.links);
@@ -167,7 +211,7 @@ export default {
           }).then(res=>res.json())
           .then(res=>{
              this.scanResponse(res);
-             toastr.success('Reply Updated');
+             toastr.success('Reply Updated.');
              this.fetchReplies();
           });
         },
@@ -176,7 +220,29 @@ export default {
           this.data.content = data.content;
           this.edit = true;
         },
-       scanResponse(res){
+
+        removeReply(data){
+
+          if (confirm('Do you want to confirm this action?')){
+
+            fetch(baseURL + 'reply/' + data.id,{
+              method:'DELETE',
+              headers:{
+              'content-Type':'application/json'
+              }
+            }).then(res=>res.json())
+            .then(res=>{
+              this.scanResponse(res);
+              toastr.success('Reply Removed');
+              this.fetchReplies();
+            });
+
+          }else{
+            toastr.success('Delete request cancelled.');
+          }          
+
+        },
+        scanResponse(res){
           if (res.message){
              if (res.error){
                 toastr.error(res.message);
@@ -209,6 +275,9 @@ export default {
 
  li:hover{
      background-color: azure;
+ }
+ .page-link{
+   color: #000 !important;
  }
 
 </style>
