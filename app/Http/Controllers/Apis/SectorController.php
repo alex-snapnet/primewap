@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Apis;
 
+use App\User;
+use App\Sector;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
 use App\Http\Resources\SectorResource;
-use App\Sector;
 
 class SectorController extends Controller
 {
@@ -56,7 +57,10 @@ class SectorController extends Controller
     public function store(Request $request,Sector $sector)
     {
         //
+        
         $sector->name = $request->name;
+        $sector->user_id = $request->user_id;
+
         if ($sector->save()){
           return new SectorResource($sector);
         }
@@ -96,9 +100,14 @@ class SectorController extends Controller
     public function update(Request $request,Sector $sector)
     {
         //
-        $sector->name = $request->name;
-        if ($sector->save()){
-            return new SectorResource($sector);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterSectors($sector)){
+            $sector->name = $request->name;
+            if ($sector->save()){
+                return new SectorResource($sector);
+            }    
+        }else{
+            return $userObj->getAccessDeniedError();
         }
     }
 
@@ -108,12 +117,18 @@ class SectorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sector $sector)
+    public function destroy(Sector $sector,Request $request)
     {
         //
-        if ($sector->delete()){
-          return new SectorResource($sector);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterSectors($sector)){
+            if ($sector->delete()){
+                return new SectorResource($sector);
+            }      
+        }else{
+            return $userObj->getAccessDeniedError();
         }
+     
 
     }
 

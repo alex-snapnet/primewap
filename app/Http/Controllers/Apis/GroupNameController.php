@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Apis;
 
+use App\User;
+use App\GroupName;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
 use App\Http\Resources\GroupNameResource;
-use App\GroupName;
 
 class GroupNameController extends Controller
 {
@@ -61,6 +62,7 @@ class GroupNameController extends Controller
         //
         $groupname->name = $request->name;
         $groupname->group_name_id = $request->group_name_id;
+        $groupname->user_id = $request->user_id;
 
         if ($groupname->save()){
           return new GroupNameResource($groupname);
@@ -79,6 +81,7 @@ class GroupNameController extends Controller
          foreach ($bulkRequest as $k=>$v){
            $objGroupName = new GroupName;
            $objGroupName->name = $v['name'];
+           $objGroupName->user_id = $request->user_id;
            $objGroupName->save(); 
          }
        $countRows = $k + 1;
@@ -126,10 +129,16 @@ class GroupNameController extends Controller
     public function update(Request $request,GroupName $groupname)
     {
         //
-        $groupname->name = $request->name;
-        if ($groupname->save()){
-          return new GroupNameResource($groupname);
-        }  
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterGroup($groupname)){
+            $groupname->name = $request->name;
+            if ($groupname->save()){
+              return new GroupNameResource($groupname);
+            }      
+        }else{
+            return $userObj->getAccessDeniedError();
+        }
+        
 
     }
 
@@ -139,19 +148,27 @@ class GroupNameController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(GroupName $groupname)
+    public function destroy(GroupName $groupname,Request $request)
     {
         //
-        if ($groupname->groups()->exists()){
-            return [
-                'message'=>'This group already has sub-groups, try deleting the the sub-groups first!',
-                'error'=>true
-            ];  
+
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterGroup($groupname)){
+            if ($groupname->groups()->exists()){
+                return [
+                    'message'=>'This group already has sub-groups, try deleting the the sub-groups first!',
+                    'error'=>true
+                ];  
+            }else{
+                if ($groupname->delete()){
+                    return new GroupNameResource($groupname);
+                }      
+            }    
         }else{
-            if ($groupname->delete()){
-                return new GroupNameResource($groupname);
-            }      
+            return $userObj->getAccessDeniedError();
         }
+
+
 
     }
 

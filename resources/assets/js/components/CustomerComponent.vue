@@ -314,7 +314,7 @@ export default {
 
             this.statusBusy('Loading ...');  
 
-                fetch(baseURL + 'customer',{
+                fetch(baseURL + 'customer' + '?user_id=' + authUser,{
                     
                     method:'POST',
                     body:JSON.stringify(this.customer),

@@ -54,6 +54,7 @@ class UserController extends Controller
         if (!$this->accountExists($request->email)){
             $user->name = $request->name;
             $user->email = $request->email;
+            $user->user_id = $request->user_id;
             // $user->type = '';
             if ($this->passwordIsValid($request)){
               $user->password = Hash::make($request->password);

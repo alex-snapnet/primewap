@@ -3,7 +3,7 @@
 
 <!-- comment modal start -->
 <div class="modal fade" :id="'milestonesListModal' + comp_id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       
       <div class="modal-header">
@@ -74,10 +74,10 @@
 
                <div class="col-md-12" align="right">
 
-                     <a href="" @click.prevent="linktoForm(item)" class="btn btn-sm btn-outline-warning">
+                     <a href="" @click.prevent="linktoForm(item)" class="btn btn-sm btn-outline-warning btn-icon">
                        <i class="fa fa-pencil"></i>
                      </a>
-                   <a href="" @click.prevent="removeMileStone(item)" class="btn btn-sm btn-outline-danger">
+                   <a href="" @click.prevent="removeMileStone(item)" class="btn btn-sm btn-outline-danger btn-icon">
                      <i class="fa fa-times"></i>
                    </a>
 
@@ -286,7 +286,7 @@ export default {
          this.edit = false;
       },
       addMileStone(){
-         fetch(baseURL + 'report',{
+         fetch(baseURL + 'report' + '?user_id=' + authUser,{
            method:'POST',
            headers:{
              'content-Type':'application/json'

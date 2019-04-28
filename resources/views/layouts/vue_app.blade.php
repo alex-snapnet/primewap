@@ -199,6 +199,11 @@
   .modal-backdrop{
      z-index:2;
   }
+
+
+  .btn-icon{
+    padding: 3px !important;
+  }
 </style>
 
 
@@ -365,11 +370,9 @@
 
             
 
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with
-
+            <!-- <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with
               <i class="mdi mdi-heart text-danger"></i>
-
-            </span>
+            </span> -->
 
           </div>
 
@@ -386,6 +389,8 @@
     <!-- page-body-wrapper ends -->
 
   </div>
+
+  <!-- </div> -->
 
   <!-- container-scroller -->
 

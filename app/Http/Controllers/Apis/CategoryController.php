@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Apis;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
-use App\Http\Resources\CategoryResource;
-use App\Category;
+use App\User;
 use Exception;
 
+use App\Category;
 use App\AuditTrail;
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
 {
@@ -21,6 +22,8 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         //
+
+        
 
         if ($request->filled('return_type')){
             if ($request->return_type == 'count'){
@@ -60,6 +63,7 @@ class CategoryController extends Controller
         $categoryObject = new Category; 
         //          
         $categoryObject->name = $request->name;
+        $categoryObject->user_id = $request->user_id;
 
         if ($categoryObject->save()){
           $id = $categoryObject->id;
@@ -102,13 +106,20 @@ class CategoryController extends Controller
     {
         //
 
-        $id = $category->id;
-        (new AuditTrail)->logCategory($id,$request->user_id,'update');
-
-        $category->name = $request->name;
-        if ($category->save()){
-           return new CategoryResource($category);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterCategories($category)){
+            $id = $category->id;
+            (new AuditTrail)->logCategory($id,$request->user_id,'update');
+    
+            $category->name = $request->name;
+            if ($category->save()){
+               return new CategoryResource($category);
+            }    
+        }else{
+            return $userObj->getAccessDeniedError();
         }
+
+
     }
 
     /**
@@ -120,11 +131,17 @@ class CategoryController extends Controller
     public function destroy(Category $category,Request $request)
     {
         //
-        $id = $category->id;
-        (new AuditTrail)->logCategory($id,$request->user_id,'destroy');
-        if ($category->delete()){
-          return new CategoryResource($category);
-        }
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterCategories($category)){
+            $id = $category->id;
+            (new AuditTrail)->logCategory($id,$request->user_id,'destroy');
+            if ($category->delete()){
+              return new CategoryResource($category);
+            }    
+        }else{
+            return $userObj->getAccessDeniedError();
+        }   
     }
+
 
 }

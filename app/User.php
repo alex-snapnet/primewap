@@ -2,9 +2,12 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use App\Sector;
+use App\Customer;
 use App\Repositories\traits\Micellenous;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Builder; //import this for the query-builder.
 
 class User extends Authenticatable
 {
@@ -36,6 +39,22 @@ class User extends Authenticatable
         return \App\Customer::get();
     }
 
+    function tasks(){
+        return $this->hasMany(Agrolytic::class,'user_id');
+    }
+
+    function reports(){ //milestones
+       return $this->hasMany(Report::class,'user_id');
+    }
+
+    function categories(){
+        return $this->hasMany(Category::class,'user_id');
+    }
+
+    function sectors(){
+        return $this->hasMany(Sector::class,'user_id');
+    }
+
     public function oprep($id){
         return $this->where('id',$id)->value('name');
     }
@@ -52,41 +71,73 @@ class User extends Authenticatable
         return $this->hasMany(Reply::class,'user_id');
     }
 
+    function groups(){
+        return $this->hasMany(GroupName::class,'user_id');
+    }
+
 
 
 
     function canAlterComment($comment){
-      $ref = $this;  
-      $query = $this->withCount(
-          ['comments'=>function(\Illuminate\Database\Eloquent\Builder $builder) use ($comment,$ref){
-                    $builder->where('comments.id',$comment->id)->where('user_id',$ref->id);
-      }]);
-      
-      $query = $query->where('id',$this->id);
-      
-    //   echo $query->toSql();
-    //   $sql = str_replace_array('?', $query->getBindings(), $query->toSql());
-    //   echo $sql;
-
-      $count = $query->first()->comments_count;
-
-    //   echo $count;
-      
-      return ($count > 0);
-    
+      return $this->checkAlterCapability($comment,'comments','comments');
     }
 
-    
-    // function canAlterComment($comment){
-    //    return $count = $user->withCount('comments')->wh();
+      function canAlterReplies($reply){
+        return $this->checkAlterCapability($reply,'replies','replies');      
+      }
 
-    //    $count->
-    //     echo $count;
-    //     return ($count > 0);
+      function canAlterGroup($group){
+        return $this->checkAlterCapability($group,'groups','group_names');      
+      }
+
+
+      function canAlterTasks($task){
+        return $this->checkAlterCapability($task,'tasks','agrolytics');      
+      }
+
+      function canAlterCategories($category){
+        return $this->checkAlterCapability($category,'categories','categories');      
+      }
+
+      function canAlterCustomers($customer){
+        return $this->checkAlterCapability($customer,'customers','customers');      
+      }
+
+      function canAlterReports($report){
+        return $this->checkAlterCapability($report,'reports','reports');
+      }
+
+      private function checkAlterCapability($obj,$relation,$table){
+        $ref = $this;  
+        $query = $this->withCount(
+            [$relation=>function(Builder $builder) use ($obj,$ref,$table){
+                      $builder->where($table . '.id',$obj->id)->where('user_id',$ref->id);
+        }]);
+        $query = $query->where('id',$this->id);
+        $count_field = $relation . '_count';
+        $count = $query->first()->$count_field;
+        return ($count > 0);         
+      }
+
+
+      function canAlterSectors($sector){
+        return $this->checkAlterCapability($sector,'sectors','sectors');
+      }
+
+      function canAlterGroups($group){
+
+      }
+
+    //   function canAlterCustomers($customer){
+
     //   }
 
-      function canAlterReplies($reply_id){
-       
+
+      function getAccessDeniedError(){
+          return [
+               'message'=>'You do not have the permission to perform this action!',
+               'error'=>true
+          ];
       }
 
 

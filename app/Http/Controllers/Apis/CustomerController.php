@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Apis;
 
+use App\User;
+use App\Customer;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
-use App\Customer;
 use App\Http\Resources\CustomerResource;
 
 
@@ -62,6 +63,7 @@ class CustomerController extends Controller
         $customer->address = $request->address;
         $customer->phone_num = $request->phone_num;
         $customer->added_by = $request->added_by;
+        $customer->user_id = $request->user_id;
 
 
         if ($customer->save()){
@@ -106,15 +108,21 @@ class CustomerController extends Controller
     public function update(Request $request,Customer $customer)
     {
         //
-        $customer->name = $request->name;
-        $customer->contact_email = $request->contact_email;
-        $customer->address = $request->address;
-        $customer->phone_num = $request->phone_num;
-        $customer->added_by = $request->added_by;
-
-        if ($customer->save()){
-           return new CustomerResource($customer);    
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterCustomers($customer)){
+          $customer->name = $request->name;
+          $customer->contact_email = $request->contact_email;
+          $customer->address = $request->address;
+          $customer->phone_num = $request->phone_num;
+          $customer->added_by = $request->added_by;
+  
+          if ($customer->save()){
+             return new CustomerResource($customer);    
+          }  
+        }else{
+          return $userObj->getAccessDeniedError();
         }
+
 
     }
 
@@ -124,12 +132,18 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy(Customer $customer,Request $request)
     {
         //
-        if ($customer->delete()){
-          return new CustomerResource($customer);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterCustomers($customer)){
+          if ($customer->delete()){
+            return new CustomerResource($customer);
+          }  
+        }else{
+          return $userObj->getAccessDeniedError();
         }
+
     }
 
     

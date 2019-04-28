@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ReplyResource;
 
 use App\Reply;
+use App\User;
 
 class ReplyController extends Controller
 {
@@ -97,8 +98,16 @@ class ReplyController extends Controller
     public function update(Request $request,Reply $reply)
     {
         //
-        $reply->content = $request->content;
-        $reply->save();
+        $userObj = User::find($request->user_id);
+        // dd($userObj);
+        if ($userObj->canAlterReplies($reply)){
+            $reply->content = $request->content;
+            $reply->save();    
+        }else{
+          return $userObj->getAccessDeniedError();
+        }
+
+
 
         return new ReplyResource($reply);
     }
@@ -109,11 +118,20 @@ class ReplyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Reply $reply)
+    public function destroy(Reply $reply,Request $request)
     {
         //
-        if ($reply->delete()){
-           return new ReplyResource($reply);            
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterReplies($reply)){
+            if ($reply->delete()){
+                return new ReplyResource($reply);            
+             }
+     
+            // $reply->content = $request->content;
+            // $reply->save();    
+        }else{
+          return $userObj->getAccessDeniedError();
         }
+
     }
 }

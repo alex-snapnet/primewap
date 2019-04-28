@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Apis;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-
-use App\Http\Resources\ReportResource;
+use App\User;
 use App\Report;
 
 use App\Agrolytic;
-
 use Carbon\Carbon;
+
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ReportResource;
 
 class ReportController extends Controller
 {
@@ -94,6 +95,7 @@ class ReportController extends Controller
         // $report->user_id = $request->user_id;
         $report->agro_id = $request->agro_id;
         $report->notes = $request->notes;
+        // $report->user_id = $request->user_id;
         // $report->status = $request->status;
         // $report->day_week =  date('Y-m-d'); //2018-07-27
         // $report->prog_status = $request->prog_status;
@@ -152,25 +154,32 @@ class ReportController extends Controller
     {
         //
 
-        if ($request->filled('report'))$report->report = $request->report;
-        if ($request->filled('done'))$report->done = $request->done;
-        if ($request->filled('user_id'))$report->user_id = $request->user_id;
-        if ($request->filled('additional_notes'))$report->additional_notes = $request->additional_notes;
-        // $report->agro_id = $request->agro_id;
-        // $report->status = $request->status;
-        // $report->day_week =  date('Y-m-d'); //2018-07-27
-        if ($request->filled('notes'))$report->notes = $request->notes;
-
-
-        if ($report->save()){
-           $this->updateAgrolyticWithRecentReport($report);
-           return new ReportResource($report);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterReports($report)){
+            if ($request->filled('report'))$report->report = $request->report;
+            if ($request->filled('done'))$report->done = $request->done;
+            if ($request->filled('user_id'))$report->user_id = $request->user_id;
+            if ($request->filled('additional_notes'))$report->additional_notes = $request->additional_notes;
+            // $report->agro_id = $request->agro_id;
+            // $report->status = $request->status;
+            // $report->day_week =  date('Y-m-d'); //2018-07-27
+            if ($request->filled('notes'))$report->notes = $request->notes;
+    
+    
+            if ($report->save()){
+               $this->updateAgrolyticWithRecentReport($report);
+               return new ReportResource($report);
+            }else{
+               return [
+                   'message'=>'Something went wrong!',
+                   'error'=>true
+               ]; 
+            }    
         }else{
-           return [
-               'message'=>'Something went wrong!',
-               'error'=>true
-           ]; 
+            return $userObj->getAccessDeniedError();
         }
+
+
 
     }
 
@@ -183,9 +192,17 @@ class ReportController extends Controller
     public function destroy(Report $report,Request $request)
     {
         //
-        $report->delete();
-        $this->updateAgrolyticWithRecentReport($report);
-        return $this->index($request);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterReports($report)){
+            $report->delete();
+            $this->updateAgrolyticWithRecentReport($report);
+            return $this->index($request);    
+        }else{
+            return $userObj->getAccessDeniedError(); 
+        }
 
     }
+
+
 }
+

@@ -5,7 +5,7 @@
 
 <!-- comment modal start -->
 <div class="modal fade" :id="'commentListModal' + comp_id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       
       <div class="modal-header">
@@ -44,7 +44,7 @@
     <!-- <a href="/manage-agrolytic"  class="btn btn-info" style="margin-bottom: 7px;">Back To Agrolytic</a> -->
 
 
-<input v-show="canModify" class="form-control" style="margin-bottom: 7px;" type="text" @keyup.enter="saveComment" v-model="comment.comment" placeholder="Type in your comment here." />
+<input autofocus class="form-control" style="margin-bottom: 7px;" type="text" @keyup.enter="saveComment" v-model="comment.comment" placeholder="Type in your comment here." />
 
 
     <!-- <a v-show="canModify" href="#" data-target="#commentModalSelf" data-toggle="modal" class="btn btn-success" style="margin-bottom: 7px;"> + Add Comment</a> -->
@@ -73,18 +73,18 @@
 <!-- v-show="canModifySingle(com) && inMinutes(com.created_at)" -->
 <!-- //openReplies -->
 
-                 <a style="font-size: 12px;" href="#" @click.prevent="$root.$emit('openReplies',com.id)" class="btn btn-sm btn-outline-success">
+                 <a style="font-size: 12px;" href="#" @click.prevent="$root.$emit('openReplies',com.id)" class="btn btn-sm btn-outline-success btn-icon">
                    
                    <!-- com.replies_count -->
 
                    Replies ({{ recieveReplyCountChanged(com.id,com) }})
-                   
+
                  </a>
 
-                 <a href="#" @click.prevent="linktoForm(com)" class="btn btn-sm btn-outline-warning">
+                 <a href="#" @click.prevent="linktoForm(com)" class="btn btn-sm btn-outline-warning btn-icon">
                    <i class="fa fa-pencil"></i>
                  </a>
-                 <a href="" @click.prevent="removeComment(com)" class="btn btn-sm btn-outline-danger">
+                 <a href="" @click.prevent="removeComment(com)" class="btn btn-sm btn-outline-danger btn-icon">
                    <i class="fa fa-times"></i>  
                  </a> 
              </div>

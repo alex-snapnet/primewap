@@ -40,10 +40,10 @@
             </div>
 
 <div class="col-xs-12">
-    <a href="#" @click.prevent="linkToForm(lst)" class="btn btn-sm btn-outline-warning">
+    <a href="#" @click.prevent="linkToForm(lst)" class="btn btn-sm btn-outline-warning btn-icon">
       <i class="fa fa-pencil"></i>
     </a>
-    <a href="" @click.prevent="removeReply(lst)" class="btn btn-sm btn-outline-danger">
+    <a href="" @click.prevent="removeReply(lst)" class="btn btn-sm btn-outline-danger btn-icon">
       <i class="fa fa-times"></i>  
     </a> 
 </div>
@@ -200,7 +200,7 @@ export default {
           });
         },
         updateReply(){
-          fetch(baseURL + 'reply/' + this.id,{
+          fetch(baseURL + 'reply/' + this.id + '?user_id=' + this.user_id,{
             method:'PUT',
             headers:{
              'content-Type':'application/json'
@@ -225,7 +225,7 @@ export default {
 
           if (confirm('Do you want to confirm this action?')){
 
-            fetch(baseURL + 'reply/' + data.id,{
+            fetch(baseURL + 'reply/' + data.id + '?user_id=' + this.user_id,{
               method:'DELETE',
               headers:{
               'content-Type':'application/json'

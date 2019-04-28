@@ -84,7 +84,7 @@ export default {
     methods:{
         assignToOpRep(){
             this.busy = true;
-            fetch(baseURL + 'agrolytic/assign-to-oprep/' + this.agro_id,{
+            fetch(baseURL + 'agrolytic/assign-to-oprep/' + this.agro_id + '?user_id=' + authUser,{
                 method:'POST',
                 body:JSON.stringify({
                     op_rep:this.data.op_rep

@@ -11,6 +11,8 @@ use Auth;
 
 use Carbon\Carbon;
 
+use App\User;
+
 class AgrolyticController extends Controller
 {
     /**
@@ -215,21 +217,27 @@ class AgrolyticController extends Controller
     public function update(Request $request,Agrolytic $agrolytic)
     {
 
-        $agrolytic->group_name_id = $request->group_name_id;
-        $agrolytic->pag_objective = $request->pag_objective;
-        $agrolytic->cat_id = $request->cat_id;
-        $agrolytic->sec_id = $request->sec_id;
-        $agrolytic->status = $request->status;
-        $agrolytic->customer_id = $request->customer_id;
-        $agrolytic->prospect = $request->prospect;
-        $agrolytic->comp_objective = $request->comp_objective;
-        $agrolytic->initiative = $request->initiative;
-        $agrolytic->user_id = $request->user_id; //Auth::user()->id;
-        $agrolytic->op_rep = $request->op_rep;
 
-
-        if ($agrolytic->save()){
-            return new AgrolyticResource($agrolytic);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterTasks($agrolytic)){
+            $agrolytic->group_name_id = $request->group_name_id;
+            $agrolytic->pag_objective = $request->pag_objective;
+            $agrolytic->cat_id = $request->cat_id;
+            $agrolytic->sec_id = $request->sec_id;
+            $agrolytic->status = $request->status;
+            $agrolytic->customer_id = $request->customer_id;
+            $agrolytic->prospect = $request->prospect;
+            $agrolytic->comp_objective = $request->comp_objective;
+            $agrolytic->initiative = $request->initiative;
+            $agrolytic->user_id = $request->user_id; //Auth::user()->id;
+            $agrolytic->op_rep = $request->op_rep;
+    
+    
+            if ($agrolytic->save()){
+                return new AgrolyticResource($agrolytic);
+            }    
+        }else{
+            return $userObj->getAccessDeniedError();
         }
 
     }
@@ -238,11 +246,17 @@ class AgrolyticController extends Controller
     public function assignToOpRep(Request $request,Agrolytic $agrolytic)
     {
 
-        $agrolytic->op_rep = $request->op_rep;
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterTasks($agrolytic)){
+            $agrolytic->op_rep = $request->op_rep;
 
-        if ($agrolytic->save()){
-            return new AgrolyticResource($agrolytic);
+            if ($agrolytic->save()){
+                return new AgrolyticResource($agrolytic);
+            }    
+        }else{
+            return $userObj->getAccessDeniedError();
         }
+
 
     }
 
@@ -253,11 +267,16 @@ class AgrolyticController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Agrolytic $agrolytic)
+    public function destroy(Agrolytic $agrolytic,Request $request)
     {
         //
-        if ($agrolytic->delete()){
-           return new AgrolyticResource($agrolytic);
+        $userObj = User::find($request->user_id);
+        if ($userObj->canAlterTasks($agrolytic)){
+            if ($agrolytic->delete()){
+                return new AgrolyticResource($agrolytic);
+            }     
+        }else{
+            return $userObj->getAccessDeniedError();
         }
     }
 

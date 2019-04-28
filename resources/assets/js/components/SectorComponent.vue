@@ -317,6 +317,7 @@ export default {
            .then(res=>res.json())
            .then(res=>{
               this.fetchSectors();
+              this.scanResponse(res);
               this.statusBusy('');
            })
            .catch(e=>{

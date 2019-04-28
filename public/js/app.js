@@ -1465,7 +1465,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.busy = true;
-      fetch(baseURL + 'agrolytic/assign-to-oprep/' + this.agro_id, {
+      fetch(baseURL + 'agrolytic/assign-to-oprep/' + this.agro_id + '?user_id=' + authUser, {
         method: 'POST',
         body: JSON.stringify({
           op_rep: this.data.op_rep
@@ -2851,7 +2851,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.statusBusy('Loading ...');
-      fetch(baseURL + 'customer', {
+      fetch(baseURL + 'customer' + '?user_id=' + authUser, {
         method: 'POST',
         body: JSON.stringify(this.customer),
         headers: {
@@ -4272,7 +4272,7 @@ __webpack_require__.r(__webpack_exports__);
     addMileStone: function addMileStone() {
       var _this3 = this;
 
-      fetch(baseURL + 'report', {
+      fetch(baseURL + 'report' + '?user_id=' + authUser, {
         method: 'POST',
         headers: {
           'content-Type': 'application/json'
@@ -4827,7 +4827,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     updateReply: function updateReply() {
       var _this4 = this;
 
-      fetch(baseURL + 'reply/' + this.id, {
+      fetch(baseURL + 'reply/' + this.id + '?user_id=' + this.user_id, {
         method: 'PUT',
         headers: {
           'content-Type': 'application/json'
@@ -4854,7 +4854,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this5 = this;
 
       if (confirm('Do you want to confirm this action?')) {
-        fetch(baseURL + 'reply/' + data.id, {
+        fetch(baseURL + 'reply/' + data.id + '?user_id=' + this.user_id, {
           method: 'DELETE',
           headers: {
             'content-Type': 'application/json'
@@ -5964,6 +5964,8 @@ __webpack_require__.r(__webpack_exports__);
           return res.json();
         }).then(function (res) {
           _this3.fetchSectors();
+
+          _this3.scanResponse(res);
 
           _this3.statusBusy('');
         })["catch"](function (e) {
@@ -10325,7 +10327,7 @@ var render = function() {
       [
         _c(
           "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
+          { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
           [
             _c("div", { staticClass: "modal-content" }, [
               _c("div", { staticClass: "modal-header" }, [
@@ -10393,12 +10395,6 @@ var render = function() {
                                     _c("input", {
                                       directives: [
                                         {
-                                          name: "show",
-                                          rawName: "v-show",
-                                          value: _vm.canModify,
-                                          expression: "canModify"
-                                        },
-                                        {
                                           name: "model",
                                           rawName: "v-model",
                                           value: _vm.comment.comment,
@@ -10408,6 +10404,7 @@ var render = function() {
                                       staticClass: "form-control",
                                       staticStyle: { "margin-bottom": "7px" },
                                       attrs: {
+                                        autofocus: "",
                                         type: "text",
                                         placeholder:
                                           "Type in your comment here."
@@ -10514,7 +10511,7 @@ var render = function() {
                                                   "a",
                                                   {
                                                     staticClass:
-                                                      "btn btn-sm btn-outline-success",
+                                                      "btn btn-sm btn-outline-success btn-icon",
                                                     staticStyle: {
                                                       "font-size": "12px"
                                                     },
@@ -10538,7 +10535,7 @@ var render = function() {
                                                             com
                                                           )
                                                         ) +
-                                                        ")\n                   \n                 "
+                                                        ")\n\n                 "
                                                     )
                                                   ]
                                                 ),
@@ -10547,7 +10544,7 @@ var render = function() {
                                                   "a",
                                                   {
                                                     staticClass:
-                                                      "btn btn-sm btn-outline-warning",
+                                                      "btn btn-sm btn-outline-warning btn-icon",
                                                     attrs: { href: "#" },
                                                     on: {
                                                       click: function($event) {
@@ -10570,7 +10567,7 @@ var render = function() {
                                                   "a",
                                                   {
                                                     staticClass:
-                                                      "btn btn-sm btn-outline-danger",
+                                                      "btn btn-sm btn-outline-danger btn-icon",
                                                     attrs: { href: "" },
                                                     on: {
                                                       click: function($event) {
@@ -12725,7 +12722,7 @@ var render = function() {
       [
         _c(
           "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
+          { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
           [
             _c("div", { staticClass: "modal-content" }, [
               _c("div", { staticClass: "modal-header" }, [
@@ -12948,7 +12945,7 @@ var render = function() {
                                         "a",
                                         {
                                           staticClass:
-                                            "btn btn-sm btn-outline-warning",
+                                            "btn btn-sm btn-outline-warning btn-icon",
                                           attrs: { href: "" },
                                           on: {
                                             click: function($event) {
@@ -12968,7 +12965,7 @@ var render = function() {
                                         "a",
                                         {
                                           staticClass:
-                                            "btn btn-sm btn-outline-danger",
+                                            "btn btn-sm btn-outline-danger btn-icon",
                                           attrs: { href: "" },
                                           on: {
                                             click: function($event) {
@@ -13675,7 +13672,7 @@ var render = function() {
                     _c(
                       "a",
                       {
-                        staticClass: "btn btn-sm btn-outline-warning",
+                        staticClass: "btn btn-sm btn-outline-warning btn-icon",
                         attrs: { href: "#" },
                         on: {
                           click: function($event) {
@@ -13690,7 +13687,7 @@ var render = function() {
                     _c(
                       "a",
                       {
-                        staticClass: "btn btn-sm btn-outline-danger",
+                        staticClass: "btn btn-sm btn-outline-danger btn-icon",
                         attrs: { href: "" },
                         on: {
                           click: function($event) {
