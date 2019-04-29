@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Apis;
 
+use App\User;
+use App\Reply;
+
+use App\Comment;
+
+use App\Mail\ReplyAltered;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\ReplyResource;
-
-use App\Reply;
-use App\User;
 
 class ReplyController extends Controller
 {
@@ -62,9 +65,35 @@ class ReplyController extends Controller
         $objReply->content = $request->content;
         $objReply->save();
 
+        // Mail;
+        // Mail::send();
+        // ReplyAltered;
+
+        $this->sendNotification($request->user_id,$request->comment_id,'just replied your comment with : "',$request->content);
+
+
         return new ReplyResource($objReply);
         
     }
+
+    function sendNotification($userId,$comment_id,$msg='',$reply){
+        $userModifier = User::find($userId);
+        $commentObj = Comment::find($comment_id);
+        
+        $userIdObj = User::find($commentObj->user_id);
+        // $opRepObj = User::find($agroObj->op_rep);
+
+        $tos = [$userIdObj->email];
+        if (!in_array($userModifier->email,$tos)){
+         $tos[] = $userModifier->email;
+        }
+        $tos[] = 'easymagic1@gmail.com';
+        
+        foreach ($tos as $to){
+         Mail::to($to)->send(new ReplyAltered($userModifier,$msg . $reply . '"'));
+        }
+    }
+
 
     /**
      * Display the specified resource.
@@ -101,6 +130,9 @@ class ReplyController extends Controller
         $userObj = User::find($request->user_id);
         // dd($userObj);
         if ($userObj->canAlterReplies($reply)){
+
+            $this->sendNotification($request->user_id,$reply->comment_id,'just replied your comment with : "',$request->content);
+
             $reply->content = $request->content;
             $reply->save();    
         }else{

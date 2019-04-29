@@ -4188,6 +4188,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['comp_id', 'count', 'agro_id', 'user_id' //report
   ],
@@ -4355,7 +4356,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this6 = this;
 
       toastr.success('Saving Status ...');
-      fetch(baseURL + 'report/' + data.id, {
+      fetch(baseURL + 'report/' + data.id + '?user_id=' + this.user_id, {
         method: 'PUT',
         headers: {
           'content-Type': 'application/json'
@@ -8409,11 +8410,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("optgroup", { attrs: { label: "Sort" } }, [
       _c("option", { attrs: { value: "agro-cat" } }, [
-        _vm._v("Agrolytics In This Category")
+        _vm._v("Tasks In This Category")
       ]),
       _vm._v(" "),
       _c("option", { attrs: { value: "agro-sec" } }, [
-        _vm._v("Agrolytics In This Sector")
+        _vm._v("Tasks In This Sector")
       ])
     ])
   }
@@ -8775,119 +8776,128 @@ var render = function() {
                   _vm._v(" "),
                   _c("div", { staticClass: "col-xs-12" }),
                   _vm._v(" "),
-                  _c("table", { staticClass: "table" }, [
-                    _vm._m(0),
-                    _vm._v(" "),
-                    _c(
-                      "tbody",
-                      _vm._l(_vm.list, function(data_) {
-                        return _c("tr", { key: data_.id }, [
-                          _c("td", [
-                            _vm._v(
-                              "\n                   " +
-                                _vm._s(
-                                  data_.client_customer
-                                    ? data_.client_customer.name
-                                    : "N/A"
-                                ) +
-                                "\n               "
+                  _c(
+                    "table",
+                    {
+                      staticClass: "table",
+                      staticStyle: { "box-shadow": "0 0 3px rgba(0,0,0,0.2)" }
+                    },
+                    [
+                      _vm._m(0),
+                      _vm._v(" "),
+                      _c(
+                        "tbody",
+                        _vm._l(_vm.list, function(data_) {
+                          return _c("tr", { key: data_.id }, [
+                            _c("td", [
+                              _vm._v(
+                                "\n                   " +
+                                  _vm._s(
+                                    data_.client_customer
+                                      ? data_.client_customer.name
+                                      : "N/A"
+                                  ) +
+                                  "\n               "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("milestones", {
+                                  attrs: {
+                                    count: data_.reports
+                                      ? data_.reports.length.toLocaleString()
+                                      : 0,
+                                    agro_id: data_.id,
+                                    user_id: _vm.user_id,
+                                    comp_id: data_.id
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("comment", {
+                                  attrs: {
+                                    agro_id: data_.id,
+                                    user_id: _vm.user_id,
+                                    comp_id: data_.id,
+                                    count: data_.reports
+                                      ? data_.comments.length.toLocaleString()
+                                      : 0
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                   " +
+                                  _vm._s(
+                                    data_.oprep ? data_.oprep.name : "N/A"
+                                  ) +
+                                  "\n               "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c("xprogress", {
+                                  attrs: {
+                                    label: "Progress",
+                                    percentage:
+                                      data_.prog_status === "Pending"
+                                        ? 0
+                                        : +data_.prog_status
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(
+                                "\n                   " +
+                                  _vm._s(data_.created_at) +
+                                  "\n               "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              { attrs: { align: "right" } },
+                              [
+                                _c("agrolytic-action", {
+                                  attrs: {
+                                    id: data_.id + "id",
+                                    data: data_,
+                                    role: _vm.role,
+                                    user_id: _vm.user_id
+                                  },
+                                  on: {
+                                    linktoForm: _vm.linktoForm,
+                                    doPreview: _vm.doPreview,
+                                    removeAgrolytic: _vm.removeAgrolytic,
+                                    selectAgrolyticRow: _vm.selectAgrolyticRow,
+                                    setCategoryFilter: _vm.setCategoryFilter,
+                                    setSectorFilter: _vm.setSectorFilter
+                                  }
+                                })
+                              ],
+                              1
                             )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("milestones", {
-                                attrs: {
-                                  count: data_.reports
-                                    ? data_.reports.length.toLocaleString()
-                                    : 0,
-                                  agro_id: data_.id,
-                                  user_id: _vm.user_id,
-                                  comp_id: data_.id
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("comment", {
-                                attrs: {
-                                  agro_id: data_.id,
-                                  user_id: _vm.user_id,
-                                  comp_id: data_.id,
-                                  count: data_.reports
-                                    ? data_.comments.length.toLocaleString()
-                                    : 0
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                   " +
-                                _vm._s(data_.oprep ? data_.oprep.name : "N/A") +
-                                "\n               "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            [
-                              _c("xprogress", {
-                                attrs: {
-                                  label: "Progress",
-                                  percentage:
-                                    data_.prog_status === "Pending"
-                                      ? 0
-                                      : +data_.prog_status
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("td", [
-                            _vm._v(
-                              "\n                   " +
-                                _vm._s(data_.created_at) +
-                                "\n               "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "td",
-                            { attrs: { align: "right" } },
-                            [
-                              _c("agrolytic-action", {
-                                attrs: {
-                                  id: data_.id + "id",
-                                  data: data_,
-                                  role: _vm.role,
-                                  user_id: _vm.user_id
-                                },
-                                on: {
-                                  linktoForm: _vm.linktoForm,
-                                  doPreview: _vm.doPreview,
-                                  removeAgrolytic: _vm.removeAgrolytic,
-                                  selectAgrolyticRow: _vm.selectAgrolyticRow,
-                                  setCategoryFilter: _vm.setCategoryFilter,
-                                  setSectorFilter: _vm.setSectorFilter
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ])
-                      }),
-                      0
-                    )
-                  ]),
+                          ])
+                        }),
+                        0
+                      )
+                    ]
+                  ),
                   _vm._v(" "),
                   _c(
                     "nav",
@@ -10448,7 +10458,8 @@ var render = function() {
                                       height: "300px",
                                       "overflow-y": "scroll",
                                       display: "inline-block",
-                                      width: "100%"
+                                      width: "100%",
+                                      padding: "20px"
                                     }
                                   },
                                   _vm._l(_vm.comments, function(com) {
@@ -10462,7 +10473,9 @@ var render = function() {
                                             staticClass: "alert alert-info",
                                             staticStyle: {
                                               "background-color": "#fff",
-                                              border: "1px solid #ddd"
+                                              border: "1px solid #ddd",
+                                              "box-shadow":
+                                                "0 0 3px rgba(0,0,0,0.2)"
                                             }
                                           },
                                           [
@@ -11634,143 +11647,147 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      {
-        staticClass:
-          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
-        on: { click: _vm.gotoAllAgrolyticLink }
-      },
-      [
-        _c("div", { staticClass: "card card-statistics" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("div", { staticClass: "clearfix" }, [
-              _vm._m(0),
-              _vm._v(" "),
-              _c("div", { staticClass: "float-right" }, [
-                _c("p", { staticClass: "mb-0 text-right" }, [
-                  _vm._v("All Agrolytic Report")
-                ]),
+  return _c(
+    "div",
+    { staticClass: "row", staticStyle: { "margin-top": "12.5px" } },
+    [
+      _c(
+        "div",
+        {
+          staticClass:
+            "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+          on: { click: _vm.gotoAllAgrolyticLink }
+        },
+        [
+          _c("div", { staticClass: "card card-statistics" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "clearfix" }, [
+                _vm._m(0),
                 _vm._v(" "),
-                _c("div", { staticClass: "fluid-container" }, [
-                  _c(
-                    "h3",
-                    { staticClass: "font-weight-medium text-right mb-0" },
-                    [_vm._v(_vm._s(_vm.agroReportCount))]
-                  )
+                _c("div", { staticClass: "float-right" }, [
+                  _c("p", { staticClass: "mb-0 text-right" }, [
+                    _vm._v("All Agrolytic Report")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "fluid-container" }, [
+                    _c(
+                      "h3",
+                      { staticClass: "font-weight-medium text-right mb-0" },
+                      [_vm._v(_vm._s(_vm.agroReportCount))]
+                    )
+                  ])
                 ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "text-muted mt-3 mb-0" })
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass:
-          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
-        on: { click: _vm.gotoAllAgrolyticThisWeekLink }
-      },
-      [
-        _c("div", { staticClass: "card card-statistics" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("div", { staticClass: "clearfix" }, [
-              _vm._m(1),
+              ]),
               _vm._v(" "),
-              _c("div", { staticClass: "float-right" }, [
-                _c("p", { staticClass: "mb-0 text-right" }, [
-                  _vm._v("Agrolytics This Week")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "fluid-container" }, [
-                  _c(
-                    "h3",
-                    { staticClass: "font-weight-medium text-right mb-0" },
-                    [_vm._v(_vm._s(_vm.agroReportThisWeekCount))]
-                  )
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+              _c("p", { staticClass: "text-muted mt-3 mb-0" })
+            ])
           ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass:
-          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
-        on: { click: _vm.gotoAllReportLink }
-      },
-      [
-        _c("div", { staticClass: "card card-statistics" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("div", { staticClass: "clearfix" }, [
-              _vm._m(2),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+          on: { click: _vm.gotoAllAgrolyticThisWeekLink }
+        },
+        [
+          _c("div", { staticClass: "card card-statistics" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "clearfix" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c("div", { staticClass: "float-right" }, [
+                  _c("p", { staticClass: "mb-0 text-right" }, [
+                    _vm._v("Agrolytics This Week")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "fluid-container" }, [
+                    _c(
+                      "h3",
+                      { staticClass: "font-weight-medium text-right mb-0" },
+                      [_vm._v(_vm._s(_vm.agroReportThisWeekCount))]
+                    )
+                  ])
+                ])
+              ]),
               _vm._v(" "),
-              _c("div", { staticClass: "float-right" }, [
-                _c("p", { staticClass: "mb-0 text-right" }, [
-                  _vm._v("All Report")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "fluid-container" }, [
-                  _c(
-                    "h3",
-                    { staticClass: "font-weight-medium text-right mb-0" },
-                    [_vm._v(_vm._s(_vm.reportCount))]
-                  )
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+              _c("p", { staticClass: "text-muted mt-3 mb-0" })
+            ])
           ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass:
-          "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
-        on: { click: _vm.gotoAllReportThisWeekLink }
-      },
-      [
-        _c("div", { staticClass: "card card-statistics" }, [
-          _c("div", { staticClass: "card-body" }, [
-            _c("div", { staticClass: "clearfix" }, [
-              _vm._m(3),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+          on: { click: _vm.gotoAllReportLink }
+        },
+        [
+          _c("div", { staticClass: "card card-statistics" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "clearfix" }, [
+                _vm._m(2),
+                _vm._v(" "),
+                _c("div", { staticClass: "float-right" }, [
+                  _c("p", { staticClass: "mb-0 text-right" }, [
+                    _vm._v("All Report")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "fluid-container" }, [
+                    _c(
+                      "h3",
+                      { staticClass: "font-weight-medium text-right mb-0" },
+                      [_vm._v(_vm._s(_vm.reportCount))]
+                    )
+                  ])
+                ])
+              ]),
               _vm._v(" "),
-              _c("div", { staticClass: "float-right" }, [
-                _c("p", { staticClass: "mb-0 text-right" }, [
-                  _vm._v("Report this Week")
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "fluid-container" }, [
-                  _c(
-                    "h3",
-                    { staticClass: "font-weight-medium text-right mb-0" },
-                    [_vm._v(_vm._s(_vm.reportThisWeekCount))]
-                  )
-                ])
-              ])
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "text-muted mt-3 mb-0" })
+              _c("p", { staticClass: "text-muted mt-3 mb-0" })
+            ])
           ])
-        ])
-      ]
-    )
-  ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card",
+          on: { click: _vm.gotoAllReportThisWeekLink }
+        },
+        [
+          _c("div", { staticClass: "card card-statistics" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "clearfix" }, [
+                _vm._m(3),
+                _vm._v(" "),
+                _c("div", { staticClass: "float-right" }, [
+                  _c("p", { staticClass: "mb-0 text-right" }, [
+                    _vm._v("Report this Week")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "fluid-container" }, [
+                    _c(
+                      "h3",
+                      { staticClass: "font-weight-medium text-right mb-0" },
+                      [_vm._v(_vm._s(_vm.reportThisWeekCount))]
+                    )
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("p", { staticClass: "text-muted mt-3 mb-0" })
+            ])
+          ])
+        ]
+      )
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
@@ -12896,7 +12913,8 @@ var render = function() {
                                 "*/background-color": "#eee",
                                 "margin-top": "10px",
                                 "border-radius": "14px",
-                                "margin-bottom": "10px"
+                                "margin-bottom": "10px",
+                                padding: "20px"
                               }
                             },
                             _vm._l(_vm.list, function(item) {
@@ -12907,7 +12925,8 @@ var render = function() {
                                   staticStyle: {
                                     border: "1px solid #bbb",
                                     padding: "7px",
-                                    "margin-bottom": "7px"
+                                    "margin-bottom": "7px",
+                                    "box-shadow": "0 0 3px rgba(0,0,0,0.2)"
                                   }
                                 },
                                 [
@@ -13629,13 +13648,7 @@ var render = function() {
             [
               _c(
                 "div",
-                {
-                  staticStyle: {
-                    "background-color": "#eee",
-                    padding: "6px",
-                    "margin-bottom": "3px"
-                  }
-                },
+                { staticStyle: { padding: "6px", "margin-bottom": "3px" } },
                 [
                   _c("div", [
                     _c(
@@ -13665,7 +13678,11 @@ var render = function() {
                       staticStyle: { color: "#888", "font-size": "11px" },
                       attrs: { align: "right" }
                     },
-                    [_c("b", [_vm._v(_vm._s(_vm._f("ago")(lst.created_at)))])]
+                    [
+                      _c("i", { staticStyle: { color: "#000" } }, [
+                        _vm._v(_vm._s(_vm._f("ago")(lst.created_at)))
+                      ])
+                    ]
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-xs-12" }, [

@@ -53,12 +53,13 @@
             </form>
       
 
-        <div class="col-xs-12" style="padding-top: 20px;height: 300px;overflow-y: scroll;/* border: 1px solid #bbb; */background-color: #eee;margin-top: 10px;border-radius: 14px;margin-bottom: 10px;">
+        <div class="col-xs-12" style="padding-top: 20px;height: 300px;overflow-y: scroll;/* border: 1px solid #bbb; */background-color: #eee;margin-top: 10px;border-radius: 14px;margin-bottom: 10px;padding: 20px;">
              
              <div v-for="item in list" v-bind:key="item.id" style="
     border: 1px solid #bbb;
     padding: 7px;
     margin-bottom: 7px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
 ">
                
                <div class="col-md-12">
@@ -350,7 +351,7 @@ export default {
       },
       markAsCompleted(data){
         toastr.success('Saving Status ...');
-          fetch(baseURL + 'report/' + data.id,{
+          fetch(baseURL + 'report/' + data.id + '?user_id=' + this.user_id,{
            method:'PUT',
            headers:{
              'content-Type':'application/json'

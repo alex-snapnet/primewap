@@ -9,6 +9,7 @@ class Report extends Model
     //
     protected $dates=['day_week'];
     protected $fillable=['report' ,'user_id','day_week','agro_id','status','prog_status','lmodified_id'];
+    protected $casts = ['done'=>'integer'];
 
     public function user(){
     	return $this->belongsTo('App\User','user_id')->withDefault();

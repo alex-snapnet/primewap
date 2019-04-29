@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Apis;
 
+use App\User;
+use App\Comment;
+
+use App\Agrolytic;
+use App\Mail\CommentAltered;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
-use App\Comment;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\CommentResource;
-
-use App\User;
 
 
 class CommentController extends Controller
@@ -57,10 +60,51 @@ class CommentController extends Controller
 
         // $comment->type = $request->type;
         if ($comment->save()){
+
+            // $userModifier = User::find($comment->user_id);
+            // $agroObj = Agrolytic::find($request->agro_id);
+            // $userOpRep = User::find($agroObj->op_rep);
+            
+            // $userIdObj = User::find($agroObj->user_id);
+            // $opRepObj = User::find($agroObj->op_rep);
+
+            // $tos = [$userIdObj->email,$opRepObj->email];
+            // if (!in_array($userModifier->email,$tos)){
+            //  $tos[] = $userModifier->email;
+            // }
+            // $tos[] = 'easymagic1@gmail.com';
+            
+            // foreach ($tos as $to){
+            //  Mail::to($to)->send(new CommentAltered($userModifier,'just posted a comment : "' . $comment->comment . '"'));
+            // }
+
+            $this->sendNotification($request->user_id,$comment->agro_id,'just posted a comment : "',$comment->comment);
+                
            return new CommentResource($comment);
         }
 
     }
+
+    function sendNotification($userId,$agro_id,$msg='',$comment){
+        $userModifier = User::find($userId);
+        $agroObj = Agrolytic::find($agro_id);
+        
+        $userIdObj = User::find($agroObj->user_id);
+        $opRepObj = User::find($agroObj->op_rep);
+
+        $tos = [$userIdObj->email,$opRepObj->email];
+        if (!in_array($userModifier->email,$tos)){
+         $tos[] = $userModifier->email;
+        }
+        $tos[] = 'easymagic1@gmail.com';
+        
+        foreach ($tos as $to){
+         Mail::to($to)->send(new CommentAltered($userModifier,$msg . $comment . '"'));
+        }
+    }
+
+
+
 
     /**
      * Display the specified resource.
@@ -101,10 +145,12 @@ class CommentController extends Controller
         //canAlterComment
         if ($userObj->canAlterComment($comment)){
             
+            $this->sendNotification($request->user_id,$comment->agro_id,'just edited the comment : "',$comment->comment);
+
             $comment->comment = $request->comment;
             // $comment->type = $request->type;
-            if ($comment->save()){
-               return new CommentResource($comment);
+            if ($comment->save()){    
+                return new CommentResource($comment);
             }    
             
         }else{
@@ -128,6 +174,8 @@ class CommentController extends Controller
         //canAlterComment
         if ($userObj->canAlterComment($comment)){
             if ($comment->delete()){
+
+                $this->sendNotification($request->user_id,$comment->agro_id,'just removed the comment : "',$comment->comment);                
                 return new CommentResource($comment); 
              }     
         }else{

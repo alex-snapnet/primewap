@@ -50,12 +50,12 @@
     <!-- <a v-show="canModify" href="#" data-target="#commentModalSelf" data-toggle="modal" class="btn btn-success" style="margin-bottom: 7px;"> + Add Comment</a> -->
 </div>
 
-<span style="height: 300px;overflow-y: scroll;display:inline-block;width: 100%;">
+<span style="height: 300px;overflow-y: scroll;display:inline-block;width: 100%;padding: 20px;">
     <!-- start loop -->
     <div class="col-lg-12" v-for="com in comments" v-bind:key="com.id">
   
 
-         <div class="alert alert-info" style="background-color: #fff;border: 1px solid #ddd;">
+         <div class="alert alert-info" style="background-color: #fff;border: 1px solid #ddd;box-shadow: 0 0 3px rgba(0,0,0,0.2);">
              <div>
                <b>
                 <u style="

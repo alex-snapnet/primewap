@@ -155,7 +155,7 @@ class ReportController extends Controller
         //
 
         $userObj = User::find($request->user_id);
-        if ($userObj->canAlterReports($report)){
+        if ($userObj->canAlterMileStones($report)){
             if ($request->filled('report'))$report->report = $request->report;
             if ($request->filled('done'))$report->done = $request->done;
             if ($request->filled('user_id'))$report->user_id = $request->user_id;

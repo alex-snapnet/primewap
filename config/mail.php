@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    'host' => env('MAIL_HOST', 'mail.gomayah.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'prime_atlantic@gomayah.com'),
+        'name' => env('MAIL_FROM_NAME', 'Prime Atlantic.'),
     ],
 
     /*
@@ -84,9 +84,9 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME'),
+    'username' => env('prime_atlantic@gomayah.com'), //config for username.
 
-    'password' => env('MAIL_PASSWORD'),
+    'password' => env('kc7qHfuWWMtY'),
 
     /*
     |--------------------------------------------------------------------------

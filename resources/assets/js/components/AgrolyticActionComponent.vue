@@ -104,8 +104,8 @@
  </optgroup>
 
  <optgroup label="Sort">
-     <option value="agro-cat">Agrolytics In This Category</option>
-     <option value="agro-sec">Agrolytics In This Sector</option>
+     <option value="agro-cat">Tasks In This Category</option>
+     <option value="agro-sec">Tasks In This Sector</option>
  </optgroup>
 
 

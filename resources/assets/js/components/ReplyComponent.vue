@@ -16,7 +16,7 @@
       <div class="col-md-12" v-for="lst in list" :key="lst.id" style="padding-right: 0;">
          
           <div style="
-    background-color: #eee;
+    
     padding: 6px;
     margin-bottom: 3px;
 ">
@@ -36,7 +36,7 @@
     color: #888;
     font-size: 11px;
 ">
-                 <b>{{ lst.created_at | ago }}</b>
+                 <i style="color: #000;">{{ lst.created_at | ago }}</i>
             </div>
 
 <div class="col-xs-12">

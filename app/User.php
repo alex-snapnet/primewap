@@ -124,6 +124,12 @@ class User extends Authenticatable
         return $this->checkAlterCapability($sector,'sectors','sectors');
       }
 
+      function canAlterMileStones($report){
+         $agrolyticObj = Agrolytic::find($report->agro_id);
+         $acceptedList = [$agrolyticObj->user_id,$agrolyticObj->op_rep];  
+         return in_array($this->id,$acceptedList);
+      }
+
       function canAlterGroups($group){
 
       }

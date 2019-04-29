@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Apis;
 use App\User;
 use App\GroupName;
 
+// use App\Mail\CommentAltered;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+// use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\GroupNameResource;
 
 class GroupNameController extends Controller
@@ -63,6 +65,7 @@ class GroupNameController extends Controller
         $groupname->name = $request->name;
         $groupname->group_name_id = $request->group_name_id;
         $groupname->user_id = $request->user_id;
+
 
         if ($groupname->save()){
           return new GroupNameResource($groupname);
