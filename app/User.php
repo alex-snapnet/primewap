@@ -63,6 +63,12 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class,'user_id');
     }
 
+    function customers_relation(){
+        return $this->hasMany(Customer::class,'user_id');
+    }
+
+
+
     function altered_comments(){
         return $this->hasMany(Comment::class,'user_id')->where('');
     }
@@ -100,7 +106,7 @@ class User extends Authenticatable
       }
 
       function canAlterCustomers($customer){
-        return $this->checkAlterCapability($customer,'customers','customers');      
+        return $this->checkAlterCapability($customer,'customers_relation','customers');      
       }
 
       function canAlterReports($report){
@@ -115,6 +121,7 @@ class User extends Authenticatable
         }]);
         $query = $query->where('id',$this->id);
         $count_field = $relation . '_count';
+        // echo $query->toSql();
         $count = $query->first()->$count_field;
         return ($count > 0);         
       }

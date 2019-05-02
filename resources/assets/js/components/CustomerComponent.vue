@@ -344,7 +344,7 @@ export default {
         },
 
         doSave(){
-               fetch(baseURL + 'customer/' + this.id,{
+               fetch(baseURL + 'customer/' + this.id + '?user_id=' + authUser,{
                     
                     method:'PUT',
                     body:JSON.stringify(this.customer),
@@ -376,7 +376,7 @@ export default {
         doRemove(customer){
           if (confirm('You you want to confirm this action?')){
            this.statusBusy('Loading ...');  
-           fetch(baseURL + 'customer/' + customer.id,{
+           fetch(baseURL + 'customer/' + customer.id + '?user_id=' + authUser,{
                method:'DELETE',
                headers:{
                    'content-Type':'application/json'

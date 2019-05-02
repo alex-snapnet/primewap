@@ -182,7 +182,8 @@
   }
 
   th{
-    background-color: #1459ff;
+    background-color: {{ Auth::user()->theme }};
+    /* #1459ff */
     /* background-image: linear-gradient(#777, #fff); */
     color: #fff;
   }
@@ -220,7 +221,7 @@
     <!-- partial:../../partials/_navbar.html -->
 
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row" 
-       style="background: #1459ff !important;">
+       style="background: {{ Auth::user()->theme }} !important;">
 
       <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center" style="border: 1px solid #888;width: 185px;">
 
@@ -315,9 +316,23 @@
 
               </a>
 
-              
 
-              <a href="{{url('logout')}}" onclick="logout()" class="dropdown-item">
+
+<a href="#" style="color: #000 !important;text-align: left;display: inline-block !important;" class="dropdown-item" data-target="#themeSelectModal11" data-toggle="modal">
+        Change Theme
+
+</a>
+
+
+<a href="#" style="color: #000 !important;text-align: left;display: inline-block !important;" class="dropdown-item" data-target="#changePasswordModal11" data-toggle="modal">
+        Change Password
+
+</a>
+
+
+
+
+              <a style="color: #000 !important;text-align: left;display: inline-block !important;" href="{{url('logout')}}" onclick="logout()" class="dropdown-item">
 
                 Sign Out
 
@@ -350,6 +365,10 @@
       <div class="main-panel" style="width: calc(100%)">
 
         <div class="content-wrapper" style="padding: 5px;">
+
+        <change-password></change-password>
+
+        <theme></theme>
 
           @yield('content')
 

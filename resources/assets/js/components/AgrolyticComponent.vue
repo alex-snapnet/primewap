@@ -898,7 +898,7 @@ export default {
   }
 
   th{
-    background-color: #1459ff;
+    /* background-color: #1459ff; */
     /* background-image: linear-gradient(#777, #fff); */
     color: #fff;
   }

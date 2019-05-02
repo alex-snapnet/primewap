@@ -73,6 +73,7 @@ class UserController extends Controller
     }
 
     private function passwordIsValid(Request $request){
+      // dd($request->all());
       return ($request->password == $request->password_confirm && !empty($request->password));
     }
 
@@ -85,9 +86,11 @@ class UserController extends Controller
            return ['message'=>'Something went wrong!','error'=>false];
          }
       }else{
-        return ['message'=>'Invalid Password!','error'=>false];                 
+        return ['message'=>'Invalid Password!','error'=>true];                 
       }
     }
+
+
 
     function changeUserName(User $user,Request $request){
       $user->name = $request->name;
@@ -159,6 +162,18 @@ class UserController extends Controller
            return new UserResource($user);
         }
 
+    }
+
+    function updateTheme(Request $request,User $user){
+      $user->theme = $request->value; 
+      // echo $request->value;
+      // #1459ff
+      if ($user->save()){
+         return [
+           'message'=>'Theme Saved',
+           'error'=>false
+         ];
+       }
     }
 
     /**

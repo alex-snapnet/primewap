@@ -54,6 +54,8 @@ Route::post('user-change-password/{user}','Apis\UserController@changePassword');
 Route::put('change-user-name/{user}','Apis\UserController@changeUserName');
 Route::put('change-user-role/{user}','Apis\UserController@updateUserRole');
 
+Route::put('change-user-theme/{user}','Apis\UserController@updateTheme');
+//updateTheme
 
 Route::resource('report','Apis\ReportController');
 
