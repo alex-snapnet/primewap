@@ -170,10 +170,10 @@
 
 <!-- content stop -->
 
+<!-- color: rgb(255, 255, 255);background-color: rgb(0, 0, 0);padding: 4px;border-radius: 50% -->
 
-                 <a @click.prevent="init" href="" style="
-color: rgb(255, 255, 255);background-color: rgb(0, 0, 0);padding: 4px;border-radius: 50%;display: inline-block;text-align: center;
-"  class="count-indicator" :data-target="'#commentListModal' + comp_id" data-toggle="modal">
+                 <a @click.prevent="init" href="" style="color: #fff;background-color: rgb(0, 0, 0);display: inline-block;text-align: center;
+"  class="badge badge-light" :data-target="'#commentListModal' + comp_id" data-toggle="modal">
                   <span class="count">{{ count?  count.toLocaleString() : 0 }}</span>
                  </a>  
 

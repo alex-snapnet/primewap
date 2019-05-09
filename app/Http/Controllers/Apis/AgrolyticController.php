@@ -59,6 +59,10 @@ class AgrolyticController extends Controller
            $query = $query->whereDate('created_at','<=',$now); 
         }
 
+        if ($request->filled('prog_status')){
+          $query = $query->where('prog_status',$request->prog_status);
+        }
+
 
         if ($request->filled('progress')){
 

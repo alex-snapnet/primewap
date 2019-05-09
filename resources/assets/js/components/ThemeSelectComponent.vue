@@ -32,7 +32,7 @@
            </div>  -->
 
 <div class="form-group col-md-12" style="margin: 0;margin-bottom: 5px;">
-   <button class="btn btn-primary form-control" :style="{backgroundColor: thm.value}"> {{ thm.name }} (Apply Theme) </button>
+   <button class="btn btn-primary form-control" style="border: 0;" :style="{backgroundColor: thm.value}"> {{ thm.name }} (Apply Theme) </button>
 </div>
 
 
@@ -91,18 +91,21 @@ export default {
          return {
             themes:[
                 {
-                    name:'Dark Knight',
-                    value:'#000'
-                },
-                {
                     name:'Blue (Default)',
                     value:'#1459ff'
                 },
                 {
-                    name:'Rose',
-                    value:'rgb(255, 20, 248)'
+                    name:'Dark Knight',
+                    value:'#000'
                 },
-                
+                {
+                    name:'Pnk',
+                    value:'rgb(255, 20, 248)'
+                },                
+                {
+                    name:'Rose',
+                    value:'#ff0000'
+                }
 
             ],
             selectedTheme:{

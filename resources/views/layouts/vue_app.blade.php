@@ -256,11 +256,16 @@
             <a href="{{ route('agrolytic.index') }}" class="nav-link">
               <i class="fa fa-check-circle"></i>Tasks</a>
           </li>          
+<!-- type::{{ Auth::user()->type }} -->
+    <!-- //prime_admin -->
 
+@if (Auth::user()->type == 'prime_super_admin')
     <sector></sector>       
     <group></group>
     <category></category>
     <user></user>
+@endif
+    
     <customer></customer>
 
 
@@ -319,21 +324,25 @@
 
 
 <a href="#" style="color: #000 !important;text-align: left;display: inline-block !important;" class="dropdown-item" data-target="#themeSelectModal11" data-toggle="modal">
-        Change Theme
+<i class="fa fa-paint-brush" ></i>
+Change Theme
 
 </a>
 
 
 <a href="#" style="color: #000 !important;text-align: left;display: inline-block !important;" class="dropdown-item" data-target="#changePasswordModal11" data-toggle="modal">
-        Change Password
+<i class="fa fa-lock" ></i>
+Change Password
 
 </a>
 
+<a style="color: #000 !important;text-align: left;display: inline-block !important;" class="dropdown-item" href="https://support.snapnet.com.ng/PrimeWAPlogin?email={{Auth::user()->email}}&name={{Auth::user()->name}}" style="font-size: 13px; color:#fff">
+<i class="mdi mdi-comment-account-outline" ></i>Support</a> 
 
 
 
               <a style="color: #000 !important;text-align: left;display: inline-block !important;" href="{{url('logout')}}" onclick="logout()" class="dropdown-item">
-
+              <i class="fa fa-power-off" ></i>
                 Sign Out
 
               </a>

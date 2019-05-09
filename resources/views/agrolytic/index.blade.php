@@ -8,6 +8,7 @@
   :sec_id="{{ request()->input('sec_id',0) }}" 
   :date_days="{{ request()->input('date_days',0) }}" 
   :cat_id="{{ request()->input('cat_id',0) }}"
+  :prog_status="{{ request()->input('prog_status','null') }}"
   :progress="{{ request()->input('progress','null') }}">
     <img src="{{ url('/') }}/images/loader.gif" style="height: 45px;"/> 
   </agrolytic>

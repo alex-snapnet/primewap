@@ -2,7 +2,7 @@
 
 <div class="row" style="margin-top: 12.5px;">
      
-     <div @click="gotoAllAgrolyticLink" class="pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+     <div @click="gotoAllAgrolyticLink" class="pointer col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
      <div class="card card-statistics">
          <div class="card-body">
              <div class="clearfix">
@@ -10,7 +10,7 @@
                      <i class="mdi mdi-cube text-danger icon-lg"></i>
                  </div>
                  <div class="float-right">
-                     <p class="mb-0 text-right">All Agrolytic Report</p>
+                     <p class="mb-0 text-right">All Task</p>
                      <div class="fluid-container">
                          <h3 class="font-weight-medium text-right mb-0">{{ agroReportCount }}</h3>
                      </div>
@@ -21,7 +21,7 @@
     </div>
    </div> 
    
-   <div @click="gotoAllAgrolyticThisWeekLink"  class="pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+   <div @click="gotoAllAgrolyticThisWeekLink"  class="pointer col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
      <div class="card card-statistics">
          <div class="card-body">
              <div class="clearfix">
@@ -29,7 +29,7 @@
                       <i class="mdi mdi-receipt text-warning icon-lg"></i>
                  </div>
              <div class="float-right">
-                  <p class="mb-0 text-right">Agrolytics This Week</p>
+                  <p class="mb-0 text-right">Tasks This Week</p>
                   <div class="fluid-container">
                       <h3 class="font-weight-medium text-right mb-0">{{ agroReportThisWeekCount }}</h3>
                   </div>
@@ -41,7 +41,7 @@
    </div> 
    
    
-   <div @click="gotoAllReportLink" class="pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+   <!-- <div @click="gotoAllReportLink" class="pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
       <div class="card card-statistics">
         <div class="card-body">
           <div class="clearfix">
@@ -58,9 +58,9 @@
             <p class="text-muted mt-3 mb-0"></p>
         </div>
       </div>
-      </div>
+      </div> -->
       
-      <div @click="gotoAllReportThisWeekLink" class="pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
+      <!-- <div @click="gotoAllReportThisWeekLink" class="pointer col-xl-3 col-lg-3 col-md-3 col-sm-6 grid-margin stretch-card">
          <div class="card card-statistics">
            <div class="card-body">
               <div class="clearfix">
@@ -77,7 +77,7 @@
               <p class="text-muted mt-3 mb-0"></p>
             </div>
           </div>
-        </div>
+        </div> -->
         
     </div>
 

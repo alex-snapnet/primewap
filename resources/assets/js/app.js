@@ -85,7 +85,10 @@ Vue.component('change-password', require('./components/ChangePasswordComponent.v
 
 Vue.component('theme', require('./components/ThemeSelectComponent.vue').default);
 
+Vue.component('multiple-export', require('./components/ExportToMultipleFormats.vue').default);
 
+
+//ExportToMultipleFormats
 //AssignToOpRepComponent
 
 //OperationRepInputComponent

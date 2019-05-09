@@ -68,7 +68,9 @@
 
 <!-- <div class="btn-group" role="group" aria-label="Basic example"> -->
 
-      <export-csv v-bind:data="list"></export-csv>     
+      <!-- <export-csv v-bind:data="list"></export-csv>      -->
+<!-- display: inline-block;position: relative;top: -5px; -->
+<multiple-export v-bind:data="list" :style="{display:'inline-block',position:'relative',top:'-5px'}"></multiple-export>
 
  <excel-import :label="'Import Agrolytic'" style="position: relative;top: -4px;"  @batchCreated="batchCreated" :compId="23" :apiBatchCreate="batchCreate"></excel-import>
 
@@ -78,7 +80,7 @@
 
      <a  href="#" @click.prevent="resetFilters" class="btn btn-outline-primary mb-2" >Reset Filter</a>
 
-     <a @click.prevent="doAddMode" v-show="isAdminOnly()" data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-outline-primary mb-2" >Add Task</a>
+     <a @click.prevent="doAddMode"  data-toggle="modal" data-target="#agrolyticModal" id="form-btn" href="#" class="btn btn-outline-primary mb-2" >Add Task</a>
 
      <!-- <a v-modal="'#agrolyticModal'" href="">Test Directive</a> -->
  
@@ -97,19 +99,19 @@
              <span style="display: inline-block;">
                 <b style="font-size: 14px;color: #777;">Date From:.</b><br />  
                 <!-- date_value -->
-                <date-picker :placeholder="'Date From'" :date_value="dateFrom" @date-changed="getDateValueFrom" :date_id="1" :date_style="{border: '1px solid #000','font-size': '14px',padding: '7px'}" ></date-picker>
+                <date-picker :placeholder="'Date From'" :date_value="dateFrom" @date-changed="getDateValueFrom" :date_id="1" :date_style="{border: '1px solid rgb(177, 177, 177)','font-size': '14px',padding: '7px'}" ></date-picker>
                <!-- <input v-bind="dateFrom" type="date" placeholder="Date From" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/> -->
              </span>
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Date To:.</b><br />  
-                <date-picker :placeholder="'Date To'" :date_value="dateTo" @date-changed="getDateValueTo" :date_id="2" :date_style="{border: '1px solid #000','font-size': '14px',padding: '7px'}"></date-picker>
+                <date-picker :placeholder="'Date To'" :date_value="dateTo" @date-changed="getDateValueTo" :date_id="2" :date_style="{border: '1px solid rgb(177, 177, 177)','font-size': '14px',padding: '7px'}"></date-picker>
                <!-- <input v-bind="dateTo" type="date" placeholder="Date To" style="border: 1px solid #ddd;font-size: 14px;padding: 7px;"/> -->
              </span> 
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Category:.</b><br />  
-                <select v-model="cat_id" style="border: 1px solid #000;font-size: 13px;padding: 7px;">
+                <select v-model="cat_id" style="border: 1px solid rgb(177, 177, 177);font-size: 13px;padding: 7px;">
                     <option value="">--Select Category--</option>
                     <option v-for="cat in categories" v-bind:value="cat.id" v-bind:key="cat.id">{{ cat.name }}</option>
                 </select>
@@ -117,7 +119,7 @@
 
              <span style="display: inline-block;">
                 <b style="font-size: 14px;;color: #777;">Sector:.</b><br />  
-                <select v-model="sec_id" style="border: 1px solid #000;font-size: 13px;padding: 7px;">
+                <select v-model="sec_id" style="border: 1px solid rgb(177, 177, 177);font-size: 13px;padding: 7px;">
                     <option value="">--Select Sector--</option>
                     <option v-for="sec in sectors" v-bind:value="sec.id" v-bind:key="sec.id">{{ sec.name }}</option>
                 </select>
@@ -309,7 +311,8 @@ export default {
       'user_id',
       'role',
       'date_days',
-      'progress'
+      'progress',
+      'prog_status'
       // 'sec_id'
       // 'cat_id'
     ],
@@ -514,6 +517,10 @@ export default {
 
            if (this.progress !== null){ ///use double equal to (==)
              this.filters.push('progress=' + this.progress);
+           }
+
+           if (this.prog_status !== null){
+             this.filters.push('prog_status=' + this.prog_status);
            }
 
           //  console.log(this.filters);
